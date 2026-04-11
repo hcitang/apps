@@ -1,0 +1,1227 @@
+{
+  "swimmer": {
+    "id": "2363517",
+    "name": "Anson Tang",
+    "team": "Uwcsea-East",
+    "location": "Singapore"
+  },
+  "scraped_at": "2026-04-02T23:52:36.351770",
+  "personal_bests": [
+    {
+      "event": "50 Free SCM",
+      "time": "30.91",
+      "time_seconds": 30.91,
+      "meet": "NIST Falcons Invitational",
+      "date": "2025-11-23"
+    },
+    {
+      "event": "50 Free LCM",
+      "time": "30.23",
+      "time_seconds": 30.23,
+      "meet": "Singapore National Age Group Championship",
+      "date": "2026-03-18"
+    },
+    {
+      "event": "100 Free SCM",
+      "time": "1:07.13",
+      "time_seconds": 67.13,
+      "meet": "NIST Falcons Invitational",
+      "date": "2025-11-22"
+    },
+    {
+      "event": "100 Free LCM",
+      "time": "1:10.09",
+      "time_seconds": 70.09,
+      "meet": "1st SINGAPORE AQUATICS SWIMFAST",
+      "date": "2026-03-01"
+    },
+    {
+      "event": "200 Free SCM",
+      "time": "2:28.19",
+      "time_seconds": 148.19,
+      "meet": "2026 SAIS Endurance Splash Invitational",
+      "date": "2026-01-31"
+    },
+    {
+      "event": "200 Free LCM",
+      "time": "2:34.09",
+      "time_seconds": 154.09,
+      "meet": "1st SINGAPORE AQUATICS SWIMFAST",
+      "date": "2026-02-28"
+    },
+    {
+      "event": "50 Back SCM",
+      "time": "39.88",
+      "time_seconds": 39.88,
+      "meet": "UWC East Club Champs 2025",
+      "date": "2025-10-04"
+    },
+    {
+      "event": "50 Back LCM",
+      "time": "39.38",
+      "time_seconds": 39.38,
+      "meet": "1st SINGAPORE AQUATICS SWIMFAST",
+      "date": "2026-03-01"
+    },
+    {
+      "event": "100 Back LCM",
+      "time": "1:47.90",
+      "time_seconds": 107.9,
+      "meet": "40th SSPA",
+      "date": "2024-02-25"
+    },
+    {
+      "event": "50 Breast SCM",
+      "time": "39.00",
+      "time_seconds": 39.0,
+      "meet": "NIST Falcons Invitational",
+      "date": "2025-11-22"
+    },
+    {
+      "event": "50 Breast LCM",
+      "time": "37.58",
+      "time_seconds": 37.58,
+      "meet": "Singapore National Age Group Championship",
+      "date": "2026-03-22"
+    },
+    {
+      "event": "100 Breast SCM",
+      "time": "1:26.11",
+      "time_seconds": 86.11,
+      "meet": "NIST Falcons Invitational",
+      "date": "2025-11-23"
+    },
+    {
+      "event": "100 Breast LCM",
+      "time": "1:26.20",
+      "time_seconds": 86.2,
+      "meet": "1st SINGAPORE AQUATICS SWIMFAST",
+      "date": "2026-02-28"
+    },
+    {
+      "event": "200 Breast SCM",
+      "time": "3:07.65",
+      "time_seconds": 187.65,
+      "meet": "NIST Falcons Invitational",
+      "date": "2025-11-22"
+    },
+    {
+      "event": "200 Breast LCM",
+      "time": "3:14.23",
+      "time_seconds": 194.23,
+      "meet": "1st SINGAPORE AQUATICS SWIMFAST",
+      "date": "2026-03-01"
+    },
+    {
+      "event": "50 Fly SCM",
+      "time": "44.51",
+      "time_seconds": 44.51,
+      "meet": "Onyx Stingrays Last Last Splash Meet",
+      "date": "2025-05-23"
+    },
+    {
+      "event": "50 Fly LCM",
+      "time": "44.16",
+      "time_seconds": 44.16,
+      "meet": "UWCSEA East 50 Fest #Last",
+      "date": "2025-06-14"
+    },
+    {
+      "event": "100 IM SCM",
+      "time": "1:28.31",
+      "time_seconds": 88.31,
+      "meet": "Onyx Stingrays Last Last Splash Meet",
+      "date": "2025-05-22"
+    },
+    {
+      "event": "200 IM SCM",
+      "time": "3:04.73",
+      "time_seconds": 184.73,
+      "meet": "UWC East Club Champs 2025",
+      "date": "2025-10-04"
+    },
+    {
+      "event": "200 IM LCM",
+      "time": "3:41.48",
+      "time_seconds": 221.48,
+      "meet": "UWC East Club Champs",
+      "date": "2024-10-05"
+    }
+  ],
+  "event_series": {
+    "50 Free LCM": [
+      {
+        "date": "2023-04-15",
+        "time": "44.02",
+        "time_seconds": 44.02,
+        "meet": "50 Fest #3",
+        "location": "Singapore, SI, SIN",
+        "improvement": null,
+        "place": "21st"
+      },
+      {
+        "date": "2024-02-24",
+        "time": "36.53",
+        "time_seconds": 36.53,
+        "meet": "40th SSPA",
+        "location": "Singapore, SG, SIN",
+        "improvement": "-4.70",
+        "place": "39th"
+      },
+      {
+        "date": "2024-04-19",
+        "time": "36.77",
+        "time_seconds": 36.77,
+        "meet": "Dragons Den Open Meet",
+        "location": "Singapore, SI, SIN",
+        "improvement": "+0.24",
+        "place": "34th"
+      },
+      {
+        "date": "2024-06-07",
+        "time": "35.48",
+        "time_seconds": 35.48,
+        "meet": "UWCSEA East 50 Fest #4 2024",
+        "location": "Singapore, SI, SAM",
+        "improvement": "-1.05",
+        "place": "26th"
+      },
+      {
+        "date": "2024-10-04",
+        "time": "35.03",
+        "time_seconds": 35.03,
+        "meet": "UWC East Club Champs",
+        "location": "Singapore, SI, SIN",
+        "improvement": null,
+        "place": "8th"
+      },
+      {
+        "date": "2024-12-06",
+        "time": "34.05",
+        "time_seconds": 34.05,
+        "meet": "Christmas Showdown",
+        "location": "Singapore, SI, SIN",
+        "improvement": "-0.98",
+        "place": "4th"
+      },
+      {
+        "date": "2025-02-14",
+        "time": "33.97",
+        "time_seconds": 33.97,
+        "meet": "Singapore Swim Series II Febru",
+        "location": "7 Stadium Drive #01-, SG, SIN",
+        "improvement": "-0.08",
+        "place": "128th"
+      },
+      {
+        "date": "2025-04-25",
+        "time": "33.69",
+        "time_seconds": 33.69,
+        "meet": "Dragons Den International Inv",
+        "location": "Singapore, SI, SIN",
+        "improvement": "-0.28",
+        "place": "26th"
+      },
+      {
+        "date": "2025-06-14",
+        "time": "33.27",
+        "time_seconds": 33.27,
+        "meet": "UWCSEA East 50 Fest #Last",
+        "location": "Singapore, SI, SAM",
+        "improvement": "-0.42",
+        "place": "2nd"
+      },
+      {
+        "date": "2026-02-28",
+        "time": "30.47",
+        "time_seconds": 30.47,
+        "meet": "1st SINGAPORE AQUATICS SWIMFAST",
+        "location": "Singapore, SG, SIN",
+        "improvement": null,
+        "place": "31st"
+      },
+      {
+        "date": "2026-03-17",
+        "time": "30.23",
+        "time_seconds": 30.23,
+        "meet": "Singapore National Age Group Championship",
+        "location": "Singapore, SG, SIN",
+        "improvement": "-0.24",
+        "place": "81st"
+      }
+    ],
+    "50 Breast LCM": [
+      {
+        "date": "2023-04-15",
+        "time": "1:10.13",
+        "time_seconds": 70.13,
+        "meet": "50 Fest #3",
+        "location": "Singapore, SI, SIN",
+        "improvement": null,
+        "place": "43rd"
+      },
+      {
+        "date": "2023-06-17",
+        "time": "1:07.92",
+        "time_seconds": 67.92,
+        "meet": "50 Fest #4",
+        "location": "Singapore, SI, SIN",
+        "improvement": "-2.21",
+        "place": "46th"
+      },
+      {
+        "date": "2024-06-07",
+        "time": "51.16",
+        "time_seconds": 51.16,
+        "meet": "UWCSEA East 50 Fest #4 2024",
+        "location": "Singapore, SI, SAM",
+        "improvement": "-2.67",
+        "place": "28th"
+      },
+      {
+        "date": "2024-10-04",
+        "time": "47.63",
+        "time_seconds": 47.63,
+        "meet": "UWC East Club Champs",
+        "location": "Singapore, SI, SIN",
+        "improvement": "-1.75",
+        "place": "6th"
+      },
+      {
+        "date": "2025-04-25",
+        "time": "45.70",
+        "time_seconds": 45.7,
+        "meet": "Dragons Den International Inv",
+        "location": "Singapore, SI, SIN",
+        "improvement": "-1.93",
+        "place": "18th"
+      },
+      {
+        "date": "2025-06-14",
+        "time": "44.64",
+        "time_seconds": 44.64,
+        "meet": "UWCSEA East 50 Fest #Last",
+        "location": "Singapore, SI, SAM",
+        "improvement": "-1.06",
+        "place": "2nd"
+      },
+      {
+        "date": "2026-02-28",
+        "time": "38.41",
+        "time_seconds": 38.41,
+        "meet": "1st SINGAPORE AQUATICS SWIMFAST",
+        "location": "Singapore, SG, SIN",
+        "improvement": "-2.35",
+        "place": "16th"
+      },
+      {
+        "date": "2026-03-17",
+        "time": "37.58",
+        "time_seconds": 37.58,
+        "meet": "Singapore National Age Group Championship",
+        "location": "Singapore, SG, SIN",
+        "improvement": "-0.83",
+        "place": "49th"
+      }
+    ],
+    "200 Free LCM": [
+      {
+        "date": "2024-02-24",
+        "time": "3:12.09",
+        "time_seconds": 192.09,
+        "meet": "40th SSPA",
+        "location": "Singapore, SG, SIN",
+        "improvement": null,
+        "place": "33rd"
+      },
+      {
+        "date": "2026-02-28",
+        "time": "2:34.09",
+        "time_seconds": 154.09,
+        "meet": "1st SINGAPORE AQUATICS SWIMFAST",
+        "location": "Singapore, SG, SIN",
+        "improvement": null,
+        "place": "15th"
+      }
+    ],
+    "200 Free SCM": [
+      {
+        "date": "2025-11-21",
+        "time": "2:32.02",
+        "time_seconds": 152.02,
+        "meet": "NIST Falcons Invitational",
+        "location": "Bangkok, BK, THA",
+        "improvement": null,
+        "place": "5th"
+      },
+      {
+        "date": "2026-01-31",
+        "time": "2:28.19",
+        "time_seconds": 148.19,
+        "meet": "SAIS Endurance Splash Invitational",
+        "location": "Sin, SC, SIN",
+        "improvement": "-3.83",
+        "place": "4th"
+      }
+    ],
+    "200 Breast SCM": [
+      {
+        "date": "2026-01-31",
+        "time": "3:08.45",
+        "time_seconds": 188.45,
+        "meet": "SAIS Endurance Splash Invitational",
+        "location": "Sin, SC, SIN",
+        "improvement": "+0.80",
+        "place": "3rd"
+      }
+    ],
+    "100 Free SCM": [
+      {
+        "date": "2024-11-08",
+        "time": "1:19.15",
+        "time_seconds": 79.15,
+        "meet": "Tri-meet",
+        "location": "Singapore, SI, SIN",
+        "improvement": null,
+        "place": "6th"
+      },
+      {
+        "date": "2025-05-22",
+        "time": "1:12.58",
+        "time_seconds": 72.58,
+        "meet": "Onyx Stingrays Last Last Splash Meet",
+        "location": "Hong Kong, HK, HKG",
+        "improvement": "-6.57",
+        "place": "36th"
+      },
+      {
+        "date": "2025-10-03",
+        "time": "1:09.81",
+        "time_seconds": 69.81,
+        "meet": "UWC East Club Champs 2025",
+        "location": "Singapore, SI, SIN",
+        "improvement": null,
+        "place": "2nd"
+      },
+      {
+        "date": "2025-11-21",
+        "time": "1:07.13",
+        "time_seconds": 67.13,
+        "meet": "NIST Falcons Invitational",
+        "location": "Bangkok, BK, THA",
+        "improvement": "-2.68",
+        "place": "5th"
+      }
+    ],
+    "50 Free SCM": [
+      {
+        "date": "2024-10-18",
+        "time": "33.29",
+        "time_seconds": 33.29,
+        "meet": "Water Dragons vs. Dragon Fish 2",
+        "location": "Singapore, SG, SIN",
+        "improvement": null,
+        "place": "10th"
+      },
+      {
+        "date": "2024-11-08",
+        "time": "33.69",
+        "time_seconds": 33.69,
+        "meet": "Tri-meet",
+        "location": "Singapore, SI, SIN",
+        "improvement": "+0.40",
+        "place": "9th"
+      },
+      {
+        "date": "2025-02-12",
+        "time": "33.04",
+        "time_seconds": 33.04,
+        "meet": "ACSIS Middle School Championsihps",
+        "location": "Singapore, UT",
+        "improvement": "-0.25",
+        "place": "13th"
+      },
+      {
+        "date": "2025-05-22",
+        "time": "32.70",
+        "time_seconds": 32.7,
+        "meet": "Onyx Stingrays Last Last Splash Meet",
+        "location": "Hong Kong, HK, HKG",
+        "improvement": "-0.34",
+        "place": "40th"
+      },
+      {
+        "date": "2025-10-03",
+        "time": "31.42",
+        "time_seconds": 31.42,
+        "meet": "UWC East Club Champs 2025",
+        "location": "Singapore, SI, SIN",
+        "improvement": null,
+        "place": "2nd"
+      },
+      {
+        "date": "2025-11-21",
+        "time": "30.91",
+        "time_seconds": 30.91,
+        "meet": "NIST Falcons Invitational",
+        "location": "Bangkok, BK, THA",
+        "improvement": "-0.51",
+        "place": "6th"
+      }
+    ],
+    "100 Breast SCM": [
+      {
+        "date": "2024-11-08",
+        "time": "1:41.11",
+        "time_seconds": 101.11,
+        "meet": "Tri-meet",
+        "location": "Singapore, SI, SIN",
+        "improvement": null,
+        "place": "6th"
+      },
+      {
+        "date": "2025-10-03",
+        "time": "1:27.54",
+        "time_seconds": 87.53999999999999,
+        "meet": "UWC East Club Champs 2025",
+        "location": "Singapore, SI, SIN",
+        "improvement": null,
+        "place": "1st"
+      }
+    ],
+    "50 Back LCM": [
+      {
+        "date": "2024-06-07",
+        "time": "48.67",
+        "time_seconds": 48.67,
+        "meet": "UWCSEA East 50 Fest #4 2024",
+        "location": "Singapore, SI, SAM",
+        "improvement": "+0.00",
+        "place": "29th"
+      },
+      {
+        "date": "2025-06-14",
+        "time": "43.27",
+        "time_seconds": 43.27,
+        "meet": "UWCSEA East 50 Fest #Last",
+        "location": "Singapore, SI, SAM",
+        "improvement": "-0.80",
+        "place": "4th"
+      }
+    ],
+    "50 Breast SCM": [
+      {
+        "date": "2025-02-12",
+        "time": "44.72",
+        "time_seconds": 44.72,
+        "meet": "ACSIS Middle School Championsihps",
+        "location": "Singapore, UT",
+        "improvement": "-2.97",
+        "place": "10th"
+      },
+      {
+        "date": "2025-05-22",
+        "time": "43.14",
+        "time_seconds": 43.14,
+        "meet": "Onyx Stingrays Last Last Splash Meet",
+        "location": "Hong Kong, HK, HKG",
+        "improvement": "-1.58",
+        "place": "27th"
+      }
+    ],
+    "100 Free LCM": [
+      {
+        "date": "2023-04-15",
+        "time": "1:49.57",
+        "time_seconds": 109.57,
+        "meet": "50 Fest #3",
+        "location": "Singapore, SI, SIN",
+        "improvement": null,
+        "place": "15th"
+      },
+      {
+        "date": "2023-06-17",
+        "time": "1:41.84",
+        "time_seconds": 101.84,
+        "meet": "50 Fest #4",
+        "location": "Singapore, SI, SIN",
+        "improvement": "-7.73",
+        "place": "37th"
+      },
+      {
+        "date": "2024-02-24",
+        "time": "1:28.76",
+        "time_seconds": 88.76,
+        "meet": "40th SSPA",
+        "location": "Singapore, SG, SIN",
+        "improvement": null,
+        "place": "46th"
+      },
+      {
+        "date": "2024-12-06",
+        "time": "1:23.12",
+        "time_seconds": 83.12,
+        "meet": "Christmas Showdown",
+        "location": "Singapore, SI, SIN",
+        "improvement": null,
+        "place": "5th"
+      },
+      {
+        "date": "2025-04-25",
+        "time": "1:16.57",
+        "time_seconds": 76.57,
+        "meet": "Dragons Den International Inv",
+        "location": "Singapore, SI, SIN",
+        "improvement": "-6.55",
+        "place": "22nd"
+      }
+    ],
+    "100 IM SCM": [
+      {
+        "date": "2025-02-12",
+        "time": "1:29.51",
+        "time_seconds": 89.51,
+        "meet": "ACSIS Middle School Championsihps",
+        "location": "Singapore, UT",
+        "improvement": null,
+        "place": "12th"
+      }
+    ],
+    "100 Breast LCM": [
+      {
+        "date": "2023-06-17",
+        "time": "2:16.90",
+        "time_seconds": 136.9,
+        "meet": "50 Fest #4",
+        "location": "Singapore, SI, SIN",
+        "improvement": null,
+        "place": "22nd"
+      },
+      {
+        "date": "2024-04-19",
+        "time": "1:55.73",
+        "time_seconds": 115.72999999999999,
+        "meet": "Dragons Den Open Meet",
+        "location": "Singapore, SI, SIN",
+        "improvement": "-8.62",
+        "place": "15th"
+      },
+      {
+        "date": "2024-10-04",
+        "time": "1:47.62",
+        "time_seconds": 107.62,
+        "meet": "UWC East Club Champs",
+        "location": "Singapore, SI, SIN",
+        "improvement": null,
+        "place": "4th"
+      },
+      {
+        "date": "2024-12-06",
+        "time": "1:45.19",
+        "time_seconds": 105.19,
+        "meet": "Christmas Showdown",
+        "location": "Singapore, SI, SIN",
+        "improvement": "-2.43",
+        "place": "5th"
+      }
+    ],
+    "50 Fly SCM": [
+      {
+        "date": "2024-10-18",
+        "time": "46.79",
+        "time_seconds": 46.79,
+        "meet": "Water Dragons vs. Dragon Fish 2",
+        "location": "Singapore, SG, SIN",
+        "improvement": null,
+        "place": "9th"
+      }
+    ],
+    "200 IM LCM": [
+      {
+        "date": "2024-04-19",
+        "time": "3:48.60",
+        "time_seconds": 228.6,
+        "meet": "Dragons Den Open Meet",
+        "location": "Singapore, SI, SIN",
+        "improvement": null,
+        "place": "15th"
+      }
+    ],
+    "50 Back SCM": [
+      {
+        "date": "2025-10-04",
+        "time": "39.88",
+        "time_seconds": 39.88,
+        "meet": "UWC East Club Champs 2025",
+        "location": "",
+        "improvement": null,
+        "place": null
+      }
+    ],
+    "100 Back LCM": [
+      {
+        "date": "2024-02-25",
+        "time": "1:47.90",
+        "time_seconds": 107.9,
+        "meet": "40th SSPA",
+        "location": "",
+        "improvement": null,
+        "place": null
+      }
+    ],
+    "200 Breast LCM": [
+      {
+        "date": "2026-03-01",
+        "time": "3:14.23",
+        "time_seconds": 194.23,
+        "meet": "1st SINGAPORE AQUATICS SWIMFAST",
+        "location": "",
+        "improvement": null,
+        "place": null
+      }
+    ],
+    "50 Fly LCM": [
+      {
+        "date": "2025-06-14",
+        "time": "44.16",
+        "time_seconds": 44.16,
+        "meet": "UWCSEA East 50 Fest #Last",
+        "location": "",
+        "improvement": null,
+        "place": null
+      }
+    ],
+    "200 IM SCM": [
+      {
+        "date": "2025-10-04",
+        "time": "3:04.73",
+        "time_seconds": 184.73,
+        "meet": "UWC East Club Champs 2025",
+        "location": "",
+        "improvement": null,
+        "place": null
+      }
+    ]
+  },
+  "meets": [
+    {
+      "name": "50 Fest #3",
+      "date": "2023-04-15",
+      "location": "Singapore, SI, SIN",
+      "events": [
+        {
+          "event": "50 Free LCM",
+          "time": "44.02",
+          "time_seconds": 44.02,
+          "improvement": null,
+          "place": "21st"
+        },
+        {
+          "event": "100 Free LCM",
+          "time": "1:49.57",
+          "time_seconds": 109.57,
+          "improvement": null,
+          "place": "15th"
+        },
+        {
+          "event": "50 Breast LCM",
+          "time": "1:10.13",
+          "time_seconds": 70.13,
+          "improvement": null,
+          "place": "43rd"
+        }
+      ]
+    },
+    {
+      "name": "50 Fest #4",
+      "date": "2023-06-17",
+      "location": "Singapore, SI, SIN",
+      "events": [
+        {
+          "event": "100 Free LCM",
+          "time": "1:41.84",
+          "time_seconds": 101.84,
+          "improvement": "-7.73",
+          "place": "37th"
+        },
+        {
+          "event": "100 Breast LCM",
+          "time": "2:16.90",
+          "time_seconds": 136.9,
+          "improvement": null,
+          "place": "22nd"
+        },
+        {
+          "event": "50 Breast LCM",
+          "time": "1:07.92",
+          "time_seconds": 67.92,
+          "improvement": "-2.21",
+          "place": "46th"
+        }
+      ]
+    },
+    {
+      "name": "40th SSPA",
+      "date": "2024-02-24",
+      "location": "Singapore, SG, SIN",
+      "events": [
+        {
+          "event": "50 Free LCM",
+          "time": "36.53",
+          "time_seconds": 36.53,
+          "improvement": "-4.70",
+          "place": "39th"
+        },
+        {
+          "event": "200 Free LCM",
+          "time": "3:12.09",
+          "time_seconds": 192.09,
+          "improvement": null,
+          "place": "33rd"
+        },
+        {
+          "event": "100 Free LCM",
+          "time": "1:28.76",
+          "time_seconds": 88.76,
+          "improvement": null,
+          "place": "46th"
+        }
+      ]
+    },
+    {
+      "name": "Dragons Den Open Meet",
+      "date": "2024-04-19",
+      "location": "Singapore, SI, SIN",
+      "events": [
+        {
+          "event": "50 Free LCM",
+          "time": "36.77",
+          "time_seconds": 36.77,
+          "improvement": "+0.24",
+          "place": "34th"
+        },
+        {
+          "event": "200 IM LCM",
+          "time": "3:48.60",
+          "time_seconds": 228.6,
+          "improvement": null,
+          "place": "15th"
+        },
+        {
+          "event": "100 Breast LCM",
+          "time": "1:55.73",
+          "time_seconds": 115.72999999999999,
+          "improvement": "-8.62",
+          "place": "15th"
+        }
+      ]
+    },
+    {
+      "name": "UWCSEA East 50 Fest #4 2024",
+      "date": "2024-06-07",
+      "location": "Singapore, SI, SAM",
+      "events": [
+        {
+          "event": "50 Free LCM",
+          "time": "35.48",
+          "time_seconds": 35.48,
+          "improvement": "-1.05",
+          "place": "26th"
+        },
+        {
+          "event": "50 Breast LCM",
+          "time": "51.16",
+          "time_seconds": 51.16,
+          "improvement": "-2.67",
+          "place": "28th"
+        },
+        {
+          "event": "50 Back LCM",
+          "time": "48.67",
+          "time_seconds": 48.67,
+          "improvement": "+0.00",
+          "place": "29th"
+        }
+      ]
+    },
+    {
+      "name": "UWC East Club Champs",
+      "date": "2024-10-04",
+      "location": "Singapore, SI, SIN",
+      "events": [
+        {
+          "event": "50 Free LCM",
+          "time": "35.03",
+          "time_seconds": 35.03,
+          "improvement": null,
+          "place": "8th"
+        },
+        {
+          "event": "50 Breast LCM",
+          "time": "47.63",
+          "time_seconds": 47.63,
+          "improvement": "-1.75",
+          "place": "6th"
+        },
+        {
+          "event": "100 Breast LCM",
+          "time": "1:47.62",
+          "time_seconds": 107.62,
+          "improvement": null,
+          "place": "4th"
+        }
+      ]
+    },
+    {
+      "name": "Water Dragons vs. Dragon Fish 2",
+      "date": "2024-10-18",
+      "location": "Singapore, SG, SIN",
+      "events": [
+        {
+          "event": "50 Free SCM",
+          "time": "33.29",
+          "time_seconds": 33.29,
+          "improvement": null,
+          "place": "10th"
+        },
+        {
+          "event": "50 Fly SCM",
+          "time": "46.79",
+          "time_seconds": 46.79,
+          "improvement": null,
+          "place": "9th"
+        }
+      ]
+    },
+    {
+      "name": "Tri-meet",
+      "date": "2024-11-08",
+      "location": "Singapore, SI, SIN",
+      "events": [
+        {
+          "event": "50 Free SCM",
+          "time": "33.69",
+          "time_seconds": 33.69,
+          "improvement": "+0.40",
+          "place": "9th"
+        },
+        {
+          "event": "100 Free SCM",
+          "time": "1:19.15",
+          "time_seconds": 79.15,
+          "improvement": null,
+          "place": "6th"
+        },
+        {
+          "event": "100 Breast SCM",
+          "time": "1:41.11",
+          "time_seconds": 101.11,
+          "improvement": null,
+          "place": "6th"
+        }
+      ]
+    },
+    {
+      "name": "Christmas Showdown",
+      "date": "2024-12-06",
+      "location": "Singapore, SI, SIN",
+      "events": [
+        {
+          "event": "50 Free LCM",
+          "time": "34.05",
+          "time_seconds": 34.05,
+          "improvement": "-0.98",
+          "place": "4th"
+        },
+        {
+          "event": "100 Free LCM",
+          "time": "1:23.12",
+          "time_seconds": 83.12,
+          "improvement": null,
+          "place": "5th"
+        },
+        {
+          "event": "100 Breast LCM",
+          "time": "1:45.19",
+          "time_seconds": 105.19,
+          "improvement": "-2.43",
+          "place": "5th"
+        }
+      ]
+    },
+    {
+      "name": "ACSIS Middle School Championsihps",
+      "date": "2025-02-12",
+      "location": "Singapore, UT",
+      "events": [
+        {
+          "event": "50 Free SCM",
+          "time": "33.04",
+          "time_seconds": 33.04,
+          "improvement": "-0.25",
+          "place": "13th"
+        },
+        {
+          "event": "50 Breast SCM",
+          "time": "44.72",
+          "time_seconds": 44.72,
+          "improvement": "-2.97",
+          "place": "10th"
+        },
+        {
+          "event": "100 IM SCM",
+          "time": "1:29.51",
+          "time_seconds": 89.51,
+          "improvement": null,
+          "place": "12th"
+        }
+      ]
+    },
+    {
+      "name": "Singapore Swim Series II Febru",
+      "date": "2025-02-14",
+      "location": "7 Stadium Drive #01-, SG, SIN",
+      "events": [
+        {
+          "event": "50 Free LCM",
+          "time": "33.97",
+          "time_seconds": 33.97,
+          "improvement": "-0.08",
+          "place": "128th"
+        }
+      ]
+    },
+    {
+      "name": "Dragons Den International Inv",
+      "date": "2025-04-25",
+      "location": "Singapore, SI, SIN",
+      "events": [
+        {
+          "event": "50 Free LCM",
+          "time": "33.69",
+          "time_seconds": 33.69,
+          "improvement": "-0.28",
+          "place": "26th"
+        },
+        {
+          "event": "100 Free LCM",
+          "time": "1:16.57",
+          "time_seconds": 76.57,
+          "improvement": "-6.55",
+          "place": "22nd"
+        },
+        {
+          "event": "50 Breast LCM",
+          "time": "45.70",
+          "time_seconds": 45.7,
+          "improvement": "-1.93",
+          "place": "18th"
+        }
+      ]
+    },
+    {
+      "name": "Onyx Stingrays Last Last Splash Meet",
+      "date": "2025-05-22",
+      "location": "Hong Kong, HK, HKG",
+      "events": [
+        {
+          "event": "100 Free SCM",
+          "time": "1:12.58",
+          "time_seconds": 72.58,
+          "improvement": "-6.57",
+          "place": "36th"
+        },
+        {
+          "event": "50 Free SCM",
+          "time": "32.70",
+          "time_seconds": 32.7,
+          "improvement": "-0.34",
+          "place": "40th"
+        },
+        {
+          "event": "50 Breast SCM",
+          "time": "43.14",
+          "time_seconds": 43.14,
+          "improvement": "-1.58",
+          "place": "27th"
+        }
+      ]
+    },
+    {
+      "name": "UWCSEA East 50 Fest #Last",
+      "date": "2025-06-14",
+      "location": "Singapore, SI, SAM",
+      "events": [
+        {
+          "event": "50 Free LCM",
+          "time": "33.27",
+          "time_seconds": 33.27,
+          "improvement": "-0.42",
+          "place": "2nd"
+        },
+        {
+          "event": "50 Breast LCM",
+          "time": "44.64",
+          "time_seconds": 44.64,
+          "improvement": "-1.06",
+          "place": "2nd"
+        },
+        {
+          "event": "50 Back LCM",
+          "time": "43.27",
+          "time_seconds": 43.27,
+          "improvement": "-0.80",
+          "place": "4th"
+        }
+      ]
+    },
+    {
+      "name": "UWC East Club Champs 2025",
+      "date": "2025-10-03",
+      "location": "Singapore, SI, SIN",
+      "events": [
+        {
+          "event": "100 Free SCM",
+          "time": "1:09.81",
+          "time_seconds": 69.81,
+          "improvement": null,
+          "place": "2nd"
+        },
+        {
+          "event": "50 Free SCM",
+          "time": "31.42",
+          "time_seconds": 31.42,
+          "improvement": null,
+          "place": "2nd"
+        },
+        {
+          "event": "100 Breast SCM",
+          "time": "1:27.54",
+          "time_seconds": 87.53999999999999,
+          "improvement": null,
+          "place": "1st"
+        }
+      ]
+    },
+    {
+      "name": "NIST Falcons Invitational",
+      "date": "2025-11-21",
+      "location": "Bangkok, BK, THA",
+      "events": [
+        {
+          "event": "100 Free SCM",
+          "time": "1:07.13",
+          "time_seconds": 67.13,
+          "improvement": "-2.68",
+          "place": "5th"
+        },
+        {
+          "event": "200 Free SCM",
+          "time": "2:32.02",
+          "time_seconds": 152.02,
+          "improvement": null,
+          "place": "5th"
+        },
+        {
+          "event": "50 Free SCM",
+          "time": "30.91",
+          "time_seconds": 30.91,
+          "improvement": "-0.51",
+          "place": "6th"
+        }
+      ]
+    },
+    {
+      "name": "SAIS Endurance Splash Invitational",
+      "date": "2026-01-31",
+      "location": "Sin, SC, SIN",
+      "events": [
+        {
+          "event": "200 Free SCM",
+          "time": "2:28.19",
+          "time_seconds": 148.19,
+          "improvement": "-3.83",
+          "place": "4th"
+        },
+        {
+          "event": "200 Breast SCM",
+          "time": "3:08.45",
+          "time_seconds": 188.45,
+          "improvement": "+0.80",
+          "place": "3rd"
+        }
+      ]
+    },
+    {
+      "name": "1st SINGAPORE AQUATICS SWIMFAST",
+      "date": "2026-02-28",
+      "location": "Singapore, SG, SIN",
+      "events": [
+        {
+          "event": "50 Free LCM",
+          "time": "30.47",
+          "time_seconds": 30.47,
+          "improvement": null,
+          "place": "31st"
+        },
+        {
+          "event": "50 Breast LCM",
+          "time": "38.41",
+          "time_seconds": 38.41,
+          "improvement": "-2.35",
+          "place": "16th"
+        },
+        {
+          "event": "200 Free LCM",
+          "time": "2:34.09",
+          "time_seconds": 154.09,
+          "improvement": null,
+          "place": "15th"
+        }
+      ]
+    },
+    {
+      "name": "Singapore National Age Group Championship",
+      "date": "2026-03-17",
+      "location": "Singapore, SG, SIN",
+      "events": [
+        {
+          "event": "50 Free LCM",
+          "time": "30.23",
+          "time_seconds": 30.23,
+          "improvement": "-0.24",
+          "place": "81st"
+        },
+        {
+          "event": "50 Breast LCM",
+          "time": "37.58",
+          "time_seconds": 37.58,
+          "improvement": "-0.83",
+          "place": "49th"
+        }
+      ]
+    }
+  ],
+  "events_list": [
+    "100 Back LCM",
+    "100 Breast LCM",
+    "100 Breast SCM",
+    "100 Free LCM",
+    "100 Free SCM",
+    "100 IM SCM",
+    "200 Breast LCM",
+    "200 Breast SCM",
+    "200 Free LCM",
+    "200 Free SCM",
+    "200 IM LCM",
+    "200 IM SCM",
+    "50 Back LCM",
+    "50 Back SCM",
+    "50 Breast LCM",
+    "50 Breast SCM",
+    "50 Fly LCM",
+    "50 Fly SCM",
+    "50 Free LCM",
+    "50 Free SCM"
+  ]
+}
