@@ -729,13 +729,79 @@ function renderSpeakers() {
   container.innerHTML = html;
 }
 
+function getStarredSchedule() {
+  // Build a full schedule structure with starred info
+  // Group all sessions by date and time slot
+  const allSessions = [...DATA.sessions].sort((a, b) => {
+    if (a.date !== b.date) return a.date.localeCompare(b.date);
+    return parseTime(a.startTime) - parseTime(b.startTime);
+  });
+
+  const schedule = []; // [{date, slot, sessions: [{session, isSessionStarred, starredPres}]}]
+  let currentDate = '';
+  let currentSlot = '';
+  let currentBlock = null;
+
+  for (const s of allSessions) {
+    // Skip hidden categories
+    if (s.category === 'break') continue;
+
+    const slot = `${s.startTime} \u2013 ${s.endTime}`;
+    const dateSlotKey = s.date + slot;
+
+    if (s.date !== currentDate || slot !== currentSlot) {
+      currentDate = s.date;
+      currentSlot = slot;
+      currentBlock = { date: s.date, slot, sessions: [] };
+      schedule.push(currentBlock);
+    }
+
+    const isSessionStarred = !!starred[s.id];
+    const starredPres = (s.presentations || []).filter(p =>
+      starred[p.id] && !p.title.startsWith('Chair:') && !p.title.startsWith('Convenor:')
+    );
+
+    if (isSessionStarred || starredPres.length > 0) {
+      currentBlock.sessions.push({ session: s, isSessionStarred, starredPres });
+    }
+  }
+
+  return schedule;
+}
+
 function renderStarred() {
   const container = document.getElementById('starred-content');
-  const starredItems = DATA.sessions.filter(s => starred[s.id]);
-  if (starredItems.length === 0) {
+  const hasAnyStars = Object.keys(starred).length > 0;
+
+  if (!hasAnyStars) {
     container.innerHTML = '<div class="no-results">No starred sessions yet. Star sessions from the Schedule tab.</div>';
     return;
   }
+
+  const schedule = getStarredSchedule();
+
+  // Only show days that have at least one starred item
+  const daysWithStars = new Set();
+  for (const block of schedule) {
+    if (block.sessions.length > 0) daysWithStars.add(block.date);
+  }
+
+  if (daysWithStars.size === 0) {
+    container.innerHTML = '<div class="no-results">No starred sessions yet. Star sessions from the Schedule tab.</div>';
+    return;
+  }
+
+  // --- Table summary ---
+  const starredDays = [...daysWithStars].sort();
+  const allSlots = [];
+  const slotSet = new Set();
+  for (const block of schedule) {
+    if (daysWithStars.has(block.date) && !slotSet.has(block.slot)) {
+      slotSet.add(block.slot);
+      allSlots.push(block.slot);
+    }
+  }
+
   let html = `
     <div class="starred-export">
       <button class="export-btn" onclick="downloadAllStarredIcal()">Export All as .ics</button>
@@ -744,37 +810,92 @@ function renderStarred() {
       <input type="file" id="import-stars" accept=".json" style="display:none" onchange="importStarredJson(event)">
       <button class="export-btn secondary" onclick="clearAllStarred()">Clear All</button>
     </div>`;
-  let currentDate = '';
-  for (const s of starredItems) {
-    if (s.date !== currentDate) {
-      currentDate = s.date;
-      html += `<h2 style="margin:20px 0 6px;font-size:15px;color:#333;font-weight:700">${DAY_LABELS[s.date] || s.date}</h2>`;
-    }
-    const cat = s.category || 'other';
-    // Find starred presentations within this session
-    const starredPres = (s.presentations || []).filter(p => starred[p.id] && !p.title.startsWith('Chair:') && !p.title.startsWith('Convenor:'));
-    html += `
-      <div style="padding:7px 0;border-bottom:1px solid #eee">
-        <div style="display:flex;align-items:center;gap:8px">
-          <div style="min-width:100px;font-size:12px;color:var(--accent);font-weight:600">${s.startTime} \u2013 ${s.endTime}</div>
-          <div style="flex:1">
-            <div style="font-size:13px;font-weight:500">${escapeHtml(s.name)}</div>
-            <div style="font-size:11px;color:#999">${escapeHtml(s.location)}</div>
-          </div>
-          <span class="cat-badge cat-${cat}" style="font-size:9px">${CAT_LABELS[cat]}</span>
-          <button class="ical-btn" onclick="downloadIcal('${s.id}')">iCal</button>
-          <button class="star-btn starred" onclick="toggleStar('${s.id}')">\u2605</button>
-        </div>
-        ${starredPres.length > 0 ? starredPres.map(p => `
-          <div style="display:flex;align-items:center;gap:8px;padding:3px 0 3px 110px">
-            <div style="font-size:12px;color:#666;flex:1">
-              \u2605 ${escapeHtml(p.title)}
-              <span style="color:#999">${p.speakers.map(sp => sp.name).join(', ')}</span>
-            </div>
-            <span style="font-size:11px;color:var(--accent)">${p.startTime || ''}</span>
-          </div>`).join('') : ''}
-      </div>`;
+
+  // Table view
+  html += '<div style="overflow-x:auto;margin-bottom:24px"><table style="width:100%;border-collapse:collapse;font-size:12px">';
+  html += '<thead><tr><th style="text-align:left;padding:6px 8px;border-bottom:2px solid var(--accent);color:var(--accent);min-width:90px">Time</th>';
+  for (const day of starredDays) {
+    html += `<th style="text-align:left;padding:6px 8px;border-bottom:2px solid var(--accent);color:var(--accent);cursor:pointer" onclick="document.getElementById('starred-day-${day}').scrollIntoView({behavior:'smooth',block:'start'})">${DAY_LABELS[day]}</th>`;
   }
+  html += '</tr></thead><tbody>';
+
+  for (const slot of allSlots) {
+    html += '<tr>';
+    html += `<td style="padding:5px 8px;border-bottom:1px solid #eee;font-weight:600;color:var(--accent);white-space:nowrap;vertical-align:top">${slot}</td>`;
+    for (const day of starredDays) {
+      const block = schedule.find(b => b.date === day && b.slot === slot);
+      const items = block ? block.sessions : [];
+      let cell = '';
+      if (items.length === 0) {
+        cell = '<span style="color:#ddd">\u2014</span>';
+      } else {
+        // Session-starred first, then presentation-only
+        const sorted = [...items].sort((a, b) => (b.isSessionStarred ? 1 : 0) - (a.isSessionStarred ? 1 : 0));
+        cell = sorted.map(item => {
+          const icon = item.isSessionStarred ? '\u2605 ' : '';
+          const name = item.session.name.length > 40 ? item.session.name.substring(0, 38) + '\u2026' : item.session.name;
+          const presNote = !item.isSessionStarred && item.starredPres.length > 0
+            ? ` <span style="color:#999">(${item.starredPres.length} talk${item.starredPres.length > 1 ? 's' : ''})</span>` : '';
+          return `<div style="margin-bottom:2px">${icon}${escapeHtml(name)}${presNote}</div>`;
+        }).join('');
+      }
+      const slotId = `starred-slot-${day}-${slot.replace(/[^0-9AMP]/g, '')}`;
+      html += `<td style="padding:5px 8px;border-bottom:1px solid #eee;vertical-align:top;cursor:${items.length > 0 ? 'pointer' : 'default'}" ${items.length > 0 ? `onclick="document.getElementById('${slotId}').scrollIntoView({behavior:'smooth',block:'start'})"` : ''}>${cell}</td>`;
+    }
+    html += '</tr>';
+  }
+  html += '</tbody></table></div>';
+
+  // --- Detailed schedule view ---
+  html += '<h3 style="font-size:14px;color:#333;margin-bottom:12px;border-bottom:1px solid #eee;padding-bottom:6px">Detailed Schedule</h3>';
+
+  let lastDate = '';
+  for (const block of schedule) {
+    if (!daysWithStars.has(block.date)) continue;
+
+    if (block.date !== lastDate) {
+      lastDate = block.date;
+      html += `<h2 id="starred-day-${block.date}" style="margin:20px 0 4px;font-size:15px;color:#333;font-weight:700">${DAY_LABELS[block.date]}</h2>`;
+    }
+
+    const slotId = `starred-slot-${block.date}-${block.slot.replace(/[^0-9AMP]/g, '')}`;
+    html += `<div class="time-label" id="${slotId}">${block.slot}</div>`;
+
+    if (block.sessions.length === 0) {
+      html += '<div style="padding:8px 0;color:#bbb;font-size:13px;font-style:italic">Nothing starred</div>';
+      continue;
+    }
+
+    // Sort: session-starred first, then presentation-only
+    const sorted = [...block.sessions].sort((a, b) => (b.isSessionStarred ? 1 : 0) - (a.isSessionStarred ? 1 : 0));
+
+    for (const { session: s, isSessionStarred, starredPres } of sorted) {
+      const cat = s.category || 'other';
+      html += `
+        <div style="padding:7px 0;border-bottom:1px solid #f5f5f5;${!isSessionStarred ? 'opacity:0.75' : ''}">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:${isSessionStarred ? '600' : '400'}">
+                ${isSessionStarred ? '\u2605 ' : ''}${escapeHtml(s.name)}
+              </div>
+              <div style="font-size:11px;color:#999">${escapeHtml(s.location)}</div>
+            </div>
+            <span class="cat-badge cat-${cat}" style="font-size:9px">${CAT_LABELS[cat]}</span>
+            <button class="ical-btn" onclick="downloadIcal('${s.id}')">iCal</button>
+            <button class="star-btn starred" onclick="toggleStar('${s.id}')">\u2605</button>
+          </div>
+          ${starredPres.length > 0 ? starredPres.map(p => `
+            <div style="display:flex;align-items:center;gap:8px;padding:3px 0 3px 16px">
+              <div style="font-size:12px;color:#444;flex:1">
+                \u2605 ${escapeHtml(p.title)}
+                <span style="color:#999">\u2014 ${p.speakers.map(sp => sp.name).join(', ')}</span>
+              </div>
+              <span style="font-size:11px;color:var(--accent)">${p.startTime || ''}</span>
+            </div>`).join('') : ''}
+        </div>`;
+    }
+  }
+
   container.innerHTML = html;
 }
 
@@ -915,6 +1036,12 @@ function setupScrollBreadcrumb() {
   if (!container) return;
 
   const onScroll = () => {
+    // Only show breadcrumb on schedule tab
+    const activeTab = document.querySelector('.tab.active');
+    if (!activeTab || activeTab.dataset.tab !== 'schedule') {
+      bc.classList.remove('visible');
+      return;
+    }
     const toolbar = document.querySelector('#schedule-panel .toolbar');
     const tabsEl = document.getElementById('tabs');
     if (!toolbar || !tabsEl) return;
