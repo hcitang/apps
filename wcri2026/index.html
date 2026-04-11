@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WCRI 2026 Program Browser</title>
+<style>
+:root {
+  --bg: #f5f5f5;
+  --card-bg: #fff;
+  --text: #1a1a1a;
+  --text-muted: #666;
+  --border: #e0e0e0;
+  --accent: #1a73e8;
+  --accent-light: #e8f0fe;
+  --star-color: #f4b400;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+/* Header */
+.header {
+  background: #1a237e;
+  color: white;
+  padding: 14px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.header h1 { font-size: 18px; font-weight: 600; }
+.header-sub { font-size: 13px; opacity: 0.85; }
+
+/* Tabs */
+.tabs {
+  display: flex;
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0; /* will be set by JS */
+  z-index: 99;
+}
+.tab {
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  border-bottom: 3px solid transparent;
+  color: var(--text-muted);
+}
+.tab:hover { color: var(--text); background: #fafafa; }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab .badge {
+  background: var(--star-color);
+  color: #333;
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  margin-left: 4px;
+  font-weight: 600;
+}
+
+/* Search + filters toolbar */
+.toolbar {
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  padding: 10px 24px;
+}
+.search-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+}
+.search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-light); }
+.search-hint { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+
+.filter-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.filter-btn {
+  padding: 4px 12px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.12s;
+  user-select: none;
+}
+.filter-btn:hover { background: #f0f0f0; }
+.filter-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+.filter-btn.hidden-cat { background: #fff; color: #bbb; border-color: #e8e8e8; text-decoration: line-through; }
+.filter-sep { width: 1px; height: 20px; background: var(--border); margin: 0 4px; }
+
+/* Category toggle chips */
+.cat-chip {
+  padding: 3px 10px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 500;
+  transition: all 0.12s;
+  user-select: none;
+}
+.cat-chip:hover { background: #f0f0f0; }
+.cat-chip.active { background: #e8f5e9; color: #2e7d32; border-color: #a5d6a7; }
+.cat-chip.inactive { background: #fafafa; color: #bbb; border-color: #eee; }
+
+/* Content */
+.content { max-width: 960px; margin: 0 auto; padding: 12px 24px 40px; }
+
+/* Time block */
+.time-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 6px 0;
+  border-bottom: 2px solid var(--accent);
+  margin: 20px 0 6px;
+}
+
+/* Session card */
+.session-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 6px;
+  overflow: hidden;
+}
+.session-card:hover { box-shadow: 0 1px 6px rgba(0,0,0,0.06); }
+.session-card.starred { border-left: 4px solid var(--star-color); }
+
+.session-header {
+  display: flex;
+  align-items: flex-start;
+  padding: 10px 14px;
+  cursor: pointer;
+  gap: 10px;
+}
+.session-color {
+  width: 5px;
+  min-height: 32px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.session-info { flex: 1; min-width: 0; }
+.session-name { font-size: 14px; font-weight: 600; }
+.session-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.cat-badge {
+  font-size: 10px;
+  padding: 1px 7px;
+  border-radius: 4px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.cat-plenary { background: #fce4ec; color: #c62828; }
+.cat-oral { background: #e3f2fd; color: #1565c0; }
+.cat-symposium { background: #f3e5f5; color: #7b1fa2; }
+.cat-workshop { background: #fff3e0; color: #e65100; }
+.cat-focus-track { background: #e0f2f1; color: #00695c; }
+.cat-poster { background: #f1f8e9; color: #558b2f; }
+.cat-ceremony { background: #fafafa; color: #616161; }
+.cat-break { background: #f5f5f5; color: #9e9e9e; }
+.cat-social { background: #e8f5e9; color: #2e7d32; }
+.cat-other { background: #f5f5f5; color: #757575; }
+
+.pres-count {
+  font-size: 11px;
+  color: #999;
+}
+
+.star-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 2px;
+  color: #ccc;
+  flex-shrink: 0;
+}
+.star-btn:hover { color: var(--star-color); }
+.star-btn.starred { color: var(--star-color); }
+
+.ical-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 10px;
+  cursor: pointer;
+  padding: 2px 6px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+.ical-btn:hover { background: var(--accent-light); color: var(--accent); }
+
+/* Session details (expandable) */
+.session-details {
+  display: none;
+  padding: 0 14px 14px 30px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.session-details.open { display: block; }
+.details-text { white-space: pre-wrap; margin-bottom: 10px; color: #444; }
+
+/* Presentations list */
+.pres-list { margin-top: 8px; }
+.pres-list-header {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: #333;
+}
+.pres-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+.pres-item:last-child { border-bottom: none; }
+.pres-time {
+  font-size: 12px;
+  color: var(--accent);
+  font-weight: 600;
+  min-width: 65px;
+  flex-shrink: 0;
+}
+.pres-info { flex: 1; }
+.pres-title { font-size: 13px; font-weight: 500; }
+.pres-speakers { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+
+/* Speaker cards within session */
+.speaker-card {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 6px 0;
+  border-top: 1px solid #f0f0f0;
+}
+.speaker-photo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: #eee;
+}
+.speaker-name { font-weight: 600; font-size: 13px; }
+.speaker-role-label { font-size: 11px; color: var(--accent); }
+.speaker-org { font-size: 12px; color: var(--text-muted); }
+
+/* Speakers tab grid */
+.speakers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 10px;
+}
+.speaker-grid-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+/* Starred tab */
+.starred-export {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.export-btn {
+  padding: 7px 14px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+}
+.export-btn:hover { background: #1557b0; }
+.export-btn.secondary {
+  background: white;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+.export-btn.secondary:hover { background: var(--accent-light); }
+
+/* Scroll breadcrumb */
+.scroll-breadcrumb {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 97; /* below header and tabs */
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(4px);
+  border-bottom: 1px solid var(--border);
+  padding: 5px 24px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+  display: none;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.scroll-breadcrumb.visible { display: flex; }
+.scroll-breadcrumb .bc-day { color: var(--accent); }
+.scroll-breadcrumb .bc-sep { color: #ccc; }
+.scroll-breadcrumb .bc-time { color: #333; }
+.scroll-breadcrumb .bc-cats { font-weight: 400; color: #999; margin-left: 4px; }
+
+.no-results {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+@media (max-width: 600px) {
+  .content { padding: 10px; }
+  .tabs { overflow-x: auto; }
+  .tab { white-space: nowrap; padding: 8px 12px; font-size: 13px; }
+  .toolbar { padding: 8px 12px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>WCRI 2026 Program Browser</h1>
+  <div class="header-sub">8th World Conference on Research Integrity &middot; May 3-6, 2026 &middot; Vancouver</div>
+</div>
+
+<div class="tabs" id="tabs">
+  <div class="tab active" data-tab="schedule">Schedule</div>
+  <div class="tab" data-tab="speakers">Speakers <span id="speaker-count" style="font-size:12px;color:#999"></span></div>
+  <div class="tab" data-tab="starred">Starred <span class="badge" id="starred-badge" style="display:none">0</span></div>
+</div>
+
+<div class="scroll-breadcrumb" id="scroll-breadcrumb"></div>
+<div id="schedule-panel">
+  <div class="toolbar">
+    <input type="text" class="search-input" id="search" placeholder="Search sessions, talks, speakers, affiliations...">
+    <div class="search-hint">Search across session titles, talk titles, speaker names, affiliations, and descriptions</div>
+    <div class="filter-row" id="day-filters"></div>
+    <div class="filter-row" id="cat-filters" style="margin-top:6px"></div>
+  </div>
+  <div class="content" id="schedule-content"></div>
+</div>
+
+<div id="speakers-panel" style="display:none">
+  <div class="toolbar">
+    <input type="text" class="search-input" id="speaker-search" placeholder="Search speakers by name, organization, or bio...">
+  </div>
+  <div class="content" id="speakers-content"></div>
+</div>
+
+<div id="starred-panel" style="display:none">
+  <div class="content" id="starred-content"></div>
+</div>
+
+<script>
+let DATA = null;
+let starred = JSON.parse(localStorage.getItem('wcri2026-starred') || '{}');
+let activeDay = 'all';
+let searchQuery = '';
+let speakerSearchQuery = '';
+let expandedSessions = {};
+
+function parseTime(timeStr) {
+  const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if (!match) return 0;
+  let h = parseInt(match[1]);
+  const m = parseInt(match[2]);
+  const ampm = match[3].toUpperCase();
+  if (ampm === 'PM' && h !== 12) h += 12;
+  if (ampm === 'AM' && h === 12) h = 0;
+  return h * 60 + m;
+}
+
+// Category visibility - workshops hidden by default
+let catVisible = JSON.parse(localStorage.getItem('wcri2026-cats') || 'null') || {
+  plenary: true,
+  oral: true,
+  symposium: true,
+  'focus-track': true,
+  poster: true,
+  ceremony: true,
+  social: true,
+  break: true,
+  workshop: false,
+  other: true,
+};
+
+const DAY_LABELS = {
+  '2026-05-03': 'Sun May 3',
+  '2026-05-04': 'Mon May 4',
+  '2026-05-05': 'Tue May 5',
+  '2026-05-06': 'Wed May 6',
+};
+
+const CAT_LABELS = {
+  plenary: 'Plenary',
+  oral: 'Oral',
+  symposium: 'Symposium',
+  'focus-track': 'Focus Track',
+  poster: 'Poster',
+  ceremony: 'Ceremony',
+  social: 'Social',
+  break: 'Break',
+  workshop: 'Workshop',
+  other: 'Other',
+};
+
+function saveCats() {
+  localStorage.setItem('wcri2026-cats', JSON.stringify(catVisible));
+}
+function saveStarred() {
+  localStorage.setItem('wcri2026-starred', JSON.stringify(starred));
+  updateStarredBadge();
+}
+function updateStarredBadge() {
+  const count = Object.keys(starred).length;
+  const badge = document.getElementById('starred-badge');
+  badge.textContent = count;
+  badge.style.display = count > 0 ? 'inline' : 'none';
+}
+
+function toggleStar(id, evt) {
+  if (evt) evt.stopPropagation();
+  if (starred[id]) delete starred[id];
+  else starred[id] = true;
+  saveStarred();
+  renderAll();
+}
+
+function starPresentation(presId, sessionId) {
+  if (starred[presId]) {
+    delete starred[presId];
+  } else {
+    starred[presId] = true;
+    // Auto-star the parent session
+    starred[sessionId] = true;
+  }
+  saveStarred();
+  renderAll();
+}
+
+function togglePresExtra(presId) {
+  const el = document.getElementById('pres-extra-' + presId);
+  if (!el) return;
+  const showing = el.style.display !== 'none';
+  el.style.display = showing ? 'none' : 'block';
+  const btn = el.nextElementSibling;
+  if (btn) btn.textContent = showing ? 'details \u25BC' : 'details \u25B2';
+}
+
+function toggleExpand(id) {
+  expandedSessions[id] = !expandedSessions[id];
+  const el = document.getElementById('details-' + id);
+  if (el) el.classList.toggle('open', expandedSessions[id]);
+  // Update arrow
+  const card = document.getElementById('card-' + id);
+  if (card) {
+    const arrow = card.querySelector('.session-name span');
+    if (arrow) arrow.textContent = expandedSessions[id] ? '\u25BC' : '\u25B6';
+  }
+}
+
+function toggleCat(cat) {
+  catVisible[cat] = !catVisible[cat];
+  saveCats();
+  renderCatFilters();
+  renderSchedule();
+}
+
+// ---- Search (includes presentations now) ----
+function matchesSearch(session, query) {
+  if (!query) return true;
+  const terms = query.toLowerCase().split(/\s+/);
+  const parts = [
+    session.name,
+    session.details,
+    session.location,
+    ...session.speakers.map(sp => `${sp.name} ${sp.organization} ${sp.position} ${sp.role}`),
+    ...session.keywords,
+    ...(session.presentations || []).map(p =>
+      `${p.title} ${p.theme || ''} ${(p.affiliations || []).join(' ')} ${p.speakers.map(sp => `${sp.name} ${sp.organization} ${sp.position}`).join(' ')}`
+    ),
+  ];
+  const searchable = parts.join(' ').toLowerCase();
+  return terms.every(t => searchable.includes(t));
+}
+
+function matchesSpeakerSearch(speaker, query) {
+  if (!query) return true;
+  const terms = query.toLowerCase().split(/\s+/);
+  const searchable = [
+    speaker.name, speaker.firstName, speaker.lastName,
+    speaker.organization, speaker.position, speaker.bio, speaker.title
+  ].join(' ').toLowerCase();
+  return terms.every(t => searchable.includes(t));
+}
+
+// ---- Rendering ----
+function escapeHtml(text) {
+  return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function googleSearchUrl(name, org) {
+  const q = encodeURIComponent([name, org].filter(Boolean).join(' '));
+  return `https://www.google.com/search?q=${q}`;
+}
+
+function speakerLink(name, org) {
+  const url = googleSearchUrl(name, org);
+  return `<a href="${url}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:inherit;text-decoration:underline;text-decoration-color:#ccc;text-underline-offset:2px">${escapeHtml(name)}</a>`;
+}
+
+function renderSessionSpeakers(speakers) {
+  if (!speakers || speakers.length === 0) return '';
+  let html = '<div style="margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0;font-size:12px;color:#888">';
+  const names = speakers.map(sp => {
+    const label = speakerLink(sp.name, sp.organization);
+    const org = sp.organization ? ` <span style="color:#bbb">(${escapeHtml(sp.organization)})</span>` : '';
+    return label + org;
+  });
+  html += names.join(' &middot; ');
+  html += '</div>';
+  return html;
+}
+
+function renderPresentations(presentations, sessionId) {
+  if (!presentations || presentations.length === 0) return '';
+  const talks = presentations.filter(p => !p.title.startsWith('Chair:') && !p.title.startsWith('Convenor:'));
+  if (talks.length === 0) return '';
+
+  let html = '<div class="pres-list">';
+  for (const p of talks) {
+    const speakers = p.speakers.map(sp => {
+      let parts = [speakerLink(sp.name, sp.organization)];
+      if (sp.position) parts[0] += ` <span style="color:#999">(${escapeHtml(sp.position)})</span>`;
+      if (sp.organization) parts.push(escapeHtml(sp.organization));
+      return parts.join(', ');
+    }).join(' &middot; ');
+    const isStarred = !!starred[p.id];
+    html += `
+      <div class="pres-item">
+        <div class="pres-time">${p.startTime || ''}</div>
+        <div class="pres-info">
+          <div class="pres-title">${escapeHtml(p.title)}</div>
+          ${speakers ? `<div class="pres-speakers">${speakers}</div>` : ''}
+        </div>
+        <button class="star-btn ${isStarred ? 'starred' : ''}" style="font-size:16px" onclick="starPresentation('${p.id}','${sessionId}')" title="${isStarred ? 'Unstar' : 'Star'}">${isStarred ? '\u2605' : '\u2606'}</button>
+      </div>`;
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderSessionCard(session) {
+  const isStarred = !!starred[session.id];
+  const isExpanded = !!expandedSessions[session.id];
+  const cat = session.category || 'other';
+  const catLabel = CAT_LABELS[cat] || cat;
+  // Chair line for the header (inline with location, clickable)
+  const chairs = session.speakers.filter(sp => sp.role && sp.role.toLowerCase().includes('chair'));
+  const chairLine = chairs.length > 0
+    ? chairs.map(sp => {
+        let s = speakerLink(sp.name, sp.organization);
+        if (sp.position) s += ` <span style="color:#ccc">(${escapeHtml(sp.position)})</span>`;
+        if (sp.organization) s += `, ${escapeHtml(sp.organization)}`;
+        return s;
+      }).join(' &middot; ')
+    : '';
+
+  const detailsText = session.details ? session.details.replace(/\r\n/g, '\n').trim() : '';
+  const expandArrow = isExpanded ? '\u25BC' : '\u25B6';
+
+  return `
+    <div class="session-card ${isStarred ? 'starred' : ''}" id="card-${session.id}">
+      <div class="session-header" onclick="toggleExpand('${session.id}')">
+        <div class="session-color" style="background:${session.background || '#ccc'}"></div>
+        <div class="session-info">
+          <div class="session-name"><span style="font-size:11px;color:#999;margin-right:4px">${expandArrow}</span>${escapeHtml(session.name)}</div>
+          <div class="session-meta">
+            <span>${escapeHtml(session.location || '')}</span>
+            ${chairLine ? `<span style="color:#bbb">Chair: ${chairLine}</span>` : ''}
+            <span class="cat-badge cat-${cat}">${catLabel}</span>
+          </div>
+        </div>
+        <button class="ical-btn" onclick="event.stopPropagation(); downloadIcal('${session.id}')" title="Download .ics">iCal</button>
+        <button class="star-btn ${isStarred ? 'starred' : ''}" onclick="toggleStar('${session.id}', event)" title="${isStarred ? 'Unstar' : 'Star'}">
+          ${isStarred ? '\u2605' : '\u2606'}
+        </button>
+      </div>
+      <div class="session-details ${isExpanded ? 'open' : ''}" id="details-${session.id}">
+        ${detailsText ? `<div class="details-text">${escapeHtml(detailsText)}</div>` : ''}
+        ${renderPresentations(session.presentations, session.id)}
+        ${renderSessionSpeakers(session.speakers)}
+      </div>
+    </div>`;
+}
+
+function renderSchedule() {
+  const container = document.getElementById('schedule-content');
+  let sessions = DATA.sessions.filter(s => {
+    if (activeDay !== 'all' && s.date !== activeDay) return false;
+    if (!catVisible[s.category]) return false;
+    return matchesSearch(s, searchQuery);
+  });
+  sessions.sort((a, b) => {
+    if (a.date !== b.date) return a.date.localeCompare(b.date);
+    return parseTime(a.startTime) - parseTime(b.startTime);
+  });
+
+  if (sessions.length === 0) {
+    container.innerHTML = '<div class="no-results">No sessions match. Try adjusting filters or search.</div>';
+    return;
+  }
+
+  let html = '';
+  let currentDate = '';
+  let currentTime = '';
+  for (const s of sessions) {
+    if (s.date !== currentDate) {
+      currentDate = s.date;
+      currentTime = '';
+      html += `<h2 class="day-header" data-date="${s.date}" style="margin:20px 0 4px;font-size:15px;color:#333;font-weight:700">${DAY_LABELS[s.date] || s.date}</h2>`;
+    }
+    const slot = `${s.startTime} \u2013 ${s.endTime}`;
+    if (slot !== currentTime) {
+      currentTime = slot;
+      // Collect categories in this time slot
+      const slotSessions = sessions.filter(x => x.date === currentDate && `${x.startTime} \u2013 ${x.endTime}` === slot);
+      const slotCats = [...new Set(slotSessions.map(x => CAT_LABELS[x.category] || x.category))].join(', ');
+      html += `<div class="time-label" data-date="${currentDate}" data-slot="${slot}" data-cats="${slotCats}">${slot}</div>`;
+    }
+    html += renderSessionCard(s);
+  }
+  container.innerHTML = html;
+  setupScrollBreadcrumb();
+}
+
+function renderCatFilters() {
+  const container = document.getElementById('cat-filters');
+  const order = ['plenary','oral','symposium','focus-track','poster','workshop','ceremony','social','break'];
+  let html = '<span style="font-size:11px;color:#999;margin-right:4px">Show:</span>';
+  for (const cat of order) {
+    const vis = catVisible[cat];
+    html += `<span class="cat-chip ${vis ? 'active' : 'inactive'}" onclick="toggleCat('${cat}')">${CAT_LABELS[cat]}</span>`;
+  }
+  container.innerHTML = html;
+}
+
+function renderDayFilters() {
+  const container = document.getElementById('day-filters');
+  const dates = [...new Set(DATA.sessions.map(s => s.date))].sort();
+  let html = `<button class="filter-btn ${activeDay === 'all' ? 'active' : ''}" onclick="setDay('all')">All Days</button>`;
+  for (const d of dates) {
+    html += `<button class="filter-btn ${activeDay === d ? 'active' : ''}" onclick="setDay('${d}')">${DAY_LABELS[d] || d}</button>`;
+  }
+  container.innerHTML = html;
+}
+
+function setDay(d) {
+  activeDay = d;
+  renderDayFilters();
+  renderSchedule();
+}
+
+function renderSpeakers() {
+  const container = document.getElementById('speakers-content');
+  let speakers = DATA.speakers
+    .filter(sp => matchesSpeakerSearch(sp, speakerSearchQuery))
+    .sort((a, b) => a.lastName.localeCompare(b.lastName));
+  document.getElementById('speaker-count').textContent = `(${speakers.length})`;
+  if (speakers.length === 0) {
+    container.innerHTML = '<div class="no-results">No speakers match your search.</div>';
+    return;
+  }
+  let html = '<div class="speakers-grid">';
+  for (const sp of speakers) {
+    const photoHtml = sp.photoUrl
+      ? `<img class="speaker-photo" src="${sp.photoUrl}" alt="${escapeHtml(sp.name)}" onerror="this.style.display='none'">`
+      : `<div class="speaker-photo" style="display:flex;align-items:center;justify-content:center;color:#999;font-size:16px">${sp.firstName[0]}${sp.lastName[0]}</div>`;
+    html += `
+      <div class="speaker-grid-card">
+        ${photoHtml}
+        <div>
+          <div class="speaker-name">${sp.title ? escapeHtml(sp.title) + ' ' : ''}${escapeHtml(sp.name)}</div>
+          <div class="speaker-org">${escapeHtml(sp.organization)}</div>
+          ${sp.position ? `<div style="font-size:11px;color:#999">${escapeHtml(sp.position)}</div>` : ''}
+        </div>
+      </div>`;
+  }
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function renderStarred() {
+  const container = document.getElementById('starred-content');
+  const starredItems = DATA.sessions.filter(s => starred[s.id]);
+  if (starredItems.length === 0) {
+    container.innerHTML = '<div class="no-results">No starred sessions yet. Star sessions from the Schedule tab.</div>';
+    return;
+  }
+  let html = `
+    <div class="starred-export">
+      <button class="export-btn" onclick="downloadAllStarredIcal()">Export All as .ics</button>
+      <button class="export-btn secondary" onclick="exportStarredJson()">Backup Stars</button>
+      <button class="export-btn secondary" onclick="document.getElementById('import-stars').click()">Import Stars</button>
+      <input type="file" id="import-stars" accept=".json" style="display:none" onchange="importStarredJson(event)">
+      <button class="export-btn secondary" onclick="clearAllStarred()">Clear All</button>
+    </div>`;
+  let currentDate = '';
+  for (const s of starredItems) {
+    if (s.date !== currentDate) {
+      currentDate = s.date;
+      html += `<h2 style="margin:20px 0 6px;font-size:15px;color:#333;font-weight:700">${DAY_LABELS[s.date] || s.date}</h2>`;
+    }
+    const cat = s.category || 'other';
+    // Find starred presentations within this session
+    const starredPres = (s.presentations || []).filter(p => starred[p.id] && !p.title.startsWith('Chair:') && !p.title.startsWith('Convenor:'));
+    html += `
+      <div style="padding:7px 0;border-bottom:1px solid #eee">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="min-width:100px;font-size:12px;color:var(--accent);font-weight:600">${s.startTime} \u2013 ${s.endTime}</div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:500">${escapeHtml(s.name)}</div>
+            <div style="font-size:11px;color:#999">${escapeHtml(s.location)}</div>
+          </div>
+          <span class="cat-badge cat-${cat}" style="font-size:9px">${CAT_LABELS[cat]}</span>
+          <button class="ical-btn" onclick="downloadIcal('${s.id}')">iCal</button>
+          <button class="star-btn starred" onclick="toggleStar('${s.id}')">\u2605</button>
+        </div>
+        ${starredPres.length > 0 ? starredPres.map(p => `
+          <div style="display:flex;align-items:center;gap:8px;padding:3px 0 3px 110px">
+            <div style="font-size:12px;color:#666;flex:1">
+              \u2605 ${escapeHtml(p.title)}
+              <span style="color:#999">${p.speakers.map(sp => sp.name).join(', ')}</span>
+            </div>
+            <span style="font-size:11px;color:var(--accent)">${p.startTime || ''}</span>
+          </div>`).join('') : ''}
+      </div>`;
+  }
+  container.innerHTML = html;
+}
+
+function exportStarredJson() {
+  const blob = new Blob([JSON.stringify(starred, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'wcri2026-stars.json';
+  a.click();
+}
+
+function importStarredJson(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const imported = JSON.parse(e.target.result);
+      Object.assign(starred, imported);
+      saveStarred();
+      renderAll();
+    } catch (err) {
+      alert('Invalid JSON file');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function clearAllStarred() {
+  if (!confirm('Clear all starred sessions?')) return;
+  starred = {};
+  saveStarred();
+  renderAll();
+}
+
+// ---- iCal ----
+function toIcalDate(dateStr, timeStr) {
+  const [y, m, d] = dateStr.split('-');
+  const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if (!match) return '';
+  let h = parseInt(match[1]);
+  const min = match[2];
+  const ampm = match[3].toUpperCase();
+  if (ampm === 'PM' && h !== 12) h += 12;
+  if (ampm === 'AM' && h === 12) h = 0;
+  // Vancouver in May = PDT = UTC-7
+  const utcH = h + 7;
+  const day = parseInt(d) + (utcH >= 24 ? 1 : 0);
+  const finalH = utcH % 24;
+  return `${y}${m}${String(day).padStart(2,'0')}T${String(finalH).padStart(2,'0')}${min}00Z`;
+}
+
+function makeIcalEvent(session) {
+  const uid = session.id + '@wcri2026';
+  const dtstart = toIcalDate(session.date, session.startTime);
+  const dtend = toIcalDate(session.date, session.endTime);
+  const summary = session.name.replace(/[,;\\]/g, ' ');
+  const location = (session.location || '').replace(/[,;\\]/g, ' ');
+  const desc = (session.details || '').substring(0, 500).replace(/\r?\n/g, '\\n').replace(/[,;\\]/g, ' ');
+  return `BEGIN:VEVENT\r\nUID:${uid}\r\nDTSTART:${dtstart}\r\nDTEND:${dtend}\r\nSUMMARY:${summary}\r\nLOCATION:${location}\r\nDESCRIPTION:${desc}\r\nEND:VEVENT`;
+}
+
+function downloadIcal(sessionId) {
+  const session = DATA.sessions.find(s => s.id === sessionId);
+  if (!session) return;
+  const cal = `BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//WCRI2026//Browser//EN\r\nCALSCALE:GREGORIAN\r\n${makeIcalEvent(session)}\r\nEND:VCALENDAR`;
+  const blob = new Blob([cal], { type: 'text/calendar' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `wcri2026-${session.name.substring(0,30).replace(/[^a-zA-Z0-9]/g,'-')}.ics`;
+  a.click();
+}
+
+function downloadAllStarredIcal() {
+  const items = DATA.sessions.filter(s => starred[s.id]);
+  if (items.length === 0) return;
+  const events = items.map(makeIcalEvent).join('\r\n');
+  const cal = `BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//WCRI2026//Browser//EN\r\nCALSCALE:GREGORIAN\r\n${events}\r\nEND:VCALENDAR`;
+  const blob = new Blob([cal], { type: 'text/calendar' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'wcri2026-starred.ics';
+  a.click();
+}
+
+// ---- Tabs ----
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  document.getElementById('schedule-panel').style.display = tab === 'schedule' ? '' : 'none';
+  document.getElementById('speakers-panel').style.display = tab === 'speakers' ? '' : 'none';
+  document.getElementById('starred-panel').style.display = tab === 'starred' ? '' : 'none';
+  if (tab === 'speakers') renderSpeakers();
+  if (tab === 'starred') renderStarred();
+}
+
+// ---- Init ----
+function renderAll() {
+  updateStarredBadge();
+  renderDayFilters();
+  renderCatFilters();
+  renderSchedule();
+  const activeTab = document.querySelector('.tab.active').dataset.tab;
+  if (activeTab === 'speakers') renderSpeakers();
+  if (activeTab === 'starred') renderStarred();
+}
+
+document.getElementById('tabs').addEventListener('click', e => {
+  const tab = e.target.closest('.tab');
+  if (tab) switchTab(tab.dataset.tab);
+});
+
+document.getElementById('search').addEventListener('input', e => {
+  searchQuery = e.target.value;
+  renderSchedule();
+});
+
+document.getElementById('speaker-search').addEventListener('input', e => {
+  speakerSearchQuery = e.target.value;
+  renderSpeakers();
+});
+
+// ---- Fix sticky positions ----
+function fixStickyPositions() {
+  const header = document.querySelector('.header');
+  const tabs = document.getElementById('tabs');
+  if (header && tabs) {
+    const headerH = header.offsetHeight;
+    tabs.style.top = headerH + 'px';
+  }
+}
+window.addEventListener('resize', fixStickyPositions);
+
+// ---- Scroll breadcrumb ----
+function setupScrollBreadcrumb() {
+  const bc = document.getElementById('scroll-breadcrumb');
+  const container = document.getElementById('schedule-content');
+  if (!container) return;
+
+  const onScroll = () => {
+    const toolbar = document.querySelector('#schedule-panel .toolbar');
+    const tabsEl = document.getElementById('tabs');
+    if (!toolbar || !tabsEl) return;
+    const tabsBottom = tabsEl.getBoundingClientRect().bottom;
+    bc.style.top = tabsBottom + 'px';
+    const toolbarBottom = toolbar.getBoundingClientRect().bottom;
+
+    // Only show breadcrumb once toolbar has scrolled off
+    if (toolbarBottom > tabsBottom) {
+      bc.classList.remove('visible');
+      return;
+    }
+
+    // Find the last day-header and time-label that have scrolled past the breadcrumb
+    const scanY = tabsBottom + 30;
+    let currentDay = '';
+    let currentSlot = '';
+    let currentCats = '';
+
+    const dayHeaders = container.querySelectorAll('.day-header');
+    for (const dh of dayHeaders) {
+      if (dh.getBoundingClientRect().top < scanY) {
+        currentDay = DAY_LABELS[dh.dataset.date] || dh.dataset.date;
+      }
+    }
+    const timeLabels = container.querySelectorAll('.time-label');
+    for (const tl of timeLabels) {
+      if (tl.getBoundingClientRect().top < scanY) {
+        currentSlot = tl.dataset.slot || '';
+        currentCats = tl.dataset.cats || '';
+      }
+    }
+
+    if (currentDay && currentSlot) {
+      bc.innerHTML = `<span class="bc-day">${currentDay}</span><span class="bc-sep">\u203A</span><span class="bc-time">${currentSlot}</span><span class="bc-cats">(${currentCats})</span>`;
+      bc.classList.add('visible');
+    } else {
+      bc.classList.remove('visible');
+    }
+  };
+
+  window.removeEventListener('scroll', window._bcScroll);
+  window._bcScroll = onScroll;
+  window.addEventListener('scroll', onScroll, { passive: true });
+}
+
+// ---- Auto-select current day ----
+function getInitialDay(dates) {
+  const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+  if (dates.includes(today)) return today;
+  // If we're between conference start and end, pick today or the closest past day
+  const sorted = dates.sort();
+  if (today > sorted[sorted.length - 1] || today < sorted[0]) return 'all';
+  // Find the most recent conference day <= today
+  for (let i = sorted.length - 1; i >= 0; i--) {
+    if (sorted[i] <= today) return sorted[i];
+  }
+  return 'all';
+}
+
+fetch('program_data.json')
+  .then(r => r.json())
+  .then(data => {
+    DATA = data;
+    fixStickyPositions();
+    const dates = [...new Set(DATA.sessions.map(s => s.date))].sort();
+    activeDay = getInitialDay(dates);
+    renderAll();
+  });
+</script>
+</body>
+</html>
