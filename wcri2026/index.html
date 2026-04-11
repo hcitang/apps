@@ -801,6 +801,7 @@ function renderStarred() {
       allSlots.push(block.slot);
     }
   }
+  allSlots.sort((a, b) => parseTime(a.split(' \u2013 ')[0]) - parseTime(b.split(' \u2013 ')[0]));
 
   let html = `
     <div class="starred-export">
