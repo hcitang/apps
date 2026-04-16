@@ -1,0 +1,751 @@
+{
+  "version": 1,
+  "method": "Gale-Shapley stable matching (min 6)",
+  "description": "Same Gale-Shapley algorithm with MIN_PER raised from 4 to 5. Eliminates 4-item sessions so all sessions fit equal-length presentation slots.",
+  "embedding": "all-mpnet-base-v2 (title + abstract)",
+  "source_script": "gale_shapley_min6.py",
+  "stats": {
+    "num_sessions": 48,
+    "num_items": 292,
+    "items_per_session": {
+      "min": 6,
+      "max": 7,
+      "distribution": {
+        "6": 44,
+        "7": 4
+      }
+    },
+    "cohesion_spread": {
+      "mean": 0.4791,
+      "std": 0.0618,
+      "min": 0.3691,
+      "max": 0.6252
+    }
+  },
+  "sessions": [
+    {
+      "id": 0,
+      "name": "Assistive Agents and Embodied Companions",
+      "quirky_name": "Your AI Plus-One",
+      "items": [
+        "Paper6152",
+        "Paper6758",
+        "Paper5685",
+        "Paper9357",
+        "Paper5200",
+        "Paper6924"
+      ],
+      "spread_norm": 0.6972,
+      "spread": 0.5477
+    },
+    {
+      "id": 1,
+      "name": "Museums, Archives, and Civic Engagement",
+      "quirky_name": "After Hours at the Museum",
+      "items": [
+        "Paper4602",
+        "Paper5927",
+        "Pictorial8667",
+        "Pictorial5363",
+        "Pictorial8082",
+        "Paper2682"
+      ],
+      "spread_norm": 0.4259,
+      "spread": 0.4782
+    },
+    {
+      "id": 2,
+      "name": "Self-Tracking and Personal Informatics",
+      "quirky_name": "The Qualified Self",
+      "items": [
+        "Paper7334",
+        "Paper6791",
+        "Paper9110",
+        "Paper3219",
+        "Paper9780",
+        "Paper9014"
+      ],
+      "spread_norm": 0.2159,
+      "spread": 0.4244
+    },
+    {
+      "id": 3,
+      "name": "Generative AI in Design Practice",
+      "quirky_name": "Prompt and Circumstance",
+      "items": [
+        "Paper6573",
+        "Paper4884",
+        "Paper2257",
+        "Paper1721",
+        "Paper9439",
+        "Paper8544"
+      ],
+      "spread_norm": 0.1833,
+      "spread": 0.4161
+    },
+    {
+      "id": 4,
+      "name": "Conversational Agents in Everyday Life",
+      "quirky_name": "Small Talk, Big Stakes",
+      "items": [
+        "Paper1640",
+        "Paper5482",
+        "Paper3595",
+        "Paper4505",
+        "Paper9910",
+        "Paper4448"
+      ],
+      "spread_norm": 0.1396,
+      "spread": 0.4049
+    },
+    {
+      "id": 5,
+      "name": "Soma Design and Felt Experience",
+      "quirky_name": "Feel It Out",
+      "items": [
+        "Pictorial3477",
+        "Paper8884",
+        "Paper5976",
+        "Paper6470",
+        "Paper4502",
+        "tochi2"
+      ],
+      "spread_norm": 0.3209,
+      "spread": 0.4513
+    },
+    {
+      "id": 6,
+      "name": "More-Than-Human Materials",
+      "quirky_name": "Designing Across Kingdoms",
+      "items": [
+        "Pictorial1824",
+        "Pictorial8914",
+        "Pictorial6839",
+        "Paper7567",
+        "Paper3546",
+        "Paper1830"
+      ],
+      "spread_norm": 0.5648,
+      "spread": 0.5138
+    },
+    {
+      "id": 7,
+      "name": "Social XR and Virtual Companionship",
+      "quirky_name": "Dinner, Drama, and Doppelgängers",
+      "items": [
+        "Paper4880",
+        "Paper7193",
+        "Paper1800",
+        "Paper1403",
+        "Paper5091",
+        "Pictorial4623"
+      ],
+      "spread_norm": 0.3901,
+      "spread": 0.469
+    },
+    {
+      "id": 8,
+      "name": "Generative AI for Storytelling and Culture",
+      "quirky_name": "Heritage Hackers",
+      "items": [
+        "Paper8242",
+        "Paper2980",
+        "Paper2850",
+        "Paper7813",
+        "Paper9474",
+        "Paper2287"
+      ],
+      "spread_norm": 0.4671,
+      "spread": 0.4887
+    },
+    {
+      "id": 9,
+      "name": "AI in Creative Practice",
+      "quirky_name": "Studio Visit with the Machine",
+      "items": [
+        "Paper6606",
+        "Paper6959",
+        "Paper7884",
+        "Paper2047",
+        "Paper6556",
+        "Paper1395"
+      ],
+      "spread_norm": 0.0,
+      "spread": 0.3691
+    },
+    {
+      "id": 10,
+      "name": "AI-Augmented Creative Interfaces",
+      "quirky_name": "Making Stuff with Machines",
+      "items": [
+        "Paper3784",
+        "Paper4667",
+        "Paper6386",
+        "Paper4791",
+        "Paper9490",
+        "Paper5474"
+      ],
+      "spread_norm": 0.3417,
+      "spread": 0.4566
+    },
+    {
+      "id": 11,
+      "name": "Power, Privacy, and Participation",
+      "quirky_name": "Who Holds the Remote?",
+      "items": [
+        "Paper1603",
+        "Paper5868",
+        "Paper9300",
+        "Paper2249",
+        "Paper8162",
+        "Paper9420"
+      ],
+      "spread_norm": 0.7297,
+      "spread": 0.556
+    },
+    {
+      "id": 12,
+      "name": "Visualization and Interface Design",
+      "quirky_name": "Pictures Worth Remixing",
+      "items": [
+        "Pictorial2842",
+        "Paper7727",
+        "Paper2881",
+        "Paper5755",
+        "Paper9393",
+        "Paper8272",
+        "Paper5396"
+      ],
+      "spread_norm": 0.5083,
+      "spread": 0.4993
+    },
+    {
+      "id": 13,
+      "name": "Situated Design: Rural, Domestic, Placed",
+      "quirky_name": "Where Design Lives",
+      "items": [
+        "Pictorial8035",
+        "Paper1535",
+        "Paper7574",
+        "Paper6188",
+        "Paper4865",
+        "Paper2376"
+      ],
+      "spread_norm": 0.8302,
+      "spread": 0.5817
+    },
+    {
+      "id": 14,
+      "name": "Designing AI Concepts and Values",
+      "quirky_name": "Value-Aligned Ideation",
+      "items": [
+        "Paper6681",
+        "Paper8828",
+        "Paper8980",
+        "Paper1376",
+        "Paper7693",
+        "Paper4407"
+      ],
+      "spread_norm": 0.1125,
+      "spread": 0.3979
+    },
+    {
+      "id": 15,
+      "name": "Learning with (and About) Technology",
+      "quirky_name": "Class in Session",
+      "items": [
+        "Paper4356",
+        "Paper7025",
+        "Paper1066",
+        "Paper7074",
+        "Paper2330",
+        "Paper9299"
+      ],
+      "spread_norm": 0.5368,
+      "spread": 0.5066
+    },
+    {
+      "id": 16,
+      "name": "AR for Embodied Skill and Motor Learning",
+      "quirky_name": "Practice Makes Augmented",
+      "items": [
+        "Pictorial7696",
+        "Paper5535",
+        "Paper4903",
+        "Paper8227",
+        "Paper5130",
+        "Paper8015"
+      ],
+      "spread_norm": 0.6924,
+      "spread": 0.5464
+    },
+    {
+      "id": 17,
+      "name": "AI Support for Reflection and Writing",
+      "quirky_name": "Writing with a Ghost in the Room",
+      "items": [
+        "Paper9706",
+        "Paper3007",
+        "Paper5804",
+        "Paper9709",
+        "Paper4946",
+        "Paper4487"
+      ],
+      "spread_norm": 0.6737,
+      "spread": 0.5417
+    },
+    {
+      "id": 18,
+      "name": "AI in Healthcare Communication",
+      "quirky_name": null,
+      "items": [
+        "Paper6569",
+        "Paper8881",
+        "Paper5376",
+        "Paper9840",
+        "Paper2953",
+        "Pictorial6710"
+      ],
+      "spread_norm": 0.3797,
+      "spread": 0.4664
+    },
+    {
+      "id": 19,
+      "name": "Haptics and Sensory Interaction",
+      "quirky_name": "Feel the Signal",
+      "items": [
+        "Pictorial1769",
+        "Paper5536",
+        "Paper8502",
+        "Paper4739",
+        "Paper6982",
+        "Paper2454"
+      ],
+      "spread_norm": 0.1581,
+      "spread": 0.4096
+    },
+    {
+      "id": 20,
+      "name": "Robots in Social and Professional Roles",
+      "quirky_name": "Who's Wrangling Who?",
+      "items": [
+        "Paper5233",
+        "Paper1230",
+        "Paper7651",
+        "Paper3728",
+        "Paper7150",
+        "Paper9919"
+      ],
+      "spread_norm": 0.5836,
+      "spread": 0.5186
+    },
+    {
+      "id": 21,
+      "name": "Queer Futures and Speculative Design",
+      "quirky_name": "Imagining Otherwise",
+      "items": [
+        "Paper5714",
+        "Paper6829",
+        "Pictorial8758",
+        "Pictorial2178",
+        "Pictorial7398",
+        "Pictorial3481"
+      ],
+      "spread_norm": 0.3008,
+      "spread": 0.4462
+    },
+    {
+      "id": 22,
+      "name": "Craft, Fabrication, and Materials",
+      "quirky_name": "Warp, Weft, and Wonder",
+      "items": [
+        "Pictorial6967",
+        "Paper5896",
+        "Paper8554",
+        "Paper5395",
+        "Paper7125",
+        "Paper3753"
+      ],
+      "spread_norm": 0.7094,
+      "spread": 0.5508
+    },
+    {
+      "id": 23,
+      "name": "AI, Civic Participation, and Journalism",
+      "quirky_name": "Hold the Front Page",
+      "items": [
+        "Paper5617",
+        "Paper8187",
+        "Paper7262",
+        "Pictorial1996",
+        "Paper1353",
+        "Paper2433"
+      ],
+      "spread_norm": 1.0,
+      "spread": 0.6252
+    },
+    {
+      "id": 24,
+      "name": "Presence, Absence, and Mortality",
+      "quirky_name": null,
+      "items": [
+        "Pictorial5187",
+        "Paper5588",
+        "Paper7066",
+        "Paper9815",
+        "Paper3876",
+        "Paper2866"
+      ],
+      "spread_norm": 0.3434,
+      "spread": 0.4571
+    },
+    {
+      "id": 25,
+      "name": "AI for Aging and Care",
+      "quirky_name": "Care Circuits",
+      "items": [
+        "Paper1499",
+        "Paper7846",
+        "Paper6368",
+        "Paper2810",
+        "Paper8799",
+        "Paper2894"
+      ],
+      "spread_norm": 0.3871,
+      "spread": 0.4682
+    },
+    {
+      "id": 26,
+      "name": "Agency and Explanation in AI Systems",
+      "quirky_name": "Who's Driving?",
+      "items": [
+        "Paper1757",
+        "Paper9177",
+        "Paper1249",
+        "Paper7085",
+        "Paper9530",
+        "Paper1634"
+      ],
+      "spread_norm": 0.3342,
+      "spread": 0.4547
+    },
+    {
+      "id": 27,
+      "name": "Place, Environment, and Shared Practice",
+      "quirky_name": "Things in Common",
+      "items": [
+        "Paper4905",
+        "Paper6456",
+        "Paper6305",
+        "Paper6710",
+        "Pictorial8179",
+        "Pictorial9064",
+        "Pictorial3563"
+      ],
+      "spread_norm": 0.2904,
+      "spread": 0.4435
+    },
+    {
+      "id": 28,
+      "name": "Structured AI Support for Design Work",
+      "quirky_name": "Blocks, Graphs, and Concepts",
+      "items": [
+        "Paper5661",
+        "Paper1998",
+        "Paper4015",
+        "Paper2106",
+        "Paper6316",
+        "Paper9913"
+      ],
+      "spread_norm": 0.2566,
+      "spread": 0.4348
+    },
+    {
+      "id": 29,
+      "name": "Accessibility Across Vision and Print",
+      "quirky_name": "Reading Between the Lines",
+      "items": [
+        "Paper8885",
+        "Paper2904",
+        "Paper4410",
+        "Paper5411",
+        "Paper2265",
+        "Paper5737"
+      ],
+      "spread_norm": 0.2704,
+      "spread": 0.4384
+    },
+    {
+      "id": 30,
+      "name": "Community, Justice, and Design",
+      "quirky_name": "Design for the People",
+      "items": [
+        "Paper1691",
+        "Paper9485",
+        "Paper3826",
+        "Paper7053",
+        "Paper5949",
+        "Paper7475"
+      ],
+      "spread_norm": 0.1129,
+      "spread": 0.398
+    },
+    {
+      "id": 31,
+      "name": "Intimate Data, Consent, and Harm",
+      "quirky_name": null,
+      "items": [
+        "Paper7557",
+        "Paper2039",
+        "Pictorial2215",
+        "Paper2085",
+        "Paper1895",
+        "Paper6024"
+      ],
+      "spread_norm": 0.5196,
+      "spread": 0.5022
+    },
+    {
+      "id": 32,
+      "name": "Mediated Presence and Emotional Connection",
+      "quirky_name": "Long-Distance Feels",
+      "items": [
+        "Paper2715",
+        "Paper9618",
+        "Paper2021",
+        "Paper3135",
+        "Paper3768",
+        "Paper9999"
+      ],
+      "spread_norm": 0.3028,
+      "spread": 0.4467
+    },
+    {
+      "id": 33,
+      "name": "Walking, Mobility, and Noticing",
+      "quirky_name": "Take the Scenic Route",
+      "items": [
+        "Pictorial2185",
+        "Pictorial5221",
+        "Pictorial9809",
+        "Paper2316",
+        "Paper2313",
+        "Paper4973"
+      ],
+      "spread_norm": 0.1532,
+      "spread": 0.4084
+    },
+    {
+      "id": 34,
+      "name": "Digital and Material Craft",
+      "quirky_name": "Loom with a View",
+      "items": [
+        "Pictorial6490",
+        "Pictorial5109",
+        "Pictorial7190",
+        "Paper9392",
+        "Paper4935",
+        "Paper5036"
+      ],
+      "spread_norm": 0.2247,
+      "spread": 0.4267
+    },
+    {
+      "id": 35,
+      "name": "Rehabilitation and Chronic Conditions",
+      "quirky_name": null,
+      "items": [
+        "Pictorial6342",
+        "Paper5303",
+        "Paper3474",
+        "Paper9040",
+        "Paper6742",
+        "Paper7857"
+      ],
+      "spread_norm": 0.4805,
+      "spread": 0.4922
+    },
+    {
+      "id": 36,
+      "name": "Robots, LLMs, and Intent",
+      "quirky_name": "Minds, Motors, Models",
+      "items": [
+        "Pictorial6673",
+        "Paper4145",
+        "Paper9846",
+        "Paper4776",
+        "Paper5882",
+        "Paper7428"
+      ],
+      "spread_norm": 0.3252,
+      "spread": 0.4524
+    },
+    {
+      "id": 37,
+      "name": "AI in Education and Reflection",
+      "quirky_name": "Between the Prompts",
+      "items": [
+        "Paper3194",
+        "Paper6685",
+        "Paper3998",
+        "Paper7040",
+        "Paper8532",
+        "Paper3937"
+      ],
+      "spread_norm": 0.6234,
+      "spread": 0.5288
+    },
+    {
+      "id": 38,
+      "name": "Taste, Texture, and Edible Design",
+      "quirky_name": "Bite-Sized Ideas",
+      "items": [
+        "Paper2218",
+        "Paper1926",
+        "Paper6984",
+        "Paper6054",
+        "Paper8527",
+        "tochi1"
+      ],
+      "spread_norm": 0.937,
+      "spread": 0.6091
+    },
+    {
+      "id": 39,
+      "name": "Speculative Futures and Temporal Reflection",
+      "quirky_name": "Time Travelers Only",
+      "items": [
+        "Pictorial9529",
+        "Paper6434",
+        "Paper9893",
+        "Paper7615",
+        "Pictorial6028",
+        "Pictorial3543",
+        "tochi3"
+      ],
+      "spread_norm": 0.2481,
+      "spread": 0.4327
+    },
+    {
+      "id": 40,
+      "name": "Presentation and Accessible Media",
+      "quirky_name": "Speak Up, Signal Through",
+      "items": [
+        "Paper7686",
+        "Paper1183",
+        "Paper4981",
+        "Paper4686",
+        "Paper2789",
+        "Paper6367"
+      ],
+      "spread_norm": 0.6032,
+      "spread": 0.5236
+    },
+    {
+      "id": 41,
+      "name": "Expressive and Soft Robotics",
+      "quirky_name": "Stagecraft for Bots",
+      "items": [
+        "Paper6235",
+        "Paper3706",
+        "Paper2007",
+        "Paper2622",
+        "Paper3643",
+        "tochi4"
+      ],
+      "spread_norm": 0.0105,
+      "spread": 0.3718
+    },
+    {
+      "id": 42,
+      "name": "Sound, Memory, and Slow Technology",
+      "quirky_name": "Slow Listening",
+      "items": [
+        "Pictorial7784",
+        "Paper4665",
+        "Paper4205",
+        "Paper3505",
+        "Paper1835",
+        "Pictorial4321"
+      ],
+      "spread_norm": 0.3625,
+      "spread": 0.4619
+    },
+    {
+      "id": 43,
+      "name": "Atmospheres, Scent, and Liveliness",
+      "quirky_name": "Stop and Smell the Pixels",
+      "items": [
+        "Pictorial5249",
+        "Paper2422",
+        "Paper1446",
+        "Paper6842",
+        "Paper1349",
+        "Paper3023"
+      ],
+      "spread_norm": 0.3086,
+      "spread": 0.4481
+    },
+    {
+      "id": 44,
+      "name": "Algorithmic Intimacy and Identity",
+      "quirky_name": "It's Complicated",
+      "items": [
+        "Paper5705",
+        "Paper8790",
+        "Paper9451",
+        "Paper2567",
+        "Paper3460",
+        "Paper5933",
+        "Paper1558"
+      ],
+      "spread_norm": 0.3236,
+      "spread": 0.452
+    },
+    {
+      "id": 45,
+      "name": "Aging, Culture, and Domestic Technology",
+      "quirky_name": "Home is Where the Chip Is",
+      "items": [
+        "Pictorial7991",
+        "Paper3646",
+        "Paper8658",
+        "Paper4965",
+        "Paper9765",
+        "Paper9421"
+      ],
+      "spread_norm": 0.8375,
+      "spread": 0.5836
+    },
+    {
+      "id": 46,
+      "name": "LLMs for Learning and Neurodiversity",
+      "quirky_name": null,
+      "items": [
+        "Paper1407",
+        "Paper3562",
+        "Paper5635",
+        "Paper9666",
+        "Paper6917",
+        "Paper9788"
+      ],
+      "spread_norm": 0.6364,
+      "spread": 0.5321
+    },
+    {
+      "id": 47,
+      "name": "Inclusive Play and Everyday Support",
+      "quirky_name": "Everyday Magic",
+      "items": [
+        "Paper9881",
+        "Paper6775",
+        "Paper8689",
+        "Paper9824",
+        "Paper1317",
+        "Paper5190"
+      ],
+      "spread_norm": 0.7636,
+      "spread": 0.5647
+    }
+  ]
+}

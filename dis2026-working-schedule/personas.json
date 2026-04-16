@@ -1,0 +1,83 @@
+{
+  "note": "Shared persona metadata for schedule-personas.html and personas.html. Edit descriptions here — they're loaded at runtime.",
+  "order": ["Andrey", "Ava", "Chris", "Emily", "Greg", "Haley", "Jen",
+            "Karthik", "Martin", "Matt", "Paula", "Rich", "Sydney",
+            "Terry", "Warren"],
+  "personas": {
+    "Andrey": {
+      "icon": "🦢",
+      "topic": "Aging & later life",
+      "description": "Older adults, dementia, domestic and cultural context of aging. Mixed methods, field deployments. Interested in how technology supports agency and everyday life across later years."
+    },
+    "Ava": {
+      "icon": "🐢",
+      "topic": "Critical / speculative",
+      "description": "Design fiction, futures, and critical provocations. Cares about the questions a design raises. Works across pictorials, zines, and discursive artefacts."
+    },
+    "Chris": {
+      "icon": "🐬",
+      "topic": "Civic / public interest",
+      "description": "Journalism, policy, civic engagement, and accountability. Works with NGOs, community groups, and government partners on stakeholder-facing design."
+    },
+    "Emily": {
+      "icon": "🦔",
+      "topic": "More-than-human",
+      "description": "Designs with microbial, plant, animal, and AI kin. Posthumanist leanings — design as coexistence work. Draws from speculative design, craft, and environmental humanities."
+    },
+    "Greg": {
+      "icon": "🐱",
+      "topic": "GenAI / LLM tools",
+      "description": "Builds LLM-powered tools and studies their use in creative and knowledge work. Comfortable with prompt engineering, agent architectures, and generative pipelines."
+    },
+    "Haley": {
+      "icon": "🐨",
+      "topic": "Health & care",
+      "description": "Clinical contexts, chronic illness, caregiving, and mental health. Works with clinicians, patients, and their networks; values ecological validity and long-term deployments."
+    },
+    "Jen": {
+      "icon": "🐝",
+      "topic": "Justice / equity",
+      "description": "Community-led, participatory, equity-oriented. Cares about reflexivity, power, and whose voices shape the design."
+    },
+    "Karthik": {
+      "icon": "🐶",
+      "topic": "HRI / robots",
+      "description": "Social robots, expressive robotics, and human-robot collaboration. Designs for industrial, domestic, and performance contexts."
+    },
+    "Martin": {
+      "icon": "🐴",
+      "topic": "Motor / embodied skill",
+      "description": "Motor learning, haptics, and skill training in music, dance, and sport. Multi-modal feedback systems and AR/VR for skill acquisition."
+    },
+    "Matt": {
+      "icon": "🐹",
+      "topic": "Materials / fabrication",
+      "description": "Textiles, ceramics, 3D print, knitting, and e-textiles. Studio-based practice; values tacit knowledge and material agency."
+    },
+    "Paula": {
+      "icon": "🦋",
+      "topic": "Pictorial / visual",
+      "description": "Visual-first research communication. Craft-as-inquiry, research through image. Engages deeply with the pictorial track."
+    },
+    "Rich": {
+      "icon": "🐻",
+      "topic": "Systems research",
+      "description": "Builds novel interactive systems and interaction techniques. Evaluates them through controlled user studies, with attention to study design, counterbalancing, and dependent measures."
+    },
+    "Sydney": {
+      "icon": "🐙",
+      "topic": "Soma / felt experience",
+      "description": "Works from felt experience and somaesthetics. Values bodily knowledge — autoethnography, micro-phenomenology, sensibilities as data."
+    },
+    "Terry": {
+      "icon": "🦭",
+      "topic": "Accessibility",
+      "description": "Works with blind / low-vision, deaf, dyslexic, and neurodivergent communities. Centers co-design grounded in lived experience."
+    },
+    "Warren": {
+      "icon": "🦊",
+      "topic": "XR / immersive",
+      "description": "VR / AR / MR narrative, presence, and embodiment. Comfortable with immersive production and game-engine pipelines."
+    }
+  }
+}

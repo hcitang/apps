@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DIS 2026 Schedule — Persona Viewer</title>
+<style>
+  :root {
+    --bg:       #f8f7f2;
+    --ink:      #2a2a30;
+    --muted:    #8a8a90;
+    --line:     #d4d2ca;
+    --slot-bg:  #ffffff;
+    --sensitive-tag: #b0506a;
+    --route-outline: #b77600;
+    --search-match:  #6aa5e0;
+
+    /* Perceptually graded amber ramp for rating 1..5. */
+    --r0: #ffffff;
+    --r1: #fbf8ed;
+    --r2: #f9eecb;
+    --r3: #f5db8a;
+    --r4: #eabf3b;
+    --r5: #c9921a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    margin: 0; padding: 20px 24px;
+    font-size: 13px;
+  }
+  h1 { margin: 0 0 6px; font-size: 20px; }
+  .summary { margin-bottom: 12px; color: var(--muted); font-size: 12px; }
+  .summary a { color: var(--ink); }
+  #validation { background: #ffe0d0; color: #7a2a00; padding: 8px 12px;
+                border-radius: 6px; margin: 10px 0; display: none; }
+
+  #controls {
+    display: flex; gap: 10px; align-items: flex-start;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  #personas {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    padding: 8px; background: #fff;
+    border: 1px solid var(--line); border-radius: 8px;
+    flex: 1; min-width: 400px;
+  }
+  .chip {
+    display: flex; align-items: center; gap: 6px;
+    padding: 5px 10px; border-radius: 18px;
+    border: 1px solid var(--line);
+    background: #fafaf7;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.1s, border-color 0.1s;
+  }
+  .chip:hover { background: #efece2; }
+  .chip.active {
+    background: var(--ink); color: white; border-color: var(--ink);
+  }
+  .chip .icon { font-size: 18px; }
+  .chip .name { font-weight: 600; font-size: 13px; }
+  .chip .topic { color: var(--muted); font-size: 10px; }
+  .chip.active .topic { color: #b8b8b8; }
+  .chip .meta { color: var(--muted); font-size: 11px; margin-left: 4px; }
+  .chip.active .meta { color: #c8c8c8; }
+
+  #sidecontrols {
+    display: flex; flex-direction: column; gap: 6px; min-width: 220px;
+  }
+  .side-row {
+    display: flex; gap: 6px; align-items: center;
+  }
+  #searchbox {
+    padding: 7px 10px; border: 1px solid var(--line); border-radius: 18px;
+    width: 100%; font-size: 12px; background: #fff; outline: none;
+  }
+  #searchbox:focus { border-color: var(--search-match); }
+  #searchclear {
+    padding: 5px 8px; border: 1px solid var(--line); border-radius: 14px;
+    background: #fff; cursor: pointer; font-size: 11px; color: var(--muted);
+  }
+  .toggle {
+    padding: 5px 10px; border: 1px solid var(--line);
+    border-radius: 16px; cursor: pointer; background: #fff;
+    user-select: none; font-size: 12px;
+    position: relative;
+  }
+  .toggle.active { background: #ffccc5; border-color: #c73a2a; color: #7a1000; }
+  .toggle .help {
+    display: inline-block; width: 14px; height: 14px;
+    line-height: 14px; text-align: center;
+    background: #bbb; color: white; border-radius: 50%;
+    font-size: 10px; margin-left: 4px;
+    cursor: help;
+  }
+  .tip {
+    position: absolute; top: 100%; left: 0; margin-top: 4px;
+    background: var(--ink); color: white; padding: 6px 10px;
+    border-radius: 6px; font-size: 11px; line-height: 1.4;
+    width: 260px; z-index: 100; display: none;
+  }
+  .toggle:hover .tip { display: block; }
+
+  #description {
+    padding: 10px 14px;
+    background: #fff;
+    border: 1px solid var(--line); border-radius: 8px;
+    margin-bottom: 14px;
+    min-height: 64px;
+    font-size: 12.5px; line-height: 1.45;
+  }
+  #description .persona-block {
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+  }
+  #description .persona-block:last-child { border-bottom: none; }
+  #description .persona-block:only-child { padding-top: 0; padding-bottom: 0; }
+  #description .head { font-weight: 600; font-size: 14px; margin-bottom: 3px; }
+  #description .meta { color: var(--muted); font-size: 11px; margin-bottom: 3px; }
+  #description .preview-tag {
+    display: inline-block; background: #f4e8c4; color: #7a5a00;
+    font-size: 10px; padding: 1px 5px; border-radius: 3px;
+    margin-left: 6px; vertical-align: middle;
+  }
+  #description .empty { color: var(--muted); font-style: italic; }
+
+  #layout { display: flex; gap: 16px; align-items: flex-start; }
+  #grid { flex: 1; min-width: 0; }
+  #detail {
+    width: 360px; flex-shrink: 0;
+    position: sticky; top: 20px;
+    max-height: calc(100vh - 40px); overflow-y: auto;
+    background: #fff;
+    border: 1px solid var(--line); border-radius: 8px;
+    padding: 16px;
+  }
+  #detail .empty {
+    color: var(--muted); font-style: italic; text-align: center;
+    padding: 40px 0;
+  }
+  #detail h2 { margin: 0 0 6px; font-size: 15px; }
+  #detail .sub { color: var(--muted); font-size: 11px; margin-bottom: 12px; }
+  #detail .paper {
+    background: #f7f5f0; padding: 8px 10px; margin: 6px 0;
+    border-radius: 4px; font-size: 12px; line-height: 1.35;
+    border-left: 3px solid transparent;
+  }
+  #detail .paper.match {
+    border-left-color: var(--search-match);
+    background: #eaf3ff;
+  }
+  #detail .paper .pid { color: var(--muted); font-size: 10px; }
+  #detail .paper .title { font-weight: 500; margin-top: 1px; }
+  #detail .paper .authors { color: var(--muted); font-size: 11px; margin-top: 3px; }
+  #detail .rsect {
+    margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line);
+  }
+  #detail .ratings {
+    display: grid; grid-template-columns: auto 1fr auto;
+    gap: 3px 8px; font-size: 12px;
+  }
+  #detail .bar {
+    background: #eee; height: 8px; border-radius: 4px; overflow: hidden;
+    align-self: center;
+  }
+  #detail .bar-fill { background: var(--ink); height: 100%; }
+
+  .day-grid {
+    display: grid;
+    grid-template-columns: 92px repeat(5, 1fr);
+    gap: 5px;
+    margin-bottom: 14px;
+  }
+  .day-header {
+    grid-column: 1 / -1;
+    font-size: 14px; font-weight: 600;
+    padding: 6px 0 2px;
+    border-bottom: 1px solid var(--line);
+  }
+  .col-header {
+    font-size: 11px; color: var(--muted); font-weight: 500;
+    padding: 3px 6px; text-align: center;
+  }
+  .slot-label {
+    padding: 6px;
+    font-size: 11px; color: var(--muted);
+    border-right: 1px solid var(--line);
+  }
+  .slot-label .time { font-weight: 500; color: var(--ink); }
+
+  .cell {
+    background: var(--cell-bg, var(--slot-bg));
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 7px 8px;
+    cursor: pointer;
+    min-height: 58px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.12s;
+  }
+  .cell:hover { border-color: var(--ink); }
+  .cell[data-hi="1"] { --cell-bg: var(--r1); }
+  .cell[data-hi="2"] { --cell-bg: var(--r2); }
+  .cell[data-hi="3"] { --cell-bg: var(--r3); }
+  .cell[data-hi="4"] { --cell-bg: var(--r4); }
+  .cell[data-hi="5"] { --cell-bg: var(--r5); }
+  .cell.attending {
+    box-shadow: inset 0 0 0 3px var(--route-outline);
+  }
+  .cell.selected { outline: 2px solid var(--ink); outline-offset: -2px; }
+  .cell.search-match { box-shadow: inset 0 0 0 3px var(--search-match); }
+  .cell.attending.search-match {
+    box-shadow: inset 0 0 0 3px var(--route-outline),
+                inset 0 0 0 6px var(--search-match);
+  }
+
+  .cell .sid { font-size: 10px; color: var(--muted); }
+  .cell .name { font-size: 12px; font-weight: 500; margin-top: 2px; line-height: 1.2; }
+  .cell .magnets { font-size: 13px; margin-top: 6px; letter-spacing: 1px; }
+  .cell .sensitive {
+    position: absolute; top: 4px; right: 6px;
+    color: var(--sensitive-tag); font-size: 11px;
+  }
+  .cell.empty { background: #eee; border-style: dashed; color: var(--muted); }
+  .cell.industry { background: #f4ece0; border-style: dashed;
+                   font-style: italic; color: var(--muted);
+                   display: flex; align-items: center; justify-content: center; }
+  .cell.conflict { outline: 2px dashed #c73a2a; outline-offset: -2px; }
+</style>
+</head>
+<body>
+
+<h1>DIS 2026 Schedule — Persona Viewer</h1>
+<div class="summary" id="summary">Loading…</div>
+<div id="validation"></div>
+
+<div id="controls">
+  <div id="personas"></div>
+  <div id="sidecontrols">
+    <div class="side-row">
+      <input id="searchbox" placeholder="Search papers — title or author…" />
+      <div id="searchclear" title="Clear search">×</div>
+    </div>
+    <div class="side-row">
+      <div class="toggle" id="conflictToggle">
+        ⚠ show conflicts
+        <span class="help">?</span>
+        <div class="tip">
+          Highlights parallel-slot pairs where a persona has two or more sessions rated 4+.
+          When one persona is active, shows only their conflicts; when multiple (or none)
+          are active, shows any persona's conflicts. These are the hard choices that
+          remain even with a good schedule.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="description"><div class="empty">Hover or click a persona chip above. Ctrl/Cmd-click to select more than one.</div></div>
+
+<div id="layout">
+  <div id="grid"></div>
+  <aside id="detail"><div class="empty">Click any session cell for paper details and per-persona ratings.</div></aside>
+</div>
+
+<script>
+const DAYS = ['Mon','Tue','Wed'];
+const DAY_LABEL = {Mon:"Monday 15 Jun", Tue:"Tuesday 16 Jun", Wed:"Wednesday 17 Jun"};
+const SLOT_TIMES = {
+  Mon: ['11:00-12:30','14:00-15:30','16:00-17:30'],
+  Tue: ['09:00-10:30','11:00-12:30','14:00-15:30','16:00-17:30'],
+  Wed: ['09:00-10:30','11:00-12:30','14:00-15:30'],
+};
+const SLOT_CAPS = {Mon:[5,5,4], Tue:[5,5,5,4], Wed:[5,5,5]};
+
+let personaData, PERSONAS, ICONS, TOPICS, DESCR;
+let sched, sessions, items, matrix;
+let ratings = {};
+let sessionById = {};
+let itemById = {};
+let slotAttended = {};
+
+let activePersonas = new Set();
+let previewPersona = null;
+let showConflicts = false;
+let selectedSessionId = null;
+let searchTerm = '';
+let searchMatchingSids = new Set();
+let searchMatchingPids = new Set();
+
+async function loadAll() {
+  [personaData, sched, sessions, items, matrix] = await Promise.all([
+    fetch('personas.json').then(r=>r.json()),
+    fetch('schedule.json').then(r=>r.json()),
+    fetch('sessions_min6.json').then(r=>r.json()),
+    fetch('items_min6.json').then(r=>r.json()),
+    fetch('persona_session_matrix.json').then(r=>r.json()),
+  ]);
+  PERSONAS = personaData.order;
+  ICONS = Object.fromEntries(PERSONAS.map(p => [p, personaData.personas[p].icon]));
+  TOPICS = Object.fromEntries(PERSONAS.map(p => [p, personaData.personas[p].topic]));
+  DESCR  = Object.fromEntries(PERSONAS.map(p => [p, personaData.personas[p].description]));
+
+  for (const s of sessions.sessions) sessionById[s.id] = s;
+  for (const it of items) itemById[it.id] = it;
+  for (const s of matrix.sessions) {
+    for (const p of PERSONAS) {
+      (ratings[p] ||= {})[s.id] = s.ratings[p];
+    }
+  }
+  validate();
+  computeAttendance();
+  renderSummary();
+  renderPersonas();
+  renderDescription();
+  renderGrid();
+  renderDetail();
+  wireSearch();
+}
+
+function validate() {
+  const warnings = [];
+  if (sched.assignments.length !== 48)
+    warnings.push(`Expected 48 assignments, got ${sched.assignments.length}`);
+  if (matrix.personas.length !== 15)
+    warnings.push(`Expected 15 personas, got ${matrix.personas.length}`);
+  if (!PERSONAS.every(p => matrix.personas.includes(p)))
+    warnings.push(`personas.json doesn't match persona_session_matrix.json`);
+  if (warnings.length) {
+    const el = document.getElementById('validation');
+    el.innerHTML = '<strong>Data issues:</strong><br>' + warnings.join('<br>');
+    el.style.display = 'block';
+  }
+}
+
+function computeAttendance() {
+  for (const p of PERSONAS) {
+    slotAttended[p] = {};
+    for (const d of DAYS) {
+      SLOT_TIMES[d].forEach((_, slot) => {
+        const candidates = sched.assignments.filter(a => a.day === d && a.slot === slot);
+        if (!candidates.length) return;
+        let best = candidates[0], bestR = ratings[p][best.session_id];
+        for (const a of candidates) {
+          const r = ratings[p][a.session_id];
+          if (r > bestR) { bestR = r; best = a; }
+        }
+        slotAttended[p][`${d}|${slot}`] = best.session_id;
+      });
+    }
+  }
+}
+
+function personaTotal(p) {
+  return Object.values(slotAttended[p]).reduce((a, sid) => a + ratings[p][sid], 0);
+}
+function personaUpper(p) {
+  const rs = Object.values(ratings[p]).sort((a,b)=>b-a);
+  return rs.slice(0,10).reduce((a,b)=>a+b, 0);
+}
+
+function renderSummary() {
+  const el = document.getElementById('summary');
+  el.innerHTML =
+    `<a href="schedule.html">plain view</a> · <a href="personas.html">persona list</a> · ` +
+    `click a persona; Ctrl/Cmd-click to add more; gold outline = session they'd attend in that slot`;
+}
+
+function renderPersonas() {
+  const el = document.getElementById('personas');
+  el.innerHTML = '';
+  for (const p of PERSONAS) {
+    const chip = document.createElement('div');
+    chip.className = 'chip';
+    if (activePersonas.has(p)) chip.classList.add('active');
+    chip.dataset.persona = p;
+    chip.innerHTML = `
+      <span class="icon">${ICONS[p]}</span>
+      <span class="name">${p}</span>
+      <span class="topic">${TOPICS[p]}</span>`;
+    chip.onclick = (ev) => {
+      const multi = ev.ctrlKey || ev.metaKey;
+      if (multi) {
+        if (activePersonas.has(p)) activePersonas.delete(p);
+        else activePersonas.add(p);
+      } else {
+        if (activePersonas.has(p) && activePersonas.size === 1) activePersonas.delete(p);
+        else { activePersonas.clear(); activePersonas.add(p); }
+      }
+      renderPersonas(); renderDescription(); updateHighlights();
+    };
+    chip.onmouseenter = () => { previewPersona = p; renderDescription(); updateHighlights(); };
+    chip.onmouseleave = () => { previewPersona = null; renderDescription(); updateHighlights(); };
+    el.appendChild(chip);
+  }
+  document.getElementById('conflictToggle').classList.toggle('active', showConflicts);
+}
+
+function renderDescription() {
+  const el = document.getElementById('description');
+  const pinned = [...activePersonas];
+  const showPreview = previewPersona && !activePersonas.has(previewPersona);
+  if (pinned.length === 0 && !showPreview) {
+    el.innerHTML = '<div class="empty">Hover or click a persona chip above. Ctrl/Cmd-click to select more than one.</div>';
+    return;
+  }
+  const toShow = [];
+  if (showPreview) toShow.push({p: previewPersona, preview: true});
+  for (const p of pinned) toShow.push({p, preview: false});
+  el.innerHTML = toShow.map(({p, preview}) => `
+    <div class="persona-block">
+      <div class="head">
+        ${ICONS[p]} ${p}
+        <span style="font-weight:400; color:var(--muted); font-size:12px">${TOPICS[p]}</span>
+        ${preview ? '<span class="preview-tag">hover</span>' : ''}
+      </div>
+      <div>${DESCR[p]}</div>
+    </div>`).join('');
+}
+
+function renderGrid() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  for (const day of DAYS) {
+    const dg = document.createElement('div');
+    dg.className = 'day-grid';
+    dg.innerHTML = `<div class="day-header">${DAY_LABEL[day]}</div><div class="col-header"></div>` +
+      [0,1,2,3,4].map(r => `<div class="col-header">Room ${r+1}</div>`).join('');
+    SLOT_TIMES[day].forEach((t, slot) => {
+      const sl = document.createElement('div');
+      sl.className = 'slot-label';
+      sl.innerHTML = `<div class="time">${t}</div><div>Slot ${slot+1}</div>`;
+      dg.appendChild(sl);
+      for (let r=0;r<5;r++) {
+        const cap = SLOT_CAPS[day][slot];
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        if (r >= cap) {
+          if (slot === SLOT_CAPS[day].length-1 && r === 4 && day !== 'Wed') {
+            cell.classList.add('industry');
+            cell.textContent = 'Industry';
+          } else {
+            cell.classList.add('empty');
+            cell.textContent = '—';
+          }
+        } else {
+          const a = sched.assignments.find(x => x.day===day && x.slot===slot && x.room===r);
+          if (!a) { cell.classList.add('empty'); cell.textContent='—'; }
+          else {
+            const s = sessionById[a.session_id];
+            const sensitive = !s.quirky_name;
+            const magnets = PERSONAS.filter(p=>ratings[p][s.id]>=4);
+            cell.innerHTML = `
+              <div class="sid">S${s.id}</div>
+              <div class="name">${s.name}</div>
+              <div class="magnets">${magnets.map(p=>ICONS[p]).join('')}</div>
+              ${sensitive ? '<div class="sensitive" title="Sensitive">●</div>' : ''}`;
+            cell.dataset.sid = s.id;
+            cell.dataset.day = day;
+            cell.dataset.slot = slot;
+            cell.dataset.room = r;
+            cell.onclick = () => { selectedSessionId = s.id; renderDetail(); updateHighlights(); };
+          }
+        }
+        dg.appendChild(cell);
+      }
+    });
+    grid.appendChild(dg);
+  }
+}
+
+function activeSetForHighlight() {
+  const set = new Set(activePersonas);
+  if (previewPersona) set.add(previewPersona);
+  return set;
+}
+
+function updateHighlights() {
+  const activeSet = activeSetForHighlight();
+  const cells = document.querySelectorAll('.cell[data-sid]');
+  cells.forEach(c => {
+    c.classList.remove('attending', 'conflict', 'selected', 'search-match');
+    c.removeAttribute('data-hi');
+    if (selectedSessionId != null && parseInt(c.dataset.sid) === selectedSessionId)
+      c.classList.add('selected');
+  });
+  const list = [...activeSet];
+  if (list.length > 0) {
+    cells.forEach(c => {
+      const sid = parseInt(c.dataset.sid);
+      const day = c.dataset.day, slot = c.dataset.slot;
+      const attendsHere = list.some(p => slotAttended[p][`${day}|${slot}`] === sid);
+      if (attendsHere) c.classList.add('attending');
+      let maxR = 0;
+      for (const p of list) maxR = Math.max(maxR, ratings[p][sid]);
+      if (maxR >= 1) c.dataset.hi = String(maxR);
+    });
+    if (showConflicts) {
+      const bySlot = {};
+      cells.forEach(c => { const k = `${c.dataset.day}|${c.dataset.slot}`; (bySlot[k] ||= []).push(c); });
+      for (const k of Object.keys(bySlot)) {
+        for (const p of list) {
+          const hi = bySlot[k].filter(c => ratings[p][parseInt(c.dataset.sid)] >= 4);
+          if (hi.length >= 2) hi.forEach(c => c.classList.add('conflict'));
+        }
+      }
+    }
+  } else if (showConflicts) {
+    const bySlot = {};
+    cells.forEach(c => { const k = `${c.dataset.day}|${c.dataset.slot}`; (bySlot[k] ||= []).push(c); });
+    for (const k of Object.keys(bySlot)) {
+      for (const p of PERSONAS) {
+        const hi = bySlot[k].filter(c => ratings[p][parseInt(c.dataset.sid)] >= 4);
+        if (hi.length >= 2) hi.forEach(c => c.classList.add('conflict'));
+      }
+    }
+  }
+  if (searchTerm) {
+    cells.forEach(c => {
+      const sid = parseInt(c.dataset.sid);
+      if (searchMatchingSids.has(sid)) c.classList.add('search-match');
+    });
+  }
+}
+
+function wireSearch() {
+  const box = document.getElementById('searchbox');
+  const clear = document.getElementById('searchclear');
+  box.addEventListener('input', () => { searchTerm = box.value.trim().toLowerCase(); runSearch(); });
+  clear.addEventListener('click', () => { box.value = ''; searchTerm = ''; runSearch(); });
+}
+
+function runSearch() {
+  searchMatchingSids = new Set(); searchMatchingPids = new Set();
+  if (searchTerm) {
+    for (const it of items) {
+      if ((it.title||'').toLowerCase().includes(searchTerm) ||
+          (it.authors||'').toLowerCase().includes(searchTerm) ||
+          (it.id||'').toLowerCase().includes(searchTerm)) {
+        searchMatchingSids.add(it.session); searchMatchingPids.add(it.id);
+      }
+    }
+  }
+  updateHighlights(); renderDetail();
+}
+
+function renderDetail() {
+  const el = document.getElementById('detail');
+  if (selectedSessionId == null) {
+    el.innerHTML = '<div class="empty">Click any session cell for paper details and per-persona ratings.</div>';
+    return;
+  }
+  const sid = selectedSessionId;
+  const s = sessionById[sid];
+  // Use session.items canonical order (from order_sessions.py)
+  const papers = (s.items || []).map(iid => itemById[iid]).filter(Boolean);
+  const sensitive = !s.quirky_name;
+  const head = `
+    <h2>S${sid} — ${s.name}</h2>
+    <div class="sub">
+      ${sensitive ? '⚠ sensitive topic · ' : (s.quirky_name ? `aka "${s.quirky_name}" · ` : '')}
+      ${papers.length} items · spread ${s.spread?.toFixed(3) ?? '?'}
+    </div>`;
+  const paperHtml = papers.map((p, i) => {
+    const matchClass = searchMatchingPids.has(p.id) ? ' match' : '';
+    return `
+      <div class="paper${matchClass}">
+        <div class="pid">#${i+1} · ${p.id}</div>
+        <div class="title">${p.title}</div>
+        <div class="authors">${p.authors}</div>
+      </div>`;
+  }).join('');
+  const rHtml = `
+    <div class="rsect">
+      <div style="font-weight:600; margin-bottom:8px">Persona interest</div>
+      <div class="ratings">
+        ${PERSONAS.map(p => `
+          <div>${ICONS[p]} ${p}</div>
+          <div class="bar"><div class="bar-fill" style="width:${ratings[p][sid]*20}%"></div></div>
+          <div>${ratings[p][sid]}</div>`).join('')}
+      </div>
+    </div>`;
+  el.innerHTML = head + paperHtml + rHtml;
+}
+
+document.getElementById('conflictToggle').addEventListener('click', () => {
+  showConflicts = !showConflicts; renderPersonas(); updateHighlights();
+});
+
+loadAll().catch(e => {
+  document.getElementById('validation').style.display = 'block';
+  document.getElementById('validation').textContent = 'Load error: ' + e;
+});
+</script>
+</body>
+</html>

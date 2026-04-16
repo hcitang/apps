@@ -1,0 +1,337 @@
+{
+  "objective": "room-camp satisfaction",
+  "total_satisfaction": 594,
+  "upper_bound": 636,
+  "gap": 42,
+  "seed": 5,
+  "day_slot_caps": {
+    "Mon": [
+      5,
+      5,
+      4
+    ],
+    "Tue": [
+      5,
+      5,
+      5,
+      4
+    ],
+    "Wed": [
+      5,
+      5,
+      5
+    ]
+  },
+  "seed_scores": [
+    {
+      "seed": 5,
+      "score": 594
+    },
+    {
+      "seed": 1,
+      "score": 593
+    },
+    {
+      "seed": 4,
+      "score": 592
+    },
+    {
+      "seed": 3,
+      "score": 592
+    },
+    {
+      "seed": 2,
+      "score": 592
+    }
+  ],
+  "assignments": [
+    {
+      "session_id": 0,
+      "day": "Mon",
+      "slot": 0,
+      "room": 1
+    },
+    {
+      "session_id": 1,
+      "day": "Tue",
+      "slot": 0,
+      "room": 0
+    },
+    {
+      "session_id": 2,
+      "day": "Tue",
+      "slot": 2,
+      "room": 2
+    },
+    {
+      "session_id": 3,
+      "day": "Wed",
+      "slot": 0,
+      "room": 3
+    },
+    {
+      "session_id": 4,
+      "day": "Tue",
+      "slot": 3,
+      "room": 2
+    },
+    {
+      "session_id": 5,
+      "day": "Wed",
+      "slot": 2,
+      "room": 4
+    },
+    {
+      "session_id": 6,
+      "day": "Wed",
+      "slot": 0,
+      "room": 2
+    },
+    {
+      "session_id": 7,
+      "day": "Tue",
+      "slot": 1,
+      "room": 3
+    },
+    {
+      "session_id": 8,
+      "day": "Wed",
+      "slot": 1,
+      "room": 3
+    },
+    {
+      "session_id": 9,
+      "day": "Wed",
+      "slot": 2,
+      "room": 3
+    },
+    {
+      "session_id": 10,
+      "day": "Mon",
+      "slot": 2,
+      "room": 2
+    },
+    {
+      "session_id": 11,
+      "day": "Wed",
+      "slot": 1,
+      "room": 0
+    },
+    {
+      "session_id": 12,
+      "day": "Tue",
+      "slot": 0,
+      "room": 4
+    },
+    {
+      "session_id": 13,
+      "day": "Mon",
+      "slot": 1,
+      "room": 3
+    },
+    {
+      "session_id": 14,
+      "day": "Tue",
+      "slot": 1,
+      "room": 4
+    },
+    {
+      "session_id": 15,
+      "day": "Wed",
+      "slot": 2,
+      "room": 1
+    },
+    {
+      "session_id": 16,
+      "day": "Tue",
+      "slot": 0,
+      "room": 3
+    },
+    {
+      "session_id": 17,
+      "day": "Tue",
+      "slot": 3,
+      "room": 1
+    },
+    {
+      "session_id": 18,
+      "day": "Tue",
+      "slot": 0,
+      "room": 2
+    },
+    {
+      "session_id": 19,
+      "day": "Tue",
+      "slot": 3,
+      "room": 3
+    },
+    {
+      "session_id": 20,
+      "day": "Wed",
+      "slot": 0,
+      "room": 1
+    },
+    {
+      "session_id": 21,
+      "day": "Tue",
+      "slot": 2,
+      "room": 0
+    },
+    {
+      "session_id": 22,
+      "day": "Wed",
+      "slot": 1,
+      "room": 2
+    },
+    {
+      "session_id": 23,
+      "day": "Mon",
+      "slot": 0,
+      "room": 3
+    },
+    {
+      "session_id": 24,
+      "day": "Wed",
+      "slot": 0,
+      "room": 4
+    },
+    {
+      "session_id": 25,
+      "day": "Mon",
+      "slot": 1,
+      "room": 1
+    },
+    {
+      "session_id": 26,
+      "day": "Mon",
+      "slot": 0,
+      "room": 2
+    },
+    {
+      "session_id": 27,
+      "day": "Wed",
+      "slot": 2,
+      "room": 2
+    },
+    {
+      "session_id": 28,
+      "day": "Mon",
+      "slot": 1,
+      "room": 2
+    },
+    {
+      "session_id": 29,
+      "day": "Wed",
+      "slot": 0,
+      "room": 0
+    },
+    {
+      "session_id": 30,
+      "day": "Tue",
+      "slot": 3,
+      "room": 0
+    },
+    {
+      "session_id": 31,
+      "day": "Mon",
+      "slot": 2,
+      "room": 3
+    },
+    {
+      "session_id": 32,
+      "day": "Tue",
+      "slot": 2,
+      "room": 4
+    },
+    {
+      "session_id": 33,
+      "day": "Mon",
+      "slot": 0,
+      "room": 0
+    },
+    {
+      "session_id": 34,
+      "day": "Mon",
+      "slot": 0,
+      "room": 4
+    },
+    {
+      "session_id": 35,
+      "day": "Wed",
+      "slot": 1,
+      "room": 4
+    },
+    {
+      "session_id": 36,
+      "day": "Wed",
+      "slot": 1,
+      "room": 1
+    },
+    {
+      "session_id": 37,
+      "day": "Tue",
+      "slot": 2,
+      "room": 1
+    },
+    {
+      "session_id": 38,
+      "day": "Mon",
+      "slot": 1,
+      "room": 4
+    },
+    {
+      "session_id": 39,
+      "day": "Tue",
+      "slot": 1,
+      "room": 0
+    },
+    {
+      "session_id": 40,
+      "day": "Tue",
+      "slot": 0,
+      "room": 1
+    },
+    {
+      "session_id": 41,
+      "day": "Tue",
+      "slot": 2,
+      "room": 3
+    },
+    {
+      "session_id": 42,
+      "day": "Mon",
+      "slot": 2,
+      "room": 0
+    },
+    {
+      "session_id": 43,
+      "day": "Mon",
+      "slot": 1,
+      "room": 0
+    },
+    {
+      "session_id": 44,
+      "day": "Wed",
+      "slot": 2,
+      "room": 0
+    },
+    {
+      "session_id": 45,
+      "day": "Tue",
+      "slot": 1,
+      "room": 2
+    },
+    {
+      "session_id": 46,
+      "day": "Tue",
+      "slot": 1,
+      "room": 1
+    },
+    {
+      "session_id": 47,
+      "day": "Mon",
+      "slot": 2,
+      "room": 1
+    }
+  ]
+}

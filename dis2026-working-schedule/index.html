@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DIS 2026 Working Schedule</title>
+<style>
+  :root {
+    --bg:    #f8f7f2;
+    --ink:   #2a2a30;
+    --muted: #8a8a90;
+    --line:  #d4d2ca;
+    --accent:#b77600;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    margin: 0; padding: 40px 32px;
+    font-size: 14px;
+    max-width: 760px;
+    line-height: 1.55;
+  }
+  h1 { margin: 0 0 8px; font-size: 26px; }
+  .sub { color: var(--muted); margin-bottom: 30px; }
+  h2 { font-size: 17px; margin-top: 32px; margin-bottom: 10px; }
+  .card {
+    display: block;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    text-decoration: none;
+    color: var(--ink);
+    transition: border-color 0.12s, transform 0.12s;
+  }
+  .card:hover { border-color: var(--accent); }
+  .card .title {
+    font-weight: 600; font-size: 15px; margin-bottom: 3px;
+  }
+  .card .desc { color: var(--muted); font-size: 12.5px; }
+  .note {
+    background: #fff;
+    border-left: 3px solid var(--accent);
+    padding: 10px 14px;
+    border-radius: 4px;
+    margin: 20px 0 28px;
+    font-size: 12.5px;
+    color: #555;
+  }
+  a { color: var(--accent); }
+  .footer {
+    margin-top: 40px;
+    color: var(--muted);
+    font-size: 12px;
+    border-top: 1px solid var(--line);
+    padding-top: 14px;
+  }
+</style>
+</head>
+<body>
+
+<h1>DIS 2026 Working Schedule</h1>
+<div class="sub">Draft program — 48 sessions · 292 items · Mon 15 – Wed 17 June 2026</div>
+
+<div class="note">
+  This is a <strong>working draft</strong> produced with automated clustering
+  and a persona-driven scheduler. It will change in response to author day
+  preferences, committee feedback, and programmatic notes. Please send
+  comments — they help tune the next pass.
+</div>
+
+<h2>Browse the schedule</h2>
+
+<a class="card" href="schedule.html">
+  <div class="title">📅 Schedule</div>
+  <div class="desc">Clean grid view of all 48 sessions. Click any cell for paper details. Search for your paper by title, author, or item ID.</div>
+</a>
+
+<a class="card" href="schedule-personas.html">
+  <div class="title">🐻🦊🐙 Schedule + personas</div>
+  <div class="desc">The same grid, but with 15 attendee archetypes you can select. Each persona highlights the sessions they'd attend across the conference. Useful for spotting parallel-slot conflicts.</div>
+</a>
+
+<a class="card" href="personas.html">
+  <div class="title">🗒️ Persona roster</div>
+  <div class="desc">Who the 15 personas are and what they care about.</div>
+</a>
+
+<a class="card" href="PROCESS.md">
+  <div class="title">🔧 How this was built</div>
+  <div class="desc">The clustering, scheduling, ordering, and validation pipeline — in plain English.</div>
+</a>
+
+<h2>Sending feedback</h2>
+<p>
+  If you spot a mis-clustered paper, a bad session name, a day-of-week
+  request from your authors, or a parallel conflict we missed, please reach
+  out to Tony Tang (DIS 2026 TPC) or open an issue at
+  <a href="https://github.com/hcitang/dis2026-schedule">github.com/hcitang/dis2026-schedule</a>.
+</p>
+
+<div class="footer">
+  Built by the DIS 2026 TPC · Source at
+  <a href="https://github.com/hcitang/dis2026-schedule">hcitang/dis2026-schedule</a>
+</div>
+
+</body>
+</html>
