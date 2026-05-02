@@ -3770,19 +3770,6 @@
     "z3": 3.877718687057495
   },
   {
-    "id": "tochi3",
-    "type": "tochi",
-    "title": "The Development and (Mis)appropriation of a Digital Kit for Jewellers",
-    "abstract": "Jewellers' participation in interaction design is scarce, yet the creativity of jewellers could add value as they interpret materials and mediate personal connections in poetic ways. We investigate how to empower jewellers to experiment with the possibilities that physical computing offers to their practice. This paper presents the making of a Digital Jewellery Kit, a composite of pre-assembled circuitry, used by second-year BA jewellery students during a 10-week project which brought together theory and practice. Drawing on students' reflective accounts, we discuss what made the jewellers' path into physical computing more meaningful to their practice, what type of artefacts they created with electronics as well as what values drove their creative process. We offer design recommendations on how to support the praxes of jewellers whilst allowing their creativity to grow through their new understanding of physical computing and contribute to the discussions around hybrid craft within HCI and educational contexts.",
-    "authors": "Nantia Koulidou, Luis Carvalho, Tanya Gleadow, Daniela Petrelli",
-    "session": 39,
-    "x": 3.6563708782196045,
-    "y": 0.9271412491798401,
-    "x3": 7.344309329986572,
-    "y3": 4.695051193237305,
-    "z3": 5.251327037811279
-  },
-  {
     "id": "tochi4",
     "type": "tochi",
     "title": "Tangles: Unpacking Extended Collision Experiences with Soma Trajectories",
