@@ -962,19 +962,6 @@
     "z3": 4.756159782409668
   },
   {
-    "id": "Paper5091",
-    "type": "paper",
-    "title": "From Shared Bodies to Shared Minds: Understanding the Design of Intertwined Cognition in Social VR",
-    "abstract": "Bodily intertwinement in body games fosters engagement and social connection, yet how shared bodily control shapes intertwined cognitive experiences remains underexplored. We introduce BrainTwist, a VR game where two players co-embody a single avatar to perform a memory task through merged physical movements. This shared control creates dynamic push-and-pull over actions and decisions, revealing how bodily coordination influences cognition. Through a mixed-methods study (N=40), we found co-embodiment introduced efficiency trade-offs, with performance significantly affected by partner cognitive skill. Participants also reported reduced sense of agency and body ownership compared to standard collaboration. However, co-embodiment significantly increased co-presence and was perceived as novel, playful, and socially engaging. Participants described progression from intertwined bodily action to cognitive negotiation, where shared movement became a medium for thinking together, disagreeing, and adapting in real time. Based on these findings, we propose design implications for leveraging co-embodied interaction to support social experiences where bodily interdependence enables cognitive negotiation.",
-    "authors": "Zhuying Li, Haoran Wang, Xin Tong, Min-Ling Zhang",
-    "session": 7,
-    "x": 3.305194616317749,
-    "y": 2.8260722160339355,
-    "x3": 8.112696647644043,
-    "y3": 5.224654197692871,
-    "z3": 3.702603578567505
-  },
-  {
     "id": "Paper4981",
     "type": "paper",
     "title": "CollEagle: Transforming Conversation into Shared Interactive Content for Collocated Collaboration",
