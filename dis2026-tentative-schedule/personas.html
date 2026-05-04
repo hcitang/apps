@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DIS 2026 Persona Roster</title>
+<style>
+  :root {
+    --bg:       #f8f7f2;
+    --ink:      #2a2a30;
+    --muted:    #8a8a90;
+    --line:     #d4d2ca;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    margin: 0; padding: 24px 32px;
+    font-size: 14px;
+    max-width: 920px;
+  }
+  h1 { margin: 0 0 6px; font-size: 22px; }
+  .intro { color: var(--muted); font-size: 13px; margin-bottom: 24px; line-height: 1.5; }
+  .intro a { color: var(--ink); }
+  .persona {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 14px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+    align-items: start;
+  }
+  .persona:last-child { border-bottom: none; }
+  .icon {
+    font-size: 36px; line-height: 1;
+    text-align: center;
+  }
+  .header {
+    display: flex; align-items: baseline; gap: 10px;
+    margin-bottom: 4px; flex-wrap: wrap;
+  }
+  .name { font-weight: 700; font-size: 18px; }
+  .topic {
+    color: var(--muted); font-size: 13px; font-weight: 500;
+  }
+  .student {
+    color: var(--muted); font-size: 11px;
+    background: #eee; padding: 2px 8px; border-radius: 10px;
+  }
+  .desc { line-height: 1.5; color: #333; }
+</style>
+</head>
+<body>
+
+<h1>DIS 2026 Persona Roster</h1>
+<div class="intro">
+  Fifteen archetypes of people who come to DIS, used for program scheduling.
+  Each is a coherent set of interests (method, topic, stance, population)
+  that magnetizes an attendee toward a particular subset of the 48 sessions.
+  The scheduler tries to spread each persona's top-rated sessions across
+  different parallel slots.
+  ·
+  <a href="schedule.html">plain schedule</a> ·
+  <a href="schedule-personas.html">persona schedule viewer</a>
+</div>
+
+<div id="list">Loading…</div>
+
+<script>
+fetch('personas.json').then(r => r.json()).then(data => {
+  const el = document.getElementById('list');
+  el.innerHTML = data.order.map(name => {
+    const p = data.personas[name];
+    return `
+      <div class="persona">
+        <div class="icon">${p.icon}</div>
+        <div>
+          <div class="header">
+            <span class="name">${name}</span>
+            <span class="topic">${p.topic}</span>
+          </div>
+          <div class="desc">${p.description}</div>
+        </div>
+      </div>`;
+  }).join('');
+}).catch(e => {
+  document.getElementById('list').textContent = 'Load error: ' + e;
+});
+</script>
+
+</body>
+</html>
