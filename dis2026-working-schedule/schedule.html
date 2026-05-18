@@ -109,10 +109,12 @@
   .cell .sid { font-size: 10px; color: var(--muted); }
   .cell .name { font-size: 12px; font-weight: 500; margin-top: 2px; line-height: 1.2; }
   .cell .count { font-size: 10px; color: var(--muted); margin-top: 6px; }
+  .cell .awards { font-size: 12px; margin-top: 4px; letter-spacing: 1px; line-height: 1; }
   .cell .sensitive {
     position: absolute; top: 4px; right: 6px;
     color: var(--sensitive-tag); font-size: 11px;
   }
+  #detail .paper .title .award { margin-right: 4px; }
   .cell.empty { background: #eee; border-style: dashed; color: var(--muted); }
   .cell.industry {
     background: #f4ece0; border-style: dashed;
@@ -147,20 +149,29 @@ const SLOT_TIMES = {
 };
 const SLOT_CAPS = {Mon:[5,5,4], Tue:[5,5,5,4], Wed:[5,5,5]};
 
+const AWARD_EMOJI = { BP: '🏅', HM: '🎗' };
+const AWARD_LABEL = { BP: 'Best Paper', HM: 'Honourable Mention' };
+
 let sched, sessions, items;
 let sessionById = {};
 let itemById = {};
+let awardOf = () => null;  // populated in loadAll
 let selectedSessionId = null;
 let searchTerm = '';
 let searchMatchingSids = new Set();
 let searchMatchingPids = new Set();
 
 async function loadAll() {
-  [sched, sessions, items] = await Promise.all([
+  let awards;
+  [sched, sessions, items, awards] = await Promise.all([
     fetch('schedule.json').then(r=>r.json()),
     fetch('sessions_min6.json').then(r=>r.json()),
     fetch('items_min6.json').then(r=>r.json()),
+    fetch('awards.json').then(r=>r.json()),
   ]);
+  const bp = new Set(awards.best_paper.map(n => 'Paper' + n));
+  const hm = new Set(awards.honourable_mention.map(n => 'Paper' + n));
+  awardOf = id => bp.has(id) ? 'BP' : hm.has(id) ? 'HM' : null;
   for (const s of sessions.sessions) sessionById[s.id] = s;
   for (const it of items) itemById[it.id] = it;
   validate();
@@ -217,10 +228,15 @@ function renderGrid() {
           else {
             const s = sessionById[a.session_id];
             const sensitive = !s.quirky_name;
+            const awarded = (s.items||[]).map(iid => awardOf(iid)).filter(Boolean);
+            const awardHtml = awarded.length
+              ? `<div class="awards" title="${awarded.map(a=>AWARD_LABEL[a]).join(', ')}">${awarded.map(a=>AWARD_EMOJI[a]).join('')}</div>`
+              : '';
             cell.innerHTML = `
               <div class="sid">S${s.id}</div>
               <div class="name">${s.name}</div>
               <div class="count">${(s.items||[]).length} items</div>
+              ${awardHtml}
               ${sensitive ? '<div class="sensitive" title="Sensitive">●</div>' : ''}`;
             cell.dataset.sid = s.id;
             cell.onclick = () => { selectedSessionId = s.id; renderDetail(); updateSearchOverlay(); };
@@ -283,10 +299,12 @@ function renderDetail() {
     </div>`;
   const paperHtml = papers.map((p, i) => {
     const matchClass = searchMatchingPids.has(p.id) ? ' match' : '';
+    const a = awardOf(p.id);
+    const badge = a ? `<span class="award" title="${AWARD_LABEL[a]}">${AWARD_EMOJI[a]}</span>` : '';
     return `
       <div class="paper${matchClass}">
         <div class="pid">#${i+1} · ${p.id}</div>
-        <div class="title">${p.title}</div>
+        <div class="title">${badge}${p.title}</div>
         <div class="authors">${p.authors}</div>
       </div>`;
   }).join('');

@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIS 2026 Schedule Visualizer</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #1a1a2e;
+  color: #e0e0e0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 13px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#topbar {
+  display: flex;
+  gap: 8px;
+  padding: 6px 12px;
+  background: #16213e;
+  border-bottom: 1px solid #2a2a4a;
+  flex-shrink: 0;
+}
+
+#topbar button {
+  padding: 5px 14px;
+  background: #2a2a4a;
+  color: #e0e0e0;
+  border: 1px solid #3a3a6a;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+#topbar button:hover { background: #3a3a6a; }
+
+#app {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── Plot panel ── */
+#plot-panel {
+  width: 65%;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #2a2a4a;
+  position: relative;
+}
+
+#plot-toolbar {
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #16213e;
+  border-bottom: 1px solid #2a2a4a;
+  flex-shrink: 0;
+}
+
+#color-toggle {
+  padding: 4px 10px;
+  background: #2a2a4a;
+  color: #e0e0e0;
+  border: 1px solid #3a3a6a;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+  white-space: nowrap;
+}
+#color-toggle:hover { background: #3a3a6a; }
+
+#legend {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  flex-wrap: wrap;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+}
+.legend-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+#search-input {
+  margin-left: auto;
+  padding: 4px 8px;
+  background: #2a2a4a;
+  color: #e0e0e0;
+  border: 1px solid #3a3a6a;
+  border-radius: 4px;
+  font-size: 12px;
+  width: 180px;
+  outline: none;
+}
+#search-input:focus { border-color: #f5a623; }
+#search-input::placeholder { color: #666; }
+
+#plot-container {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+#plot-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+#cors-msg {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #2a2a4a;
+  border: 1px solid #f5a623;
+  border-radius: 6px;
+  padding: 20px 28px;
+  text-align: center;
+  color: #f5a623;
+  font-size: 13px;
+  line-height: 1.7;
+}
+#cors-msg code {
+  background: #1a1a2e;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+#tooltip {
+  position: fixed;
+  pointer-events: none;
+  background: #0d0d1e;
+  border: 1px solid #3a3a6a;
+  border-radius: 4px;
+  padding: 5px 9px;
+  font-size: 11px;
+  color: #e0e0e0;
+  z-index: 1000;
+  max-width: 280px;
+  display: none;
+}
+
+/* ── Sessions panel ── */
+#sessions-panel {
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #2a2a4a;
+  background: #16213e;
+  overflow: hidden;
+}
+
+#sessions-header {
+  padding: 7px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #2a2a4a;
+  flex-shrink: 0;
+  background: #131328;
+}
+#sessions-header span {
+  font-size: 12px;
+  font-weight: 600;
+  color: #a0a8d0;
+  letter-spacing: 0.04em;
+}
+#new-session-btn {
+  padding: 3px 8px;
+  background: #2a2a4a;
+  color: #e0e0e0;
+  border: 1px solid #3a3a6a;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+}
+#new-session-btn:hover { background: #3a3a6a; }
+
+#session-action-btns {
+  padding: 5px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-bottom: 1px solid #2a2a4a;
+  flex-shrink: 0;
+}
+#session-action-btns button {
+  padding: 4px 8px;
+  font-size: 11px;
+  background: #1e3a5f;
+  color: #7fc4fd;
+  border: 1px solid #2a5a8a;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: left;
+}
+#session-action-btns button:hover { background: #2a4a6f; }
+
+#sessions-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+#sessions-list::-webkit-scrollbar { width: 5px; }
+#sessions-list::-webkit-scrollbar-thumb { background: #2a2a4a; border-radius: 3px; }
+
+.session-row {
+  padding: 6px 8px;
+  cursor: pointer;
+  border-bottom: 1px solid #1a1a2e;
+  user-select: none;
+}
+.session-row:hover { background: #1e1e3a; }
+.session-row.focused { background: #1e3050; border-left: 2px solid #00d4ff; }
+.session-row.hover-highlight { background: #1e2a3a; border-left: 2px solid #f5a623; }
+
+.session-row-top {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.session-num {
+  font-size: 10px;
+  color: #666;
+  min-width: 16px;
+}
+.session-name {
+  flex: 1;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.session-badge {
+  font-size: 10px;
+  background: #2a2a4a;
+  padding: 1px 5px;
+  border-radius: 10px;
+  color: #aaa;
+  flex-shrink: 0;
+}
+.session-icons {
+  display: flex;
+  gap: 3px;
+  flex-shrink: 0;
+}
+.session-icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 2px;
+  font-size: 11px;
+  opacity: 0.5;
+  color: #e0e0e0;
+  line-height: 1;
+}
+.session-icon-btn:hover { opacity: 1; }
+
+.session-dot-strip {
+  display: flex;
+  gap: 2px;
+  padding-top: 3px;
+  flex-wrap: wrap;
+}
+.session-dot-strip .sdot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  opacity: 0.8;
+}
+
+.session-spread-bar-wrap {
+  margin-top: 3px;
+  display: flex;
+  align-items: center;
+}
+.session-spread-bar-bg {
+  width: 60px; height: 3px;
+  background: #2a2a4a;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.session-spread-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+}
+
+.session-edit-form {
+  display: none;
+  padding-top: 5px;
+  flex-direction: column;
+  gap: 3px;
+}
+.session-edit-form input {
+  background: #2a2a4a;
+  border: 1px solid #3a3a6a;
+  border-radius: 3px;
+  color: #e0e0e0;
+  padding: 3px 6px;
+  font-size: 11px;
+  width: 100%;
+  outline: none;
+}
+.session-edit-form input:focus { border-color: #f5a623; }
+
+/* ── Info panel ── */
+#info-panel {
+  width: 15%;
+  display: flex;
+  flex-direction: column;
+  background: #16213e;
+  overflow-y: auto;
+}
+#info-panel::-webkit-scrollbar { width: 5px; }
+#info-panel::-webkit-scrollbar-thumb { background: #2a2a4a; border-radius: 3px; }
+
+.info-section {
+  border-bottom: 1px solid #2a2a4a;
+  flex-shrink: 0;
+}
+.info-section-header {
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  background: #131328;
+  user-select: none;
+}
+.info-section-header:hover { background: #1a1a40; }
+.info-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #a0a8d0;
+  letter-spacing: 0.04em;
+}
+.info-chevron {
+  font-size: 10px;
+  color: #555;
+  transition: transform 0.15s;
+}
+.info-section.collapsed .info-chevron { transform: rotate(-90deg); }
+.info-section-body {
+  padding: 8px 10px;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.info-section.collapsed .info-section-body { display: none; }
+
+.info-id { color: #f5a623; font-size: 10px; margin-bottom: 2px; }
+.info-title { font-weight: 600; margin-bottom: 4px; color: #e0e0e0; }
+.info-authors { color: #aaa; margin-bottom: 4px; }
+.info-session-assign { color: #7fc4fd; font-size: 10px; margin-bottom: 4px; }
+.info-abstract { color: #bbb; font-size: 10px; }
+
+.search-result-item {
+  padding: 3px 0;
+  border-bottom: 1px solid #1a1a2e;
+  cursor: pointer;
+  font-size: 10px;
+  color: #ccc;
+  line-height: 1.4;
+}
+.search-result-item:hover { color: #f5a623; }
+.search-result-item .sri-id { color: #f5a623; }
+
+.pick-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 2px 0;
+  border-bottom: 1px solid #1a1a2e;
+  font-size: 10px;
+}
+.pick-item-text { flex: 1; color: #ccc; line-height: 1.3; }
+.pick-item-x, .session-item-x {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.pick-item-x:hover, .session-item-x:hover { color: #ff7c5c; }
+
+.pick-actions {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+.pick-actions button {
+  padding: 3px 7px;
+  font-size: 10px;
+  background: #2a2a4a;
+  color: #e0e0e0;
+  border: 1px solid #3a3a6a;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.pick-actions button:hover { background: #3a3a6a; }
+
+.session-detail-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 2px 0;
+  border-bottom: 1px solid #1a1a2e;
+  font-size: 10px;
+}
+.session-detail-item-text { flex: 1; color: #ccc; line-height: 1.3; }
+
+.session-detail-name-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 6px;
+}
+.session-detail-name-edit input {
+  background: #2a2a4a;
+  border: 1px solid #3a3a6a;
+  border-radius: 3px;
+  color: #e0e0e0;
+  padding: 3px 6px;
+  font-size: 11px;
+  outline: none;
+  width: 100%;
+}
+.session-detail-name-edit input:focus { border-color: #f5a623; }
+.session-detail-name-edit label { font-size: 9px; color: #666; }
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <span style="font-size:12px;color:#a0a8d0;">DIS 2026 clustering (min6, production)</span>
+  <button id="load-btn">Load sessions</button>
+  <button id="save-btn">Save sessions</button>
+  <input type="file" id="file-input" accept=".json" style="display:none">
+  <span style="font-size:11px;color:#8888a8;margin-left:auto;">Note: lasso / re-assign / save are local-only — Save downloads a JSON but does not update the deployed schedule.</span>
+</div>
+
+<div id="app">
+  <!-- Plot panel -->
+  <div id="plot-panel">
+    <div id="plot-toolbar">
+      <button id="color-toggle">Color: Type</button>
+      <div id="legend"></div>
+      <input type="text" id="search-input" placeholder="Search titles…">
+    </div>
+    <div id="plot-container">
+      <svg id="plot-svg"></svg>
+      <div id="cors-msg">
+        Could not load <code>items_min6.json</code> — likely a CORS error.<br>
+        Serve with: <code>python3 -m http.server 8000</code>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sessions panel -->
+  <div id="sessions-panel">
+    <div id="sessions-header">
+      <span>SESSIONS</span>
+      <button id="new-session-btn">+ New</button>
+    </div>
+    <div id="session-action-btns"></div>
+    <div id="sessions-list"></div>
+  </div>
+
+  <!-- Info panel -->
+  <div id="info-panel">
+    <!-- Spotlight -->
+    <div class="info-section" id="section-spotlight">
+      <div class="info-section-header" data-section="spotlight">
+        <span class="info-section-title">SPOTLIGHT</span>
+        <span class="info-chevron">▾</span>
+      </div>
+      <div class="info-section-body" id="spotlight-body">
+        <div style="color:#555;font-size:11px">Hover over an item or search.</div>
+      </div>
+    </div>
+
+    <!-- Pick selection -->
+    <div class="info-section collapsed" id="section-picks">
+      <div class="info-section-header" data-section="picks">
+        <span class="info-section-title">PICK SELECTION</span>
+        <span class="info-chevron">▾</span>
+      </div>
+      <div class="info-section-body" id="picks-body"></div>
+    </div>
+
+    <!-- Session detail -->
+    <div class="info-section collapsed" id="section-session-detail">
+      <div class="info-section-header" data-section="session-detail">
+        <span class="info-section-title">SESSION DETAIL</span>
+        <span class="info-chevron">▾</span>
+      </div>
+      <div class="info-section-body" id="session-detail-body"></div>
+    </div>
+  </div>
+</div>
+
+<div id="tooltip"></div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────────────
+const state = {
+  items: [],           // all items from items.json
+  sessions: [],        // [{id, name, quirky_name, items:[ids]}]
+  focusedSession: null,// session id or null
+  hoveredSession: null,// session id or null
+  lassoSelection: new Set(),  // item ids
+  pickSelection: new Set(),   // item ids
+  searchQuery: '',
+  colorMode: 'type',   // 'type' | 'session'
+  _nextSessionId: 0,
+};
+
+const TYPE_COLORS = {
+  paper: '#4a9eff',
+  pictorial: '#ff7c5c',
+  tochi: '#ffd700',
+};
+const SESSION_SCHEME = d3.schemeTableau10.concat(d3.schemePastel1);
+
+function sessionColor(sessionId) {
+  if (sessionId == null) return '#555';
+  const idx = state.sessions.findIndex(s => s.id === sessionId);
+  return idx >= 0 ? SESSION_SCHEME[idx % SESSION_SCHEME.length] : '#555';
+}
+
+function itemById(id) { return state.items.find(it => it.id === id); }
+
+function sessionOfItem(itemId) {
+  return state.sessions.find(s => s.items.includes(itemId)) || null;
+}
+
+// ── D3 Plot ────────────────────────────────────────────────────────────────
+let svg, gBase, gSearch, gLasso, gPick, gFocus, gHoverSession, lassoRect, xScale, yScale;
+let lassoActive = false, lassoStart = null, lassoCurrentRect = null;
+
+function initPlot() {
+  const container = document.getElementById('plot-container');
+  svg = d3.select('#plot-svg');
+  svg.selectAll('*').remove();
+
+  const W = container.clientWidth;
+  const H = container.clientHeight;
+  const margin = { top: 20, right: 20, bottom: 30, left: 40 };
+
+  const xs = state.items.map(d => d.x);
+  const ys = state.items.map(d => d.y);
+  const xPad = (d3.max(xs) - d3.min(xs)) * 0.05 || 1;
+  const yPad = (d3.max(ys) - d3.min(ys)) * 0.05 || 1;
+
+  xScale = d3.scaleLinear()
+    .domain([d3.min(xs) - xPad, d3.max(xs) + xPad])
+    .range([margin.left, W - margin.right]);
+
+  yScale = d3.scaleLinear()
+    .domain([d3.min(ys) - yPad, d3.max(ys) + yPad])
+    .range([H - margin.bottom, margin.top]);
+
+  // Axes (subtle)
+  svg.append('g')
+    .attr('transform', `translate(0,${H - margin.bottom})`)
+    .call(d3.axisBottom(xScale).ticks(6).tickSize(-H + margin.top + margin.bottom))
+    .call(g => {
+      g.selectAll('line').attr('stroke', '#2a2a4a');
+      g.selectAll('text').attr('fill', '#444');
+      g.select('.domain').remove();
+    });
+
+  svg.append('g')
+    .attr('transform', `translate(${margin.left},0)`)
+    .call(d3.axisLeft(yScale).ticks(6).tickSize(-W + margin.left + margin.right))
+    .call(g => {
+      g.selectAll('line').attr('stroke', '#2a2a4a');
+      g.selectAll('text').attr('fill', '#444');
+      g.select('.domain').remove();
+    });
+
+  // Layers
+  gBase        = svg.append('g').attr('class', 'layer-base');
+  gHoverSession= svg.append('g').attr('class', 'layer-hover-session');
+  gFocus       = svg.append('g').attr('class', 'layer-focus');
+  gSearch = svg.append('g').attr('class', 'layer-search');
+  gLasso  = svg.append('g').attr('class', 'layer-lasso');
+  gPick   = svg.append('g').attr('class', 'layer-pick');
+
+  // Lasso rect element
+  lassoRect = svg.append('rect')
+    .attr('class', 'lasso-rect')
+    .attr('fill', 'none')
+    .attr('stroke', '#00ff88')
+    .attr('stroke-width', 1.5)
+    .attr('stroke-dasharray', '4 3')
+    .attr('pointer-events', 'none')
+    .style('display', 'none');
+
+  // Interactions on SVG background
+  svg.on('mousedown', onLassoStart)
+    .on('mousemove', onMouseMove)
+    .on('mouseup', onLassoEnd)
+    .on('mouseleave', () => { hideTooltip(); });
+
+  drawBase();
+  drawHighlights();
+}
+
+function dotColor(d) {
+  if (state.colorMode === 'session') {
+    const s = sessionOfItem(d.id);
+    return s ? sessionColor(s.id) : '#555';
+  }
+  return TYPE_COLORS[d.type] || '#888';
+}
+
+function drawBase() {
+  if (!gBase) return;
+  const circles = gBase.selectAll('circle').data(state.items, d => d.id);
+  circles.join(
+    enter => enter.append('circle')
+      .attr('cx', d => xScale(d.x))
+      .attr('cy', d => yScale(d.y))
+      .attr('r', 5)
+      .attr('fill', d => dotColor(d))
+      .attr('opacity', 0.75)
+      .attr('cursor', 'pointer')
+      .on('click', onDotClick)
+      .on('mouseenter', onDotHover)
+      .on('mouseleave', hideTooltip),
+    update => update
+      .attr('cx', d => xScale(d.x))
+      .attr('cy', d => yScale(d.y))
+      .attr('fill', d => dotColor(d))
+      .on('click', onDotClick)
+      .on('mouseenter', onDotHover)
+      .on('mouseleave', hideTooltip),
+    exit => exit.remove()
+  );
+}
+
+function drawHighlights() {
+  if (!gFocus) return;
+
+  // Hovered session items — soft orange ring (below focus layer)
+  const hoverSessionIds = state.hoveredSession != null
+    ? (state.sessions.find(s => s.id === state.hoveredSession)?.items || [])
+    : [];
+  const hoverSessionData = state.items.filter(d => hoverSessionIds.includes(d.id));
+  gHoverSession.selectAll('circle').data(hoverSessionData, d => d.id).join(
+    enter => enter.append('circle')
+      .attr('cx', d => xScale(d.x)).attr('cy', d => yScale(d.y))
+      .attr('r', 7).attr('fill', 'none')
+      .attr('stroke', '#f5a623').attr('stroke-width', 1.5).attr('opacity', 0.6),
+    update => update.attr('cx', d => xScale(d.x)).attr('cy', d => yScale(d.y)),
+    exit => exit.remove()
+  );
+
+  // Focused session items — cyan
+  const focusIds = state.focusedSession != null
+    ? (state.sessions.find(s => s.id === state.focusedSession)?.items || [])
+    : [];
+  const focusData = state.items.filter(d => focusIds.includes(d.id));
+  gFocus.selectAll('circle').data(focusData, d => d.id).join(
+    enter => enter.append('circle')
+      .attr('cx', d => xScale(d.x)).attr('cy', d => yScale(d.y))
+      .attr('r', 7).attr('fill', 'none')
+      .attr('stroke', '#00d4ff').attr('stroke-width', 2)
+      .attr('pointer-events', 'none'),
+    update => update.attr('cx', d => xScale(d.x)).attr('cy', d => yScale(d.y)),
+    exit => exit.remove()
+  );
+
+  // Search highlights — yellow
+  const searchData = state.searchQuery
+    ? state.items.filter(d => d.title.toLowerCase().includes(state.searchQuery.toLowerCase()))
+    : [];
+  gSearch.selectAll('circle').data(searchData, d => d.id).join(
+    enter => enter.append('circle')
+      .attr('cx', d => xScale(d.x)).attr('cy', d => yScale(d.y))
+      .attr('r', 7).attr('fill', 'none')
+      .attr('stroke', '#ffe600').attr('stroke-width', 2)
+      .attr('pointer-events', 'none'),
+    update => update.attr('cx', d => xScale(d.x)).attr('cy', d => yScale(d.y)),
+    exit => exit.remove()
+  );
+
+  // Lasso highlights — bright green
+  const lassoData = state.items.filter(d => state.lassoSelection.has(d.id));
+  gLasso.selectAll('circle').data(lassoData, d => d.id).join(
+    enter => enter.append('circle')
+      .attr('cx', d => xScale(d.x)).attr('cy', d => yScale(d.y))
+      .attr('r', 7).attr('fill', '#00ff88').attr('opacity', 0.35)
+      .attr('stroke', '#00ff88').attr('stroke-width', 1.5)
+      .attr('pointer-events', 'none'),
+    update => update.attr('cx', d => xScale(d.x)).attr('cy', d => yScale(d.y)),
+    exit => exit.remove()
+  );
+
+  // Pick highlights — orange ring
+  const pickData = state.items.filter(d => state.pickSelection.has(d.id));
+  gPick.selectAll('circle').data(pickData, d => d.id).join(
+    enter => enter.append('circle')
+      .attr('cx', d => xScale(d.x)).attr('cy', d => yScale(d.y))
+      .attr('r', 8).attr('fill', 'none')
+      .attr('stroke', '#f5a623').attr('stroke-width', 2.5)
+      .attr('pointer-events', 'none'),
+    update => update.attr('cx', d => xScale(d.x)).attr('cy', d => yScale(d.y)),
+    exit => exit.remove()
+  );
+}
+
+// ── Lasso interactions ─────────────────────────────────────────────────────
+function onLassoStart(event) {
+  if (event.target.tagName === 'circle') return;
+  lassoActive = true;
+  lassoStart = d3.pointer(event);
+  lassoCurrentRect = null;
+  lassoRect.style('display', null)
+    .attr('x', lassoStart[0]).attr('y', lassoStart[1])
+    .attr('width', 0).attr('height', 0);
+}
+
+function onLassoEnd(event) {
+  if (!lassoActive) return;
+  lassoActive = false;
+  lassoRect.style('display', 'none');
+  if (!lassoCurrentRect) {
+    lassoStart = null;
+    if (state.lassoSelection.size > 0) {
+      state.lassoSelection = new Set();
+      drawHighlights();
+      renderSessionActions();
+      renderPicksPanel();
+      clearSpotlight();
+    }
+    return;
+  }
+  const { x, y, w, h } = lassoCurrentRect;
+  // Convert pixel rect to data coords
+  const x0 = xScale.invert(x), x1 = xScale.invert(x + w);
+  const y0 = yScale.invert(y + h), y1 = yScale.invert(y);
+  const selected = state.items.filter(d =>
+    d.x >= Math.min(x0, x1) && d.x <= Math.max(x0, x1) &&
+    d.y >= Math.min(y0, y1) && d.y <= Math.max(y0, y1)
+  );
+  state.lassoSelection = new Set(selected.map(d => d.id));
+  lassoStart = null;
+  lassoCurrentRect = null;
+  drawHighlights();
+  renderSessionActions();
+  renderPicksPanel();
+  if (state.lassoSelection.size > 0) renderSpotlightLasso();
+}
+
+function onMouseMove(event) {
+  if (lassoActive && lassoStart) {
+    const cur = d3.pointer(event);
+    const x = Math.min(lassoStart[0], cur[0]);
+    const y = Math.min(lassoStart[1], cur[1]);
+    const w = Math.abs(cur[0] - lassoStart[0]);
+    const h = Math.abs(cur[1] - lassoStart[1]);
+    lassoCurrentRect = { x, y, w, h };
+    lassoRect.attr('x', x).attr('y', y).attr('width', w).attr('height', h);
+  }
+}
+
+// ── Dot interactions ───────────────────────────────────────────────────────
+function onDotClick(event, d) {
+  event.stopPropagation();
+  if (event.shiftKey && state.focusedSession != null) {
+    // Shift+click: toggle in focused session
+    const session = state.sessions.find(s => s.id === state.focusedSession);
+    if (session) {
+      const idx = session.items.indexOf(d.id);
+      if (idx >= 0) session.items.splice(idx, 1);
+      else moveItemsToSession([d.id], session);
+    }
+    drawBase();
+    drawHighlights();
+    renderSessionsPanel();
+    renderSessionDetailPanel();
+    return;
+  }
+  // Normal click: toggle pick
+  if (state.pickSelection.has(d.id)) state.pickSelection.delete(d.id);
+  else state.pickSelection.add(d.id);
+  drawHighlights();
+  renderPicksPanel();
+  renderSessionActions();
+}
+
+function onDotHover(event, d) {
+  const tt = document.getElementById('tooltip');
+  tt.style.display = 'block';
+  tt.innerHTML = `<strong style="color:#f5a623">${d.id}</strong><br>${d.title}`;
+  positionTooltip(event, tt);
+  if (!state.searchQuery) renderSpotlightHover(d);
+  // Highlight the session row this item belongs to
+  document.querySelectorAll('.session-row.hover-highlight').forEach(r => r.classList.remove('hover-highlight'));
+  const s = sessionOfItem(d.id);
+  if (s) {
+    const row = document.querySelector(`.session-row[data-session-id="${s.id}"]`);
+    if (row) {
+      row.classList.add('hover-highlight');
+      row.scrollIntoView({ block: 'nearest' });
+    }
+  }
+}
+
+function positionTooltip(event, tt) {
+  const mx = event.clientX, my = event.clientY;
+  let left = mx + 12, top = my - 10;
+  if (left + 290 > window.innerWidth) left = mx - 290;
+  if (top + 60 > window.innerHeight) top = my - 60;
+  tt.style.left = left + 'px';
+  tt.style.top = top + 'px';
+}
+
+function hideTooltip() {
+  document.getElementById('tooltip').style.display = 'none';
+  document.querySelectorAll('.session-row.hover-highlight').forEach(r => r.classList.remove('hover-highlight'));
+}
+
+// ── Legend ─────────────────────────────────────────────────────────────────
+function renderLegend() {
+  const container = document.getElementById('legend');
+  container.innerHTML = '';
+  if (state.colorMode === 'type') {
+    Object.entries(TYPE_COLORS).forEach(([type, color]) => {
+      const item = document.createElement('div');
+      item.className = 'legend-item';
+      item.innerHTML = `<div class="legend-dot" style="background:${color}"></div><span>${type}</span>`;
+      container.appendChild(item);
+    });
+  } else {
+    const item = document.createElement('div');
+    item.className = 'legend-item';
+    item.style.color = '#aaa';
+    item.innerHTML = `<span>${state.sessions.length} session${state.sessions.length !== 1 ? 's' : ''}</span>`;
+    container.appendChild(item);
+  }
+}
+
+// ── Sessions panel ─────────────────────────────────────────────────────────
+function spreadBarColor(norm) {
+  // green (0,200,0) → yellow (255,220,0) → red (220,50,50)
+  if (norm <= 0.5) {
+    const t = norm * 2;
+    const r = Math.round(t * 255);
+    const g = Math.round(200 + t * 20);
+    return `rgb(${r},${g},0)`;
+  } else {
+    const t = (norm - 0.5) * 2;
+    const g = Math.round(220 - t * 170);
+    return `rgb(220,${g},50)`;
+  }
+}
+
+function renderSessionsPanel() {
+  const list = document.getElementById('sessions-list');
+  list.innerHTML = '';
+  state.sessions.forEach((session, idx) => {
+    const row = document.createElement('div');
+    row.className = 'session-row' + (state.focusedSession === session.id ? ' focused' : '');
+    row.dataset.sessionId = session.id;
+
+    const displayName = session.name || `Unnamed session ${idx + 1}`;
+
+    // Dot strip
+    const dotStrip = session.items.map(id => {
+      const item = itemById(id);
+      const color = item ? (TYPE_COLORS[item.type] || '#888') : '#555';
+      return `<div class="sdot" style="background:${color}"></div>`;
+    }).join('');
+
+    row.innerHTML = `
+      <div class="session-row-top">
+        <span class="session-num">${idx + 1}</span>
+        <span class="session-name" title="${displayName}">${displayName}</span>
+        <span class="session-badge">${session.items.length}</span>
+        <div class="session-icons">
+          <button class="session-icon-btn edit-btn" title="Edit name">✏️</button>
+          <button class="session-icon-btn delete-btn" title="Delete">🗑️</button>
+        </div>
+      </div>
+      <div class="session-dot-strip">${dotStrip}</div>
+      ${session.spread_norm != null ? `<div class="session-spread-bar-wrap"><div class="session-spread-bar-bg" title="spread: ${session.spread.toFixed(3)}"><div class="session-spread-bar-fill" style="width:${(session.spread_norm*100).toFixed(1)}%;background:${spreadBarColor(session.spread_norm)}"></div></div></div>` : ''}
+      <div class="session-edit-form">
+        <input type="text" class="edit-name-input" placeholder="Session name" value="${session.name || ''}">
+        <input type="text" class="edit-quirky-input" placeholder="Quirky name" value="${session.quirky_name || ''}">
+      </div>
+    `;
+
+    // Hover row → highlight items on plot
+    row.addEventListener('mouseenter', () => {
+      state.hoveredSession = session.id;
+      drawHighlights();
+    });
+    row.addEventListener('mouseleave', () => {
+      state.hoveredSession = null;
+      drawHighlights();
+    });
+
+    // Click row to focus (not on buttons)
+    row.addEventListener('click', (e) => {
+      if (e.target.closest('.edit-btn') || e.target.closest('.delete-btn') ||
+          e.target.closest('.session-edit-form')) return;
+      if (state.focusedSession === session.id) {
+        state.focusedSession = null;
+      } else {
+        state.focusedSession = session.id;
+      }
+      drawHighlights();
+      renderSessionsPanel();
+      renderSessionActions();
+      renderSessionDetailPanel();
+    });
+
+    // Edit button
+    row.querySelector('.edit-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const form = row.querySelector('.session-edit-form');
+      const isOpen = form.style.display === 'flex';
+      form.style.display = isOpen ? 'none' : 'flex';
+    });
+
+    // Edit inputs — save on change
+    row.querySelector('.edit-name-input').addEventListener('input', (e) => {
+      session.name = e.target.value || null;
+      row.querySelector('.session-name').textContent = session.name || `Unnamed session ${idx + 1}`;
+      if (state.focusedSession === session.id) renderSessionDetailPanel();
+    });
+    row.querySelector('.edit-quirky-input').addEventListener('input', (e) => {
+      session.quirky_name = e.target.value || null;
+      if (state.focusedSession === session.id) renderSessionDetailPanel();
+    });
+
+    // Delete button
+    row.querySelector('.delete-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const si = state.sessions.indexOf(session);
+      if (si >= 0) state.sessions.splice(si, 1);
+      if (state.focusedSession === session.id) {
+        state.focusedSession = null;
+        renderSessionDetailPanel();
+      }
+      drawBase();
+      drawHighlights();
+      renderSessionsPanel();
+      renderSessionActions();
+      renderLegend();
+    });
+
+    list.appendChild(row);
+  });
+
+  // Keep edit form open state if re-rendering (can't easily, just close all)
+}
+
+function moveItemsToSession(ids, targetSession) {
+  // Remove from all other sessions first
+  state.sessions.forEach(s => {
+    if (s.id !== targetSession.id) {
+      s.items = s.items.filter(id => !ids.includes(id));
+    }
+  });
+  // Add to target
+  ids.forEach(id => {
+    if (!targetSession.items.includes(id)) targetSession.items.push(id);
+  });
+}
+
+function renderSessionActions() {
+  const container = document.getElementById('session-action-btns');
+  container.innerHTML = '';
+  const hasLasso = state.lassoSelection.size > 0;
+  const hasPick = state.pickSelection.size > 0;
+  const hasFocus = state.focusedSession != null;
+
+  if (hasLasso) {
+    const btn = document.createElement('button');
+    btn.textContent = `Add lasso (${state.lassoSelection.size}) to picks`;
+    btn.addEventListener('click', () => {
+      state.lassoSelection.forEach(id => state.pickSelection.add(id));
+      drawHighlights();
+      renderPicksPanel();
+      renderSessionActions();
+    });
+    container.appendChild(btn);
+  }
+
+  if (hasLasso && hasFocus) {
+    const btn = document.createElement('button');
+    btn.textContent = `Add lasso (${state.lassoSelection.size}) to session`;
+    btn.addEventListener('click', () => {
+      const session = state.sessions.find(s => s.id === state.focusedSession);
+      if (session) moveItemsToSession([...state.lassoSelection], session);
+      drawBase();
+      drawHighlights();
+      renderSessionsPanel();
+      renderSessionDetailPanel();
+    });
+    container.appendChild(btn);
+  }
+
+  if (hasPick && hasFocus) {
+    const btn = document.createElement('button');
+    btn.textContent = `Add picks (${state.pickSelection.size}) to session`;
+    btn.addEventListener('click', () => {
+      const session = state.sessions.find(s => s.id === state.focusedSession);
+      if (session) moveItemsToSession([...state.pickSelection], session);
+      drawBase();
+      drawHighlights();
+      renderSessionsPanel();
+      renderSessionDetailPanel();
+    });
+    container.appendChild(btn);
+  }
+}
+
+// ── Info panel renders ─────────────────────────────────────────────────────
+function renderSpotlightHover(d) {
+  const body = document.getElementById('spotlight-body');
+  const session = sessionOfItem(d.id);
+  const sessionLabel = session
+    ? `Session ${state.sessions.indexOf(session) + 1}: ${session.name || 'Unnamed'}`
+    : 'Unassigned';
+  const abstract = d.abstract ? d.abstract.slice(0, 300) + (d.abstract.length > 300 ? '…' : '') : '';
+  body.innerHTML = `
+    <div class="info-id">${d.id}</div>
+    <div class="info-title">${d.title}</div>
+    <div class="info-authors">${d.authors || ''}</div>
+    <div class="info-session-assign">${sessionLabel}</div>
+    <div class="info-abstract">${abstract}</div>
+  `;
+  const sec = document.getElementById('section-spotlight');
+  sec.classList.remove('collapsed');
+}
+
+function renderSpotlightSearch() {
+  const body = document.getElementById('spotlight-body');
+  const q = state.searchQuery.toLowerCase();
+  const matches = state.items.filter(d => d.title.toLowerCase().includes(q));
+  if (matches.length === 0) {
+    body.innerHTML = `<div style="color:#555">No results for "${state.searchQuery}"</div>`;
+    return;
+  }
+  body.innerHTML = `<div style="color:#888;font-size:10px;margin-bottom:4px">${matches.length} result${matches.length !== 1 ? 's' : ''}</div>` +
+    matches.map(d => `<div class="search-result-item"><span class="sri-id">${d.id}</span> — ${d.title}</div>`).join('');
+  const sec = document.getElementById('section-spotlight');
+  sec.classList.remove('collapsed');
+}
+
+function clearSpotlight() {
+  document.getElementById('spotlight-body').innerHTML =
+    `<div style="color:#555;font-size:11px">Hover over an item or search.</div>`;
+}
+
+function renderSpotlightLasso() {
+  const ids = [...state.lassoSelection];
+  const items = ids.map(id => state.items.find(d => d.id === id)).filter(Boolean);
+  const body = document.getElementById('spotlight-body');
+  body.innerHTML = `<div style="color:#4dff88;font-size:10px;margin-bottom:4px">${items.length} lasso-selected</div>` +
+    items.map(d => `<div class="search-result-item"><span class="sri-id">${d.id}</span> — ${d.title}</div>`).join('');
+  document.getElementById('section-spotlight').classList.remove('collapsed');
+}
+
+function renderPicksPanel() {
+  const sec = document.getElementById('section-picks');
+  const body = document.getElementById('picks-body');
+  if (state.pickSelection.size === 0) {
+    sec.classList.add('collapsed');
+    body.innerHTML = '';
+    return;
+  }
+  sec.classList.remove('collapsed');
+  const items = [...state.pickSelection].map(id => itemById(id)).filter(Boolean);
+  body.innerHTML = `
+    <div class="pick-actions">
+      <button id="picks-clear-btn">Clear all</button>
+    </div>
+  ` + items.map(d =>
+    `<div class="pick-item">
+      <div class="pick-item-text"><span style="color:#f5a623">${d.id}</span> ${d.title}</div>
+      <button class="pick-item-x" data-id="${d.id}">✕</button>
+    </div>`
+  ).join('');
+
+  body.querySelector('#picks-clear-btn').addEventListener('click', () => {
+    state.pickSelection.clear();
+    drawHighlights();
+    renderPicksPanel();
+    renderSessionActions();
+  });
+  body.querySelectorAll('.pick-item-x').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.pickSelection.delete(btn.dataset.id);
+      drawHighlights();
+      renderPicksPanel();
+      renderSessionActions();
+    });
+  });
+}
+
+function renderSessionDetailPanel() {
+  const sec = document.getElementById('section-session-detail');
+  const body = document.getElementById('session-detail-body');
+  if (state.focusedSession == null) {
+    sec.classList.add('collapsed');
+    body.innerHTML = '';
+    return;
+  }
+  const session = state.sessions.find(s => s.id === state.focusedSession);
+  if (!session) {
+    sec.classList.add('collapsed');
+    body.innerHTML = '';
+    return;
+  }
+  sec.classList.remove('collapsed');
+  const idx = state.sessions.indexOf(session);
+
+  body.innerHTML = `
+    <div class="session-detail-name-edit">
+      <label>Name</label>
+      <input type="text" id="sd-name" value="${session.name || ''}" placeholder="Session name">
+      <label>Quirky name</label>
+      <input type="text" id="sd-quirky" value="${session.quirky_name || ''}" placeholder="Quirky name">
+    </div>
+    <div style="color:#888;font-size:10px;margin-bottom:4px">${session.items.length} item${session.items.length !== 1 ? 's' : ''}</div>
+    <div style="margin-bottom:6px;font-size:11px">
+      <span style="color:#aaa">Cohesion: </span>
+      ${session.spread_norm != null ? (() => {
+        const pct = Math.round(session.spread_norm * 100);
+        const filled = Math.round(session.spread_norm * 10);
+        const bar = '█'.repeat(filled) + '░'.repeat(10 - filled);
+        const color = spreadBarColor(session.spread_norm);
+        return `<span style="color:${color};font-family:monospace">${bar}</span> <span style="color:#e0e0e0">${session.spread.toFixed(2)}</span> <span style="color:#666;font-size:10px">(${pct}%)  tighter ◄────► more spread</span>`;
+      })() : '<span style="color:#555">–</span>'}
+    </div>
+    ${session.items.map(id => {
+      const d = itemById(id);
+      return `<div class="session-detail-item">
+        <div class="session-detail-item-text">
+          <span style="color:#f5a623">${id}</span> ${d ? d.title : '(unknown)'}
+        </div>
+        <button class="session-item-x" data-id="${id}">✕</button>
+      </div>`;
+    }).join('')}
+  `;
+
+  body.querySelector('#sd-name').addEventListener('input', e => {
+    session.name = e.target.value || null;
+    renderSessionsPanel();
+  });
+  body.querySelector('#sd-quirky').addEventListener('input', e => {
+    session.quirky_name = e.target.value || null;
+  });
+
+  body.querySelectorAll('.session-item-x').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const i = session.items.indexOf(btn.dataset.id);
+      if (i >= 0) session.items.splice(i, 1);
+      drawBase();
+      drawHighlights();
+      renderSessionsPanel();
+      renderSessionDetailPanel();
+    });
+  });
+}
+
+// ── Load / Save ────────────────────────────────────────────────────────────
+function loadSessions(json) {
+  const data = typeof json === 'string' ? JSON.parse(json) : json;
+  if (!data.sessions || !Array.isArray(data.sessions)) return;
+  state.sessions = data.sessions.map(s => ({
+    id: s.id != null ? s.id : state._nextSessionId++,
+    name: s.name || null,
+    quirky_name: s.quirky_name || null,
+    items: Array.isArray(s.items) ? s.items.filter(id => state.items.some(it => it.id === id)) : [],
+    spread: s.spread != null ? s.spread : undefined,
+    spread_norm: s.spread_norm != null ? s.spread_norm : undefined,
+  }));
+  state._nextSessionId = Math.max(state._nextSessionId, ...state.sessions.map(s => s.id + 1), 0);
+  state.focusedSession = null;
+  drawBase();
+  drawHighlights();
+  renderSessionsPanel();
+  renderSessionActions();
+  renderSessionDetailPanel();
+  renderLegend();
+}
+
+function saveSessions() {
+  const data = {
+    version: 1,
+    sessions: state.sessions.map((s, i) => ({
+      id: i,
+      name: s.name || null,
+      quirky_name: s.quirky_name || null,
+      items: s.items.slice(),
+    })),
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'sessions.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── Collapsible sections ───────────────────────────────────────────────────
+document.querySelectorAll('.info-section-header').forEach(header => {
+  header.addEventListener('click', () => {
+    header.closest('.info-section').classList.toggle('collapsed');
+  });
+});
+
+// ── Top bar buttons ────────────────────────────────────────────────────────
+document.getElementById('load-btn').addEventListener('click', () => {
+  document.getElementById('file-input').click();
+});
+
+document.getElementById('file-input').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => loadSessions(ev.target.result);
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+document.getElementById('save-btn').addEventListener('click', saveSessions);
+
+document.getElementById('new-session-btn').addEventListener('click', () => {
+  const id = state._nextSessionId++;
+  state.sessions.push({ id, name: null, quirky_name: null, items: [] });
+  renderSessionsPanel();
+  renderLegend();
+});
+
+// ── Color toggle ──────────────────────────────────────────────────────────
+document.getElementById('color-toggle').addEventListener('click', () => {
+  state.colorMode = state.colorMode === 'type' ? 'session' : 'type';
+  document.getElementById('color-toggle').textContent =
+    `Color: ${state.colorMode === 'type' ? 'Type' : 'Session'}`;
+  drawBase();
+  renderLegend();
+});
+
+// ── Search ─────────────────────────────────────────────────────────────────
+document.getElementById('search-input').addEventListener('input', (e) => {
+  state.searchQuery = e.target.value.trim();
+  drawHighlights();
+  if (state.searchQuery) renderSpotlightSearch();
+  else clearSpotlight();
+});
+
+document.getElementById('search-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    e.target.value = '';
+    state.searchQuery = '';
+    drawHighlights();
+    clearSpotlight();
+  }
+});
+
+// ── Resize ─────────────────────────────────────────────────────────────────
+window.addEventListener('resize', () => {
+  if (state.items.length > 0) initPlot();
+});
+
+
+// ── Dataset switcher ───────────────────────────────────────────────────────
+// ── Bootstrap ──────────────────────────────────────────────────────────────
+async function bootstrap() {
+  // Load items
+  let items;
+  try {
+    const res = await fetch('items_min6.json');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    items = await res.json();
+  } catch (err) {
+    document.getElementById('cors-msg').style.display = 'block';
+    return;
+  }
+  state.items = items;
+
+  // Load sessions
+  try {
+    const res = await fetch('sessions_min6.json');
+    if (res.ok) {
+      const sessionsData = await res.json();
+      loadSessions(sessionsData);
+    }
+  } catch (_) { /* optional */ }
+
+  initPlot();
+  renderSessionsPanel();
+  renderSessionActions();
+  renderPicksPanel();
+  renderSessionDetailPanel();
+  renderLegend();
+}
+
+bootstrap();
+</script>
+</body>
+</html>
