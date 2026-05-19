@@ -221,6 +221,8 @@
   .cell .sid { font-size: 10px; color: var(--muted); }
   .cell .name { font-size: 12px; font-weight: 500; margin-top: 2px; line-height: 1.2; }
   .cell .magnets { font-size: 13px; margin-top: 6px; letter-spacing: 1px; }
+  .cell .awards { font-size: 12px; margin-top: 3px; letter-spacing: 1px; line-height: 1; }
+  #detail .paper .title .award { margin-right: 4px; }
   .cell .sensitive {
     position: absolute; top: 4px; right: 6px;
     color: var(--sensitive-tag); font-size: 11px;
@@ -278,11 +280,15 @@ const SLOT_TIMES = {
 const SLOT_CAPS = {Mon:[5,5,4], Tue:[5,5,5,4], Wed:[5,5,5]};
 
 let personaData, PERSONAS, ICONS, TOPICS, DESCR;
+const AWARD_EMOJI = { BP: '🏅', HM: '🎗' };
+const AWARD_LABEL = { BP: 'Best Paper', HM: 'Honourable Mention' };
+
 let sched, sessions, items, matrix;
 let ratings = {};
 let sessionById = {};
 let itemById = {};
 let slotAttended = {};
+let awardOf = () => null;
 
 let activePersonas = new Set();
 let previewPersona = null;
@@ -293,13 +299,18 @@ let searchMatchingSids = new Set();
 let searchMatchingPids = new Set();
 
 async function loadAll() {
-  [personaData, sched, sessions, items, matrix] = await Promise.all([
+  let awards;
+  [personaData, sched, sessions, items, matrix, awards] = await Promise.all([
     fetch('personas.json').then(r=>r.json()),
     fetch('schedule.json').then(r=>r.json()),
     fetch('sessions_min6.json').then(r=>r.json()),
     fetch('items_min6.json').then(r=>r.json()),
     fetch('persona_session_matrix.json').then(r=>r.json()),
+    fetch('awards.json').then(r=>r.json()),
   ]);
+  const bp = new Set(awards.best_paper.map(n => 'Paper' + n));
+  const hm = new Set(awards.honourable_mention.map(n => 'Paper' + n));
+  awardOf = id => bp.has(id) ? 'BP' : hm.has(id) ? 'HM' : null;
   PERSONAS = personaData.order;
   ICONS = Object.fromEntries(PERSONAS.map(p => [p, personaData.personas[p].icon]));
   TOPICS = Object.fromEntries(PERSONAS.map(p => [p, personaData.personas[p].topic]));
@@ -454,10 +465,15 @@ function renderGrid() {
             const s = sessionById[a.session_id];
             const sensitive = !s.quirky_name;
             const magnets = PERSONAS.filter(p=>ratings[p][s.id]>=4);
+            const awarded = (s.items||[]).map(iid => awardOf(iid)).filter(Boolean);
+            const awardHtml = awarded.length
+              ? `<div class="awards" title="${awarded.map(a=>AWARD_LABEL[a]).join(', ')}">${awarded.map(a=>AWARD_EMOJI[a]).join('')}</div>`
+              : '';
             cell.innerHTML = `
               <div class="sid">S${s.id}</div>
               <div class="name">${s.name}</div>
               <div class="magnets">${magnets.map(p=>ICONS[p]).join('')}</div>
+              ${awardHtml}
               ${sensitive ? '<div class="sensitive" title="Sensitive">●</div>' : ''}`;
             cell.dataset.sid = s.id;
             cell.dataset.day = day;
@@ -567,10 +583,12 @@ function renderDetail() {
     </div>`;
   const paperHtml = papers.map((p, i) => {
     const matchClass = searchMatchingPids.has(p.id) ? ' match' : '';
+    const a = awardOf(p.id);
+    const badge = a ? `<span class="award" title="${AWARD_LABEL[a]}">${AWARD_EMOJI[a]}</span>` : '';
     return `
       <div class="paper${matchClass}">
         <div class="pid">#${i+1} · ${p.id}</div>
-        <div class="title">${p.title}</div>
+        <div class="title">${badge}${p.title}</div>
         <div class="authors">${p.authors}</div>
       </div>`;
   }).join('');
