@@ -3,427 +3,135 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CHI 2026 keyword overview</title>
-<style>
-  :root {
-    --fg: #1a1a1a;
-    --muted: #6b6b6b;
-    --grey: #9b9b95;
-    --bg: #fdfdfa;
-    --panel: #ffffff;
-    --border: #e2e2dc;
-    --accent: #2a5edb;
-    --warn: #b15c00;
-    --cv-bg: #e3ebff;
-    --cv-fg: #2a5edb;
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    font-family: -apple-system, "SF Pro Text", Inter, system-ui, sans-serif;
-    font-size: 14px;
-    line-height: 1.4;
-    color: var(--fg);
-    background: var(--bg);
-    padding: 24px 28px 64px;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  h1 { font-size: 22px; margin: 0 0 4px; }
-  h2 { font-size: 17px; margin: 28px 0 8px; }
-  .meta {
-    color: var(--muted);
-    font-size: 12px;
-    margin-bottom: 16px;
-  }
-  .meta code {
-    background: #f0f0e8;
-    padding: 1px 5px;
-    border-radius: 3px;
-  }
-
-  /* Tabs */
-  nav#tabs {
-    display: flex;
-    gap: 2px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 20px;
-  }
-  nav#tabs button {
-    background: none;
-    border: 1px solid transparent;
-    border-bottom: none;
-    padding: 8px 18px;
-    font: inherit;
-    font-size: 13px;
-    color: var(--muted);
-    cursor: pointer;
-    border-radius: 6px 6px 0 0;
-    margin-bottom: -1px;
-  }
-  nav#tabs button:hover { background: #f0f4ff; color: var(--fg); }
-  nav#tabs button.active {
-    background: var(--bg);
-    color: var(--fg);
-    border-color: var(--border);
-    font-weight: 500;
-  }
-  .tab { display: none; }
-  .tab.active { display: block; }
-
-  .toolbar {
-    margin-bottom: 16px;
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-  .toolbar button {
-    padding: 5px 10px;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    cursor: pointer;
-    font: inherit;
-    font-size: 12px;
-  }
-  .toolbar button:hover { background: #f0f4ff; border-color: var(--accent); }
-
-  /* === Tab: Proposed taxonomy === */
-
-  details.column {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    margin-bottom: 12px;
-    overflow: hidden;
-  }
-  details.column[open] { box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
-  details.column > summary {
-    padding: 12px 16px;
-    cursor: pointer;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: baseline;
-    gap: 12px;
-    background: #f8f8f3;
-    list-style: none;
-  }
-  details.column > summary::-webkit-details-marker { display: none; }
-  details.column > summary::before {
-    content: "▶";
-    margin-right: 8px;
-    font-size: 10px;
-    color: var(--muted);
-    display: inline-block;
-    width: 12px;
-  }
-  details.column[open] > summary::before { content: "▼"; }
-  .col-name {
-    font-weight: 600;
-    font-size: 15px;
-  }
-  .col-stats {
-    color: var(--muted);
-    font-size: 12px;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .pile {
-    border-top: 1px solid var(--border);
-    padding: 10px 16px 10px 36px;
-    background: var(--panel);
-  }
-  .pile-head {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 12px;
-    align-items: baseline;
-    margin-bottom: 4px;
-  }
-  .pile-name {
-    font-weight: 500;
-    font-size: 13.5px;
-  }
-  .pile-stats {
-    color: var(--muted);
-    font-size: 11px;
-    font-variant-numeric: tabular-nums;
-  }
-  .muted-tail { color: var(--grey); font-weight: normal; }
-  .pile-cards {
-    color: var(--grey);
-    font-size: 11.5px;
-    line-height: 1.6;
-    padding-left: 4px;
-  }
-  .pile-card {
-    display: inline;
-    margin-right: 12px;
-    white-space: nowrap;
-  }
-  .pile-card .ck {
-    color: #2c8a3a;
-    font-weight: 600;
-    margin-right: 2px;
-  }
-  .pile-card .cnt {
-    font-variant-numeric: tabular-nums;
-    opacity: 0.7;
-  }
-  .pile-empty {
-    color: var(--grey);
-    font-size: 11px;
-    font-style: italic;
-  }
-
-  /* CV badges */
-  .cv {
-    display: inline-block;
-    margin-left: 6px;
-    padding: 0 5px;
-    font-size: 9px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    background: var(--cv-bg);
-    color: var(--cv-fg);
-    border-radius: 3px;
-    vertical-align: middle;
-    cursor: help;
-  }
-  .cv-checks {
-    display: inline-block;
-    margin-left: 4px;
-    padding: 0 5px;
-    font-size: 9px;
-    font-weight: 600;
-    letter-spacing: 0.03em;
-    background: #fff7e3;
-    color: #8b5a00;
-    border-radius: 3px;
-    vertical-align: middle;
-    cursor: help;
-  }
-
-  /* === Tab: CV distribution === */
-
-  .facet-block {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    margin-bottom: 14px;
-    overflow: hidden;
-  }
-  .facet-head {
-    padding: 10px 16px;
-    background: #f8f8f3;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: baseline;
-    gap: 12px;
-    border-bottom: 1px solid var(--border);
-  }
-  .facet-name {
-    font-weight: 600;
-    font-size: 15px;
-  }
-  .facet-stats {
-    color: var(--muted);
-    font-size: 12px;
-    font-variant-numeric: tabular-nums;
-  }
-  .facet-row {
-    display: grid;
-    grid-template-columns: 1fr 70px 220px;
-    align-items: center;
-    gap: 12px;
-    padding: 5px 16px;
-    font-size: 13px;
-    border-bottom: 1px solid var(--border);
-  }
-  .facet-row:last-child { border-bottom: none; }
-  .facet-row .term { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .facet-row .num {
-    text-align: right;
-    color: var(--muted);
-    font-variant-numeric: tabular-nums;
-  }
-  .facet-row .bar-wrap { background: #f0f0e8; border-radius: 2px; height: 10px; overflow: hidden; }
-  .facet-row .bar { height: 100%; background: #c9a553; opacity: 0.85; }
-
-  #status { color: var(--warn); font-size: 13px; padding: 16px; }
-</style>
+<title>CHI 2026 keyword explorer</title>
+<link rel="stylesheet" href="style.css?v=public1">
 </head>
 <body>
-  <h1>CHI 2026 keyword overview</h1>
-  <div class="meta" id="meta">Loading <code>overview_data.json</code>…</div>
-
+<header>
+  <h1>CHI 2026 keyword explorer</h1>
   <nav id="tabs">
-    <button data-tab="proposed" class="active">Proposed taxonomy</button>
-    <button data-tab="cv">CV usage by facet</button>
+    <button data-tab="board" class="active">Board</button>
+    <button data-tab="taxhier">Taxonomy view</button>
+    <button data-tab="gaps">Taxonomy gaps</button>
+    <button data-tab="clusters">Author keywords</button>
+    <button data-tab="taxonomy">Taxonomy keywords</button>
+    <button data-tab="about">About</button>
   </nav>
+  <div id="meta-summary"></div>
+</header>
 
-  <!-- Tab: Proposed taxonomy -->
-  <section id="tab-proposed" class="tab active">
+<main>
+  <!-- Tab: Board (Trello-lite) -->
+  <section id="tab-board" class="tab active">
     <div class="toolbar">
-      <button id="expand-all">Expand all</button>
-      <button id="collapse-all">Collapse all</button>
-      <span class="meta" style="margin:0">
-        <strong>Top-level columns + sub-piles</strong> are the proposed new controlled vocabulary.
-        The headline number on each is the count of <strong>unique submissions</strong> whose author keywords landed in that pile —
-        an estimate of how many papers would have selected this category if it were available.
-        Cards inside (greyed) are the author-supplied keywords that landed there — <em>examples</em>, not part of the taxonomy.
-        Only keywords used <strong>≥ 3 times</strong> are shown; the parenthetical count notes how many additional one- or two-mention keywords sit in the pile but are hidden.
-        <span class="cv">CV</span> = matches an existing CHI taxonomy term.
-        <span class="cv-checks">CV N</span> = N submissions checked it in PCS.
-      </span>
+      <input id="board-search" placeholder="Search card canonical or member…" autocomplete="off">
+      <label>Min mentions:
+        <input id="board-min" type="number" min="1" value="2" style="width:5em">
+      </label>
+      <label>Sort cards by:
+        <select id="board-sort">
+          <option value="count">Mentions (desc)</option>
+          <option value="confidence">Low confidence first</option>
+          <option value="alpha">Alphabetical</option>
+        </select>
+      </label>
     </div>
-    <div id="proposed-root"></div>
+    <p class="muted" style="margin-top:0">
+      Each column is a top-level pile; sub-piles group the author-keyword clusters within. Card number is mentions across all CHI 2026 submissions. Click a card to jump to its cluster detail.
+    </p>
+    <div id="board-canvas"></div>
   </section>
 
-  <!-- Tab: CV usage by facet -->
-  <section id="tab-cv" class="tab">
+  <!-- Tab: taxonomy-anchored hierarchy (view A) -->
+  <section id="tab-taxhier" class="tab">
     <div class="toolbar">
-      <span class="meta" style="margin:0" id="cv-intro"></span>
+      <input id="taxhier-search" placeholder="Search facet / term / cluster…" autocomplete="off">
+      <label>Show:
+        <select id="taxhier-mode">
+          <option value="all">All clusters</option>
+          <option value="anchored">Anchored only (well-fit to a taxonomy term)</option>
+          <option value="unanchored">Unanchored only (gaps)</option>
+        </select>
+      </label>
+      <span id="taxhier-count" class="muted"></span>
     </div>
-    <div id="cv-root"></div>
+    <p class="muted" style="margin-top:0">
+      Author-keyword clusters organized under the existing CHI taxonomy: <strong>facet → term → cluster</strong>.
+      Clusters with no good taxonomy match (cosine distance &gt; 0.55) are parked under <em>Unanchored</em> — these are the redesign-relevant gaps.
+    </p>
+    <div id="taxhier-tree"></div>
   </section>
 
-  <div id="status"></div>
+  <!-- Tab: hierarchy (auto Ward) -->
+  <section id="tab-hierarchy" class="tab">
+    <div class="toolbar">
+      <input id="hier-search" placeholder="Search level/cluster name…" autocomplete="off">
+      <span id="hier-count" class="muted"></span>
+      <span class="muted">Click a row to expand. Leaf rows link to the Author keywords tab.</span>
+    </div>
+    <div id="hierarchy-tree"></div>
+  </section>
 
-<script>
-const $ = sel => document.querySelector(sel);
-const $$ = sel => Array.from(document.querySelectorAll(sel));
+  <!-- Tab: gaps -->
+  <section id="tab-gaps" class="tab">
+    <div class="toolbar">
+      <label>Min papers in cluster:
+        <input id="gap-min" type="number" min="1" value="3" style="width:5em">
+      </label>
+      <label>Min distance to nearest taxonomy:
+        <input id="gap-dist" type="number" min="0" max="1" step="0.05" value="0.5" style="width:5em">
+      </label>
+      <span id="gap-count" class="muted"></span>
+    </div>
+    <p class="muted" style="margin-top:0">
+      Author-keyword clusters whose <em>nearest</em> existing taxonomy term is far away (cosine distance > threshold).
+      These are candidate gaps in the current CHI taxonomy — concepts authors use that the official keyword set doesn't capture cleanly.
+    </p>
+    <div id="gaps-table"></div>
+  </section>
 
-function escapeHtml(s) {
-  return (s || "").replace(/[&<>"']/g, ch => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;",
-  }[ch]));
-}
-
-function cvBadges(facet, checks) {
-  if (!facet) return "";
-  const checksTag = (typeof checks === "number")
-    ? ` <span class="cv-checks" title="Submissions that checked this term in PCS">CV ${checks.toLocaleString()}</span>`
-    : "";
-  return `<span class="cv" title="Matches CHI taxonomy term — facet: ${escapeHtml(facet)}">CV</span>${checksTag}`;
-}
-
-function initTabs() {
-  $$("nav#tabs button").forEach(btn => {
-    btn.addEventListener("click", () => {
-      $$("nav#tabs button").forEach(b => b.classList.toggle("active", b === btn));
-      const id = btn.dataset.tab;
-      $$(".tab").forEach(t => t.classList.toggle("active", t.id === `tab-${id}`));
-    });
-  });
-}
-
-function renderProposed(data) {
-  const root = $("#proposed-root");
-  root.innerHTML = "";
-  for (const col of data.columns) {
-    const colEl = document.createElement("details");
-    colEl.className = "column";
-    colEl.innerHTML = `
-      <summary>
-        <span class="col-name">${escapeHtml(col.name)}${cvBadges(col.cv_facet, col.cv_checks)}</span>
-        <span class="col-stats"><strong>${col.papers_unique.toLocaleString()} papers</strong> · ${col.subpiles.length} sub-piles · ${col.shown_cards}/${col.total_cards} keywords</span>
-      </summary>
-    `;
-    for (const pile of col.subpiles) {
-      const pileEl = document.createElement("div");
-      pileEl.className = "pile";
-      const cardsHtml = pile.cards.length === 0
-        ? `<div class="pile-empty">${pile.total_cards === 0 ? "(empty)" : `(no cards above threshold; ${pile.total_cards} total in pile)`}</div>`
-        : `<div class="pile-cards">${pile.cards.map(card => {
-            const ck = card.accepted ? `<span class="ck" title="confirmed">✓</span>` : "";
-            return `<span class="pile-card">${ck}${escapeHtml(card.canonical)}${cvBadges(card.cv_facet, card.cv_checks)} <span class="cnt">${card.total_count}</span></span>`;
-          }).join("")}</div>`;
-      const tail = pile.low_count_cards > 0
-        ? ` <span class="muted-tail">(${pile.low_count_cards} keyword${pile.low_count_cards === 1 ? "" : "s"} with ≤2 mentions)</span>`
-        : "";
-      pileEl.innerHTML = `
-        <div class="pile-head">
-          <span class="pile-name">${escapeHtml(pile.name)}${cvBadges(pile.cv_facet, pile.cv_checks)}</span>
-          <span class="pile-stats"><strong>${pile.papers_unique.toLocaleString()} papers</strong>${tail}</span>
-        </div>
-        ${cardsHtml}
-      `;
-      colEl.appendChild(pileEl);
-    }
-    root.appendChild(colEl);
-  }
-
-  $("#expand-all").addEventListener("click", () => {
-    $$("#tab-proposed details").forEach(d => d.open = true);
-  });
-  $("#collapse-all").addEventListener("click", () => {
-    $$("#tab-proposed details").forEach(d => d.open = false);
-  });
-}
-
-function renderCV(data) {
-  // Intro text + enforcement stats
-  const s = data.cv_count_stats;
-  const outliers = s.max_outliers.length;
-  $("#cv-intro").innerHTML = `
-    The existing CHI submission keywords (the controlled vocabulary used in the PCS submission form during CHI&nbsp;2026 review).
-    Counts below are how many of <strong>${s.submissions.toLocaleString()}</strong> submissions checked each term, grouped by facet.
-    <br>
-    Authors were instructed to pick <strong>2–4 keywords</strong>, but this was <strong>not enforced</strong>:
-    median ${s.median}, mean ${s.mean}, range ${s.min}–${s.max};
-    <strong>${s.pct_in_range_2_4}%</strong> of submissions stayed within 2–4,
-    <strong>${s.pct_above_4}%</strong> picked more than 4 (${s.above_4_count.toLocaleString()} submissions),
-    and ${outliers} submissions picked ≥20 keywords (one picked ${s.max}).
-  `;
-
-  const root = $("#cv-root");
-  root.innerHTML = "";
-  for (const f of data.cv_distribution) {
-    const block = document.createElement("div");
-    block.className = "facet-block";
-    const max = f.terms[0]?.checks || 1;
-    block.innerHTML = `
-      <div class="facet-head">
-        <span class="facet-name">${escapeHtml(f.facet)}</span>
-        <span class="facet-stats">${f.term_count} terms · ${f.total_checks.toLocaleString()} total checks</span>
+  <!-- Tab: clusters -->
+  <section id="tab-clusters" class="tab">
+    <div class="toolbar">
+      <input id="cluster-search" placeholder="Search canonical or member keyword…" autocomplete="off">
+      <label>Sort:
+        <select id="cluster-sort">
+          <option value="paper_count">By paper count (desc)</option>
+          <option value="member_count">By member count (desc)</option>
+          <option value="canonical">Canonical A–Z</option>
+        </select>
+      </label>
+      <label>Min papers:
+        <input id="cluster-min" type="number" min="1" value="1" style="width:5em">
+      </label>
+      <span id="cluster-count" class="muted"></span>
+    </div>
+    <div class="split">
+      <div id="cluster-list" class="list"></div>
+      <div id="cluster-detail" class="detail">
+        <p class="muted">Pick a cluster on the left.</p>
       </div>
-      ${f.terms.map(t => `
-        <div class="facet-row">
-          <div class="term">${escapeHtml(t.term)}${t.abbr ? ` <span class="cv-checks" style="background:#f0f0e8;color:#666" title="PCS abbreviation">${escapeHtml(t.abbr)}</span>` : ""}</div>
-          <div class="num">${t.checks.toLocaleString()}</div>
-          <div class="bar-wrap"><div class="bar" style="width:${(t.checks/max*100).toFixed(1)}%"></div></div>
-        </div>
-      `).join("")}
-    `;
-    root.appendChild(block);
-  }
-}
+    </div>
+  </section>
 
-function render(data) {
-  const built = new Date(data.built_at).toLocaleString();
-  $("#meta").innerHTML =
-    `${data.columns.length} proposed columns · ` +
-    `${data.columns.reduce((s,c) => s + c.shown_cards, 0)} cards shown ` +
-    `(of ${data.columns.reduce((s,c) => s + c.total_cards, 0)} total) · ` +
-    `card threshold: &gt;${data.min_card_count - 1} mentions · ` +
-    `built ${built}`;
-  initTabs();
-  renderProposed(data);
-  renderCV(data);
-}
+  <!-- Tab: taxonomy -->
+  <section id="tab-taxonomy" class="tab">
+    <div class="toolbar">
+      <input id="tax-search" placeholder="Search keyword…" autocomplete="off">
+      <span id="tax-count" class="muted"></span>
+    </div>
+    <div id="taxonomy-list"></div>
+  </section>
 
-fetch("overview_data.json", { cache: "no-cache" })
-  .then(r => {
-    if (!r.ok) throw new Error("HTTP " + r.status);
-    return r.json();
-  })
-  .then(render)
-  .catch(err => {
-    $("#status").textContent = "Could not load overview_data.json — " + err.message +
-      " (the page expects overview_data.json next to this HTML file)";
-  });
-</script>
+  <!-- Tab: about -->
+  <section id="tab-about" class="tab">
+    <h2>What is this</h2>
+    <p>A public viewer for the CHI 2026 keyword-system redesign. Explore how authors actually used keywords across 6,730 submissions, versus how the existing controlled vocabulary captured them, and the proposed pile/sub-pile reorganization.</p>
+    <p>Author keywords are normalized (lowercase / trim), synonym-mapped (<code>llm</code>→<code>large language models</code>, etc.), then embedding-clustered with <code>all-MiniLM-L6-v2</code> at cosine threshold 0.18, hand-audited, and arranged into a 2-level taxonomy of piles and sub-piles.</p>
+    <p>Read-only viewer. The working curation board lives elsewhere.</p>
+  </section>
+</main>
+
+<script src="app.js?v=public1"></script>
 </body>
 </html>

@@ -1,0 +1,17 @@
+{
+  "built_at": "2026-05-03T14:47:21",
+  "total_papers": 6730,
+  "total_clusters": 4632,
+  "total_taxonomy_keywords": 108,
+  "hierarchy_levels": {
+    "level1": {
+      "target": 60,
+      "groups": 60
+    },
+    "level2": {
+      "target": 400,
+      "groups": 400
+    }
+  },
+  "taxonomy_term_count": 108
+}
