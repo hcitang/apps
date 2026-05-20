@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>CHI keyword redesign — feedback activity</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root { --ink:#1f2937; --muted:#6b7280; --accent:#0369a1; --warn:#92400e; --bg:#f9fafb; --card:#fff; --line:#e5e7eb; --done:#047857; }
+  html, body { margin:0; padding:0; background:var(--bg); color:var(--ink); font:15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
+  main { max-width: 780px; margin: 0 auto; padding: 32px 24px 64px; }
+  h1 { font-size: 24px; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 20px; }
+  .intro { margin-bottom: 20px; }
+  .intro ol { margin: 8px 0; padding-left: 22px; }
+  .intro ol li { margin: 6px 0; }
+  .meta { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 14px 18px; margin-bottom: 24px; }
+  .step { display: flex; gap: 14px; align-items: flex-start; padding: 18px 0; border-top: 1px solid var(--line); }
+  .step:first-of-type { border-top: 0; }
+  .step .box { flex: 0 0 auto; padding-top: 2px; }
+  .step .box input { width: 28px; height: 28px; cursor: pointer; accent-color: var(--done); }
+  .step .num { flex: 0 0 auto; width: 30px; height: 30px; line-height: 30px; text-align:center; background: var(--accent); color: white; border-radius: 50%; font-size: 14px; font-weight: 700; }
+  .step .num.opt { width: auto; padding: 0 10px; border-radius: 999px; background: var(--muted); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .step .body { flex: 1 1 auto; min-width: 0; }
+  .step h2 { font-size: 17px; margin: 4px 0 6px; }
+  .step h2 .time { color: var(--muted); font-weight: normal; font-size: 13px; margin-left: 8px; }
+  .step.done h2 { text-decoration: line-through; color: var(--muted); }
+  .step.done .num { background: var(--done); }
+  p { margin: 6px 0; }
+  ul { margin: 6px 0; padding-left: 22px; }
+  li { margin: 3px 0; }
+  .open { display: inline-block; margin-top: 10px; padding: 8px 14px; background: var(--accent); color: white; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px; }
+  .open:hover { background: #075985; }
+  .open.form { background: #047857; }
+  .open.form:hover { background: #065f46; }
+  blockquote { margin: 8px 0; padding: 8px 14px; background: #fef3c7; border-left: 3px solid var(--warn); color: #78350f; border-radius: 0 4px 4px 0; }
+  code { background: #f3f4f6; padding: 1px 5px; border-radius: 3px; font-size: 13px; }
+  footer { margin-top: 40px; color: var(--muted); font-size: 13px; text-align: center; }
+</style>
+</head>
+<body>
+<main>
+
+<h1>CHI keyword redesign — feedback activity</h1>
+<p class="sub">Thanks for taking the time. The whole thing is ~20 minutes.</p>
+
+<div class="intro">
+  <p>The keywords redesign is focused on <b>paper routing</b>: getting papers
+  into the hands of the right reviewers. We have two goals:</p>
+  <ol>
+    <li>From the <b>reviewer's</b> perspective: <i>"Which research areas are
+    you current on, and excited about reviewing?"</i></li>
+    <li>From the <b>author's</b> perspective on a given paper: <i>"What kind
+    of expertise would an ideal reviewer have to effectively review this
+    work?"</i></li>
+  </ol>
+  <p>As such, the <i>intention</i> of the keywords is now different. It is
+  not about one's identity as a researcher, and it is not about the
+  intellectual details of the paper itself.</p>
+</div>
+
+<div class="meta">
+  <b>Total time:</b> ~20 minutes. Hard ceiling: 30. Stop and submit whenever
+  you run out of patience — partial feedback is still useful.
+  Tick the boxes as you go (state is saved in your browser).
+</div>
+
+<div class="step" data-step="1">
+  <div class="box"><input type="checkbox" id="cb1" aria-label="Mark step 1 complete"></div>
+  <div class="num">1</div>
+  <div class="body">
+    <h2>Build your reviewer profile<span class="time">≈7 min</span></h2>
+    <p>Tag yourself as if you were signing up to review for CHI 2027 across
+    Domain / Method / Users.</p>
+    <p>We limit how many keywords a reviewer can <i>claim</i> expertise in —
+    this assists with targeted routing.</p>
+    <blockquote><b>The question to answer:</b> <i>Which research areas are
+    you current on, and excited about reviewing?</i></blockquote>
+    <p>While doing this, watch — <b>as a reviewer, not as an author</b> — for:</p>
+    <ul>
+      <li><b>Missing</b>: piles or sub-piles you'd expect to find and couldn't.</li>
+      <li><b>Mis-grouped</b>: keywords or sub-piles in the wrong place.</li>
+      <li><b>Mis-named</b>: pile/sub-pile names that confused you or felt off.</li>
+    </ul>
+    <a class="open" href="person.html" target="_blank">Open person.html →</a>
+  </div>
+</div>
+
+<div class="step" data-step="2">
+  <div class="box"><input type="checkbox" id="cb2" aria-label="Mark step 2 complete"></div>
+  <div class="num">2</div>
+  <div class="body">
+    <h2>Tag two of your own papers<span class="time">≈7 min</span></h2>
+    <p>Pick <b>two of your own published papers</b> — ideally ones that
+    span different areas. Tag each across Domain / Method / Users / Primary
+    Contribution.</p>
+    <blockquote><b>The question to answer:</b> <i>What kind of expertise
+    would an ideal reviewer have to effectively review this work?</i> Avoid
+    keying in keywords that simply describe the work.</blockquote>
+    <p>While doing this, watch — <b>as the author</b> — for:</p>
+    <ul>
+      <li><b>Missing</b>: expertise you'd have wanted a reviewer to have
+      but couldn't express via the taxonomy.</li>
+      <li><b>Mis-placed</b>: keywords that sit under the wrong pile/sub-pile.</li>
+      <li><b>Cardinality</b>: did the per-facet caps (Domain 1–5, Method 1–2,
+      Users 0–2, Primary Contribution exactly 1) feel right, or constraining?</li>
+    </ul>
+    <a class="open" href="paper.html" target="_blank">Open paper.html →</a>
+  </div>
+</div>
+
+<div class="step" data-step="3">
+  <div class="box"><input type="checkbox" id="cb3" aria-label="Mark step 3 complete"></div>
+  <div class="num">3</div>
+  <div class="body">
+    <h2>Fill the feedback form<span class="time">≈5 min</span></h2>
+    <p>The form is mostly short-answer with a few scales. It mirrors the
+    structure above, so you can answer as you go if you prefer. If you run
+    out of time mid-task, submit whatever you have.</p>
+    <a class="open form" href="https://forms.gle/K3khuGurmWwKgLJn6" target="_blank">Open the feedback form →</a>
+  </div>
+</div>
+
+<div class="step" data-step="orient">
+  <div class="box"><input type="checkbox" id="cborient" aria-label="Mark optional step complete"></div>
+  <div class="num opt">Optional</div>
+  <div class="body">
+    <h2>Browse the full keyword set<span class="time">≈3 min</span></h2>
+    <p>Our current working version of the keywords. Two levels of buckets:
+    big <b>piles</b> and <b>sub-piles</b>; each sub-pile contains normalized
+    versions of author keywords. Hover a sub-pile to see those keywords.</p>
+    <p>While some keywords are grouped, the intention is <i>not</i> to say
+    that they are the same; rather, the idea is that the expertise within
+    that grouped keyword ought to be effective for paper routing.</p>
+    <a class="open" href="keyword-columns.html" target="_blank">Open the keyword view →</a>
+  </div>
+</div>
+
+<footer>Questions? Reply to Tony's email.</footer>
+
+</main>
+<script>
+  // Persist checkbox state in localStorage so a refresh doesn't lose progress.
+  const KEY = 'chi-kw-feedback-progress-v2';
+  const saved = JSON.parse(localStorage.getItem(KEY) || '{}');
+  document.querySelectorAll('.step').forEach(stepEl => {
+    const n = stepEl.dataset.step;
+    const cb = stepEl.querySelector('input[type=checkbox]');
+    cb.checked = !!saved[n];
+    stepEl.classList.toggle('done', cb.checked);
+    cb.addEventListener('change', () => {
+      saved[n] = cb.checked;
+      localStorage.setItem(KEY, JSON.stringify(saved));
+      stepEl.classList.toggle('done', cb.checked);
+    });
+  });
+</script>
+</body>
+</html>
