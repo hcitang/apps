@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>💣 Bomberman — four reinterpretations</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root { color-scheme: dark; }
+  html, body { margin: 0; background: #0a0816; color: #f0e9ff; font-family: -apple-system, system-ui, sans-serif; min-height: 100vh; }
+  body { padding: 32px 16px 64px; box-sizing: border-box; }
+  .wrap { max-width: 980px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 28px; }
+  h1 { font-size: 42px; margin: 0 0 8px; letter-spacing: 0.04em; }
+  .lede { opacity: 0.7; font-size: 15px; max-width: 640px; margin: 0 auto; line-height: 1.5; }
+
+  .controls { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 16px 20px; margin: 0 auto 28px; max-width: 720px; }
+  .controls h3 { margin: 0 0 10px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.18em; opacity: 0.6; }
+  .controls .row { display: grid; grid-template-columns: 60px 1fr 1fr 1fr; gap: 12px; align-items: center; font-size: 14px; padding: 6px 0; border-top: 1px solid rgba(255,255,255,0.05); }
+  .controls .row.head { opacity: 0.55; font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; border-top: 0; }
+  .controls code { background: rgba(255,255,255,0.08); padding: 2px 7px; border-radius: 3px; font-size: 13px; }
+  .controls .p { font-weight: 600; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .card { border-radius: 12px; padding: 22px; text-decoration: none; color: inherit; transition: transform .12s ease, filter .12s ease; display: flex; flex-direction: column; min-height: 220px; position: relative; overflow: hidden; }
+  .card:hover { transform: translateY(-3px); filter: brightness(1.12); }
+  .card .badge { font-size: 10px; opacity: 0.7; text-transform: uppercase; letter-spacing: .18em; margin-bottom: 8px; }
+  .card h2 { margin: 0 0 4px; font-size: 24px; }
+  .card .tag { font-size: 12px; opacity: 0.7; margin-bottom: 12px; font-style: italic; }
+  .card p { margin: 0 0 10px; font-size: 13px; line-height: 1.5; opacity: 0.88; }
+  .card .twist { font-size: 12px; opacity: 0.7; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.12); margin-top: auto; }
+  .card .twist strong { opacity: 0.95; }
+
+  .c1 { background: linear-gradient(160deg, #2b2447 0%, #1a1530 100%); border: 1px solid #ffd16644; }
+  .c1 h2 { color: #ffd166; }
+  .c15 { background: linear-gradient(160deg, #0f2630 0%, #0a161b 100%); border: 1px solid #4ee0c244; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  .c15 h2 { color: #4ee0c2; letter-spacing: 0.08em; }
+  .c2 { background: linear-gradient(160deg, #1a0030 0%, #05000f 100%); border: 1px solid #ff00ff66; }
+  .c2 h2 { color: #ff66ff; text-shadow: 0 0 12px #ff00ff99; letter-spacing: 0.18em; }
+  .c2 { box-shadow: 0 0 24px rgba(255,0,255,0.12) inset; }
+  .c22 { background: linear-gradient(160deg, #200035 0%, #050015 100%); border: 1px solid #00ffff66; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  .c22 h2 { color: #00ffff; text-shadow: 0 0 12px #00ffff88; letter-spacing: 0.18em; }
+  .c22 { box-shadow: 0 0 24px rgba(0,255,255,0.12) inset; }
+  .c3 { background: linear-gradient(160deg, #2a1a0e 0%, #0a0606 100%); border: 1px solid #d4a37344; font-family: Georgia, serif; }
+  .c3 h2 { color: #e8c39e; letter-spacing: 0.12em; }
+  .c3p { background: linear-gradient(160deg, #3a1a18 0%, #0a0606 100%); border: 1px solid #ff8855aa; font-family: Georgia, serif; }
+  .c3p h2 { color: #ff8855; letter-spacing: 0.12em; text-shadow: 0 0 14px #ff5a3c66; }
+  .c3p { box-shadow: 0 0 24px rgba(255,90,30,0.10) inset; }
+
+  .retired-section { margin-top: 36px; padding-top: 18px; border-top: 1px dashed rgba(255,255,255,0.10); }
+  .retired-section h3 { margin: 0 0 10px; font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; opacity: 0.55; }
+  .retired-section .grid { opacity: 0.65; }
+  .retired-section .card { filter: saturate(0.55); }
+  .retired-section .card:hover { filter: saturate(0.9); }
+  footer { margin-top: 40px; opacity: 0.45; font-size: 12px; text-align: center; line-height: 1.6; }
+  footer code { background: rgba(255,255,255,0.06); padding: 1px 5px; border-radius: 3px; }
+  .footer-links { margin-top: 8px; }
+  .footer-links a { color: #f0e9ff; opacity: 0.8; text-decoration: none; margin: 0 8px; }
+  .footer-links a:hover { opacity: 1; }
+</style></head>
+<body><div class="wrap">
+  <header>
+    <h1>💣 Bomberman</h1>
+    <div class="lede">Four reinterpretations of the same game, sharing one deterministic engine. Each version diverges in look <em>and</em> a key mechanic. Local 3-player on a single keyboard.</div>
+  </header>
+
+  <div class="controls">
+    <h3>3-player keyboard</h3>
+    <div class="row head"><div></div><div>Move</div><div>Bomb</div><div>Detonate*</div></div>
+    <div class="row"><div class="p" style="color:#ffd166">P1</div><div><code>W A S D</code></div><div><code>Q</code></div><div><code>E</code></div></div>
+    <div class="row"><div class="p" style="color:#06d6a0">P2</div><div><code>I J K L</code></div><div><code>U</code></div><div><code>O</code></div></div>
+    <div class="row"><div class="p" style="color:#ef476f">P3</div><div><code>↑ ← ↓ →</code></div><div><code>/</code></div><div><code>.</code></div></div>
+  </div>
+
+  <div class="grid">
+    <a class="card c1" href="v1/">
+      <div class="badge">v1 · playable</div>
+      <h2>😀 Emojiman</h2>
+      <div class="tag">faithful classic, party-game feel</div>
+      <p>Pure emoji on a pastel grid. Drop bombs, dodge blasts, pick up powerups, last one standing wins the round.</p>
+      <div class="twist"><strong>Twist:</strong> none — the control. Validates the engine.</div>
+    </a>
+    <a class="card c15" href="v1_5/">
+      <div class="badge">v1.5 · playable</div>
+      <h2>🎯 TileTap</h2>
+      <div class="tag">deliberate, chess-with-bombs cadence</div>
+      <p>Discrete tile-by-tile movement. You can't hold a direction — release and tap again to keep moving. Every step is a commitment.</p>
+      <div class="twist"><strong>Twist:</strong> edge-detected input. No analog walking.</div>
+    </a>
+    <a class="card c3" href="v3/">
+      <div class="badge">v3 · playable</div>
+      <h2>🕯️ CRYPT</h2>
+      <div class="tag">dungeon roguelite</div>
+      <p>Torchlit halls. <strong>3 hearts</strong> per life instead of one-shot kills. Rune bombs (standard / cluster / pierce) carried per player.</p>
+      <div class="twist"><strong>Twist:</strong> between every round, all 3 players draft a card simultaneously — cards persist for the match.</div>
+    </a>
+    <a class="card c3p" href="v3_plus/">
+      <div class="badge">v3+ · playable</div>
+      <h2>🕯️ CRYPT+</h2>
+      <div class="tag">champion select brawler</div>
+      <p>Crypt with <strong>8 champions</strong> — SuperBomber's full-map super bomb, Teleporter, DefuseMan, StrongMan who shoves walls, Vampire who drains powerups on contact, LavaMan's trail, FreezeMan's cross-ray, plus Loser &amp; Random.</p>
+      <div class="twist"><strong>Twist:</strong> pick once at game start. Half-heart cluster damage. Pierce capped at 3 tiles.</div>
+    </a>
+  </div>
+
+  <div class="retired-section">
+    <h3>Retired</h3>
+    <div class="grid">
+      <a class="card c2" href="v2/">
+        <div class="badge">v2 · retired</div>
+        <h2>BOMBWAVE</h2>
+        <div class="tag">neon synthwave arcade</div>
+        <p>Vector glow, scanlines, perspective grid. Hold a direction while dropping a bomb to <em>throw</em> it — bombs slide until they hit something.</p>
+        <div class="twist"><strong>Twist:</strong> throwable bombs + lava trickles in from the edges, tile-by-tile.</div>
+      </a>
+      <a class="card c22" href="v2_5/">
+        <div class="badge">v2.5 · retired</div>
+        <h2>BOMBWAVE · TAP</h2>
+        <div class="tag">discrete-move synthwave</div>
+        <p>Same neon arena, same throwable bombs, same creeping lava — but movement is one-tile-per-tap. Bombwave meets TileTap.</p>
+        <div class="twist"><strong>Twist:</strong> tap-to-move + throw-on-hold + lava creep, all combined.</div>
+      </a>
+    </div>
+  </div>
+
+  <footer>Designed by Anson Tang and Tony Tang</footer>
+</div></body></html>

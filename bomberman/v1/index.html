@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Emojiman — Bomberman v1</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💣</text></svg>" />
+    <style>
+      :root { color-scheme: dark; }
+      html, body { margin: 0; padding: 0; background: #1a1530; color: #f0e9ff; font-family: -apple-system, system-ui, sans-serif; }
+      body { display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+      h1 { margin: 8px 0 0 0; font-weight: 600; letter-spacing: 0.04em; }
+      #hud { font-size: 13px; opacity: 0.75; margin: 4px 0 8px; }
+      #stage { position: relative; }
+      canvas { background: #2a2547; border-radius: 8px; image-rendering: auto; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+      #overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+      #overlay .card { background: rgba(20, 14, 40, 0.92); padding: 24px 36px; border-radius: 12px; text-align: center; pointer-events: auto; }
+      #overlay h2 { margin: 0 0 8px 0; }
+      #overlay button { margin-top: 12px; padding: 8px 16px; font-size: 14px; border-radius: 6px; border: 0; background: #06d6a0; color: #1a1530; cursor: pointer; font-weight: 600; }
+      .legend { font-size: 12px; margin-top: 10px; opacity: 0.75; display: flex; gap: 18px; }
+      .legend code { background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 3px; }
+      details { margin-top: 12px; font-size: 13px; max-width: 800px; }
+      summary { cursor: pointer; opacity: 0.8; }
+      .settings { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 18px; padding: 10px; background: rgba(255,255,255,0.04); border-radius: 6px; margin-top: 6px; }
+      .settings label { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+    </style>
+    <script type="module" crossorigin src="/apps/bomberman/v1/assets/index-CFFBTBj7.js"></script>
+  </head>
+  <body>
+    <h1>💣 Emojiman</h1>
+    <div id="hud">round 1 · first to 3</div>
+    <div id="stage">
+      <canvas id="game" width="960" height="704"></canvas>
+      <div id="overlay"></div>
+    </div>
+    <div class="legend">
+      <span>P1 😀 <code>WASD</code> + <code>Q</code> bomb</span>
+      <span>P2 😎 <code>IJKL</code> + <code>U</code> bomb</span>
+      <span>P3 🥸 <code>↑←↓→</code> + <code>/</code> bomb</span>
+    </div>
+    <div id="slots"></div>
+    <div style="font-size:11px;opacity:0.55;margin-top:-6px">click a tile to cycle  ·  any key on a bot slot promotes it to human</div>
+    <details>
+      <summary>⚙️ settings &amp; powerups</summary>
+      <div id="settings" class="settings"></div>
+    </details>
+  </body>
+</html>

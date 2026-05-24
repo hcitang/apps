@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Crypt — Bomberman v3</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕯️</text></svg>" />
+    <style>
+      :root { color-scheme: dark; }
+      html, body { margin: 0; padding: 0; background: #0a0606; color: #e8c39e; font-family: Georgia, "Times New Roman", serif; }
+      body { display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+      h1 { margin: 8px 0 0; font-weight: 600; letter-spacing: 0.18em; color: #e8c39e; text-shadow: 0 0 10px #ff7a00; }
+      #hud { font-size: 13px; opacity: 0.75; margin: 4px 0 8px; color: #a68a64; letter-spacing: 0.08em; }
+      #stage { position: relative; }
+      canvas { background: #0c0a08; border: 1px solid #382a1c; box-shadow: 0 0 30px rgba(255, 120, 30, 0.20), inset 0 0 60px rgba(0,0,0,0.6); border-radius: 2px; }
+      #overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+      #overlay .card-modal { background: rgba(8, 5, 4, 0.96); padding: 22px 32px; border-radius: 4px; text-align: center; pointer-events: auto; border: 1px solid #5c3a1c; box-shadow: 0 0 24px rgba(255, 120, 30, 0.25); }
+      #overlay h2 { margin: 0 0 6px; color: #e8c39e; }
+      #overlay button { margin-top: 12px; padding: 8px 16px; font-size: 14px; border-radius: 2px; border: 1px solid #d4a373; background: transparent; color: #d4a373; cursor: pointer; font-weight: 600; font-family: inherit; letter-spacing: 0.1em; }
+      #overlay button:hover { background: rgba(212,163,115,0.12); }
+      .draft { display: grid; grid-template-columns: auto 1fr; gap: 14px 18px; padding: 18px; background: rgba(10,6,4,0.96); border: 1px solid #5c3a1c; border-radius: 4px; pointer-events: auto; }
+      .draft-row-label { color: #a68a64; align-self: center; font-weight: 600; }
+      .draft-row-label.confirmed { color: #6fa66f; }
+      .draft-cards { display: flex; gap: 10px; }
+      .draft-card { width: 130px; padding: 12px 10px; border: 1px solid #5c3a1c; border-radius: 4px; text-align: center; background: rgba(20,12,8,0.7); }
+      .draft-card.selected { border-color: #e8c39e; background: rgba(40,24,16,0.95); box-shadow: 0 0 16px rgba(232,195,158,0.5); }
+      .draft-card.confirmed { opacity: 0.6; border-color: #6fa66f; }
+      .draft-card .emoji { font-size: 28px; line-height: 1; }
+      .draft-card .name { font-size: 13px; margin-top: 6px; color: #e8c39e; font-weight: 600; }
+      .draft-card .desc { font-size: 11px; margin-top: 4px; color: #a68a64; line-height: 1.3; }
+      .legend { font-size: 12px; margin-top: 10px; opacity: 0.7; display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; }
+      .legend code { background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 3px; color: #d4a373; }
+      .rules { font-size: 12px; opacity: 0.7; margin-top: 6px; max-width: 720px; text-align: center; line-height: 1.5; color: #a68a64; }
+      .rules b { color: #e8c39e; }
+      details { margin-top: 12px; font-size: 13px; max-width: 800px; color: #a68a64; }
+      summary { cursor: pointer; opacity: 0.8; }
+      .settings { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 18px; padding: 10px; background: rgba(255,150,40,0.04); border-radius: 2px; margin-top: 6px; border: 1px solid #382a1c; }
+      .settings label { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #d4a373; }
+
+      #board-layout { display: flex; gap: 14px; align-items: flex-start; }
+      #player-panels { display: flex; flex-direction: column; gap: 10px; width: 220px; flex-shrink: 0; }
+      .pp { background: rgba(20,12,8,0.72); border: 1px solid #5c3a1c; border-radius: 4px; padding: 10px 12px; font-size: 13px; color: #d4a373; }
+      .pp.dead { opacity: 0.5; filter: grayscale(0.6); }
+      .pp.frozen { box-shadow: 0 0 0 2px rgba(180,220,255,0.45) inset; }
+      .pp .pp-head { display: flex; align-items: center; gap: 6px; font-weight: 600; color: #e8c39e; margin-bottom: 4px; }
+      .pp .pp-head .pp-pnum { font-family: ui-monospace, monospace; font-size: 13px; opacity: 0.9; letter-spacing: 0.1em; }
+      .pp .pp-hp { color: #c8334d; font-size: 16px; letter-spacing: 1px; margin-bottom: 4px; }
+      .pp .pp-hp .hp-empty { opacity: 0.25; }
+      .pp .pp-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px 8px; font-size: 12px; color: #c8b393; }
+      .pp .pp-stats .pp-row { display: flex; gap: 4px; align-items: center; white-space: nowrap; }
+      .pp .pp-stats .pp-row .lab { opacity: 0.65; min-width: 16px; text-align: center; }
+      .pp .pp-stats .pp-row .val { font-family: ui-monospace, monospace; font-weight: 600; }
+      .pp .pp-stats .pp-row.gained .val { color: #e8c39e; }
+      .pp .pp-flags { margin-top: 4px; display: flex; gap: 6px; flex-wrap: wrap; font-size: 14px; min-height: 18px; }
+      .pp .pp-flags .flag { background: rgba(255,180,60,0.12); border: 1px solid rgba(255,180,60,0.35); border-radius: 3px; padding: 1px 5px; }
+      .pp .pp-flags .flag.off { opacity: 0.25; }
+    </style>
+    <script type="module" crossorigin src="/apps/bomberman/v3/assets/index-BbF2-Fsu.js"></script>
+  </head>
+  <body>
+    <h1>🕯️ CRYPT 🕯️</h1>
+    <div id="hud">round 1 · first to 3</div>
+    <div id="board-layout">
+      <div id="stage">
+        <canvas id="game" width="960" height="704"></canvas>
+        <div id="overlay"></div>
+      </div>
+      <div id="player-panels"></div>
+    </div>
+    <div class="rules">Hearts replace one-shot deaths. Between rounds, <b>each player drafts a card</b> — left/right to highlight, your bomb key to confirm. Cards persist for the match.</div>
+    <div class="legend">
+      <span>P1 ❤️ <code>WASD</code> + <code>Q</code></span>
+      <span>P2 ❤️ <code>IJKL</code> + <code>U</code></span>
+      <span>P3 ❤️ <code>↑←↓→</code> + <code>/</code></span>
+    </div>
+    <details>
+      <summary>⚙ settings &amp; powerups</summary>
+      <div id="settings" class="settings"></div>
+    </details>
+    <details open style="margin-top: 16px; max-width: 880px;">
+      <summary style="font-size: 14px; letter-spacing: 0.08em;">📜 how to play</summary>
+      <div style="padding: 14px 18px; background: rgba(20,12,8,0.5); border: 1px solid #382a1c; border-radius: 4px; margin-top: 6px; color: #d4a373; font-size: 13px; line-height: 1.6;">
+        <div style="margin-bottom: 12px;">
+          <strong style="color: #e8c39e;">The round.</strong> Drop bombs (your bomb key) to break walls and damage opponents. Each player has <span style="color:#c8334d;">❤️ 3 HP</span> by default — a blast costs one heart, with a brief invulnerability window after. Survive when others run out of hearts. Bombs <em>chain-detonate</em> if caught in another's blast.
+        </div>
+        <div style="margin-bottom: 12px;">
+          <strong style="color: #e8c39e;">The draft.</strong> Between every round, all three players see three cards each. Use your <em>left/right</em> keys to highlight a card, your <em>bomb</em> key to confirm. Once everyone has confirmed, the next round starts. Card effects persist for the entire match.
+        </div>
+        <div style="margin-bottom: 4px;"><strong style="color: #e8c39e;">Powerups (dropped from soft walls):</strong></div>
+        <ul style="margin: 0 0 12px; padding-left: 22px;">
+          <li><span style="color:#e8c39e;">B more bombs</span> — you can have +1 bomb on the board at once.</li>
+          <li><span style="color:#e8c39e;">F longer blast</span> — your blast radius grows by one tile.</li>
+          <li><span style="color:#e8c39e;">S faster speed</span> — +1 tile/sec movement.</li>
+          <li><span style="color:#e8c39e;">K kick bombs</span> — <em>walk into</em> a stationary bomb to push it. The bomb slides in your direction until it hits a wall, another bomb, or a player. (No separate "throw" button.)</li>
+          <li><span style="color:#e8c39e;">D detonator</span> — press your <em>detonate</em> key (P1=E, P2=O, P3=.) to manually blow up your oldest bomb instead of waiting for its fuse.</li>
+          <li><span style="color:#e8c39e;">P flame pass</span> — immune to your <em>own</em> blasts (still vulnerable to other players' bombs).</li>
+          <li><span style="color:#e8c39e;">I brief invuln</span> — a few seconds of full immunity on pickup.</li>
+        </ul>
+        <div style="margin-bottom: 4px;"><strong style="color: #e8c39e;">Rune bombs (from the card draft):</strong></div>
+        <ul style="margin: 0; padding-left: 22px;">
+          <li><span style="color:#ff9a3c;">✦ Cluster rune</span> — every bomb you drop spawns 4 short-fuse child bombs at its cardinal neighbors after detonating. Massive coverage; easy to chain into yourself.</li>
+          <li><span style="color:#9aa3ff;">→ Pierce rune</span> — your blasts pass <em>through</em> soft walls, destroying multiple in a line. Range is what matters, not what's between you and them.</li>
+          <li>Your active rune is shown on each bomb (✦ or →) and as an indicator next to your hearts in the HUD.</li>
+        </ul>
+      </div>
+    </details>
+  </body>
+</html>

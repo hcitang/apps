@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Crypt+ — Bomberman v3+</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕯️</text></svg>" />
+    <style>
+      :root { color-scheme: dark; }
+      html, body { margin: 0; padding: 0; background: #0a0606; color: #e8c39e; font-family: Georgia, "Times New Roman", serif; }
+      body { display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+      h1 { margin: 8px 0 0; font-weight: 600; letter-spacing: 0.18em; color: #e8c39e; text-shadow: 0 0 10px #ff7a00; }
+      #hud { font-size: 13px; opacity: 0.75; margin: 4px 0 8px; color: #a68a64; letter-spacing: 0.08em; }
+      #stage { position: relative; }
+      canvas { background: #0c0a08; border: 1px solid #382a1c; box-shadow: 0 0 30px rgba(255, 120, 30, 0.20), inset 0 0 60px rgba(0,0,0,0.6); border-radius: 2px; }
+      #overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+      #overlay .card-modal { background: rgba(8, 5, 4, 0.96); padding: 22px 32px; border-radius: 4px; text-align: center; pointer-events: auto; border: 1px solid #5c3a1c; box-shadow: 0 0 24px rgba(255, 120, 30, 0.25); }
+      #overlay h2 { margin: 0 0 6px; color: #e8c39e; }
+      #overlay button { margin-top: 12px; padding: 8px 16px; font-size: 14px; border-radius: 2px; border: 1px solid #d4a373; background: transparent; color: #d4a373; cursor: pointer; font-weight: 600; font-family: inherit; letter-spacing: 0.1em; }
+      #overlay button:hover { background: rgba(212,163,115,0.12); }
+
+      /* Character select grid */
+      .select-modal { background: rgba(10,6,4,0.97); border: 1px solid #5c3a1c; border-radius: 4px; padding: 18px; pointer-events: auto; box-shadow: 0 0 24px rgba(255,120,30,0.25); width: 880px; }
+      .select-title { text-align: center; color: #e8c39e; font-size: 18px; letter-spacing: 0.15em; margin-bottom: 4px; }
+      .select-sub { text-align: center; color: #a68a64; font-size: 12px; margin-bottom: 14px; }
+      .select-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+      .select-cell { position: relative; padding: 10px 8px; border: 2px solid #5c3a1c; border-radius: 4px; background: rgba(20,12,8,0.7); text-align: center; min-height: 132px; }
+      .select-cell .em { font-size: 30px; line-height: 1.1; }
+      .select-cell .nm { font-size: 13px; color: #e8c39e; font-weight: 600; margin-top: 2px; }
+      .select-cell .ds { font-size: 11px; color: #a68a64; margin-top: 4px; line-height: 1.3; }
+      .cursors { position: absolute; top: 4px; right: 4px; display: flex; gap: 3px; }
+      .cursor-tag { width: 10px; height: 10px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.4); }
+      .confirmed-marks { position: absolute; bottom: 4px; left: 4px; right: 4px; display: flex; justify-content: center; gap: 4px; font-size: 11px; }
+      .select-cell.player-1-cursor { box-shadow: 0 0 0 2px #d4a373; }
+      .select-cell.player-2-cursor { box-shadow: 0 0 0 2px #a3b18a; }
+      .select-cell.player-3-cursor { box-shadow: 0 0 0 2px #e8b4bc; }
+      .select-cell.player-1-cursor.player-2-cursor { box-shadow: 0 0 0 2px #d4a373, 0 0 0 4px #a3b18a; }
+      .select-cell.player-1-cursor.player-2-cursor.player-3-cursor { box-shadow: 0 0 0 2px #d4a373, 0 0 0 4px #a3b18a, 0 0 0 6px #e8b4bc; }
+
+      .legend { font-size: 12px; margin-top: 10px; opacity: 0.7; display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; }
+      .legend code { background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 3px; color: #d4a373; }
+      .rules { font-size: 12px; opacity: 0.7; margin-top: 6px; max-width: 720px; text-align: center; line-height: 1.5; color: #a68a64; }
+      .rules b { color: #e8c39e; }
+      details { margin-top: 12px; font-size: 13px; max-width: 880px; color: #a68a64; }
+      summary { cursor: pointer; opacity: 0.8; }
+      .settings { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 18px; padding: 10px; background: rgba(255,150,40,0.04); border-radius: 2px; margin-top: 6px; border: 1px solid #382a1c; }
+      .settings label { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #d4a373; }
+
+      /* Side-by-side: arena on the left, player status panels stacked on the right */
+      #board-layout { display: flex; gap: 14px; align-items: flex-start; margin-top: 0; }
+      #player-panels { display: flex; flex-direction: column; gap: 10px; width: 260px; flex-shrink: 0; }
+      .pp { background: rgba(20,12,8,0.72); border: 1px solid #5c3a1c; border-radius: 4px; padding: 10px 12px; font-size: 13px; color: #d4a373; }
+      .pp.dead { opacity: 0.5; filter: grayscale(0.6); }
+      .pp.frozen { box-shadow: 0 0 0 2px rgba(180,220,255,0.45) inset; }
+      .pp.active { box-shadow: 0 0 0 2px rgba(255,180,80,0.45) inset; }
+      .pp .pp-head { display: flex; align-items: center; gap: 6px; font-weight: 600; color: #e8c39e; margin-bottom: 4px; }
+      .pp .pp-head .pp-pnum { font-family: ui-monospace, monospace; font-size: 12px; opacity: 0.85; }
+      .pp .pp-head .pp-emoji { font-size: 20px; }
+      .pp .pp-head .pp-name { letter-spacing: 0.06em; }
+      .pp .pp-hp { color: #c8334d; font-size: 16px; letter-spacing: 1px; margin-bottom: 4px; }
+      .pp .pp-hp .hp-empty { opacity: 0.25; }
+      .pp .pp-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px 8px; font-size: 12px; color: #c8b393; }
+      .pp .pp-stats .pp-row { display: flex; gap: 4px; align-items: center; white-space: nowrap; }
+      .pp .pp-stats .pp-row .lab { opacity: 0.65; min-width: 16px; text-align: center; }
+      .pp .pp-stats .pp-row .val { font-family: ui-monospace, monospace; font-weight: 600; }
+      .pp .pp-stats .pp-row.gained .val { color: #e8c39e; }
+      .pp .pp-flags { margin-top: 4px; display: flex; gap: 6px; flex-wrap: wrap; font-size: 14px; min-height: 18px; }
+      .pp .pp-flags .flag { background: rgba(255,180,60,0.12); border: 1px solid rgba(255,180,60,0.35); border-radius: 3px; padding: 1px 5px; }
+      .pp .pp-flags .flag.off { opacity: 0.25; }
+      .pp .pp-cd { margin-top: 6px; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
+      .pp .pp-cd-fill { height: 100%; background: #d4a373; transition: width 80ms linear; }
+      .pp .pp-cd.ready .pp-cd-fill { background: #e8c39e; box-shadow: 0 0 6px #ffce88; }
+      .pp .pp-cd-label { font-size: 10px; color: #a68a64; margin-top: 2px; letter-spacing: 0.06em; text-transform: uppercase; display: flex; justify-content: space-between; }
+    </style>
+    <script type="module" crossorigin src="/apps/bomberman/v3_plus/assets/index-B9DwShMz.js"></script>
+  </head>
+  <body>
+    <h1>🕯️ CRYPT+ 🕯️</h1>
+    <div id="hud">pick your champions…</div>
+    <div id="board-layout">
+      <div id="stage">
+        <canvas id="game" width="960" height="704"></canvas>
+        <div id="overlay"></div>
+      </div>
+      <div id="player-panels"></div>
+    </div>
+    <div class="rules"><b>Pick a champion once at game start</b> — your choice persists across all rounds until the match ends. Each champion has a unique ability triggered by your <em>detonate</em> key (some have cooldowns; some only fire every other round).</div>
+    <div class="legend">
+      <span>P1 ❤️ <code>WASD</code> + <code>Q</code> (bomb) + <code>E</code> (ability)</span>
+      <span>P2 ❤️ <code>IJKL</code> + <code>U</code> + <code>O</code></span>
+      <span>P3 ❤️ <code>↑←↓→</code> + <code>/</code> + <code>.</code></span>
+    </div>
+    <details>
+      <summary>⚙ settings &amp; powerups</summary>
+      <div id="settings" class="settings"></div>
+    </details>
+    <details open style="margin-top: 16px; max-width: 880px;">
+      <summary style="font-size: 14px; letter-spacing: 0.08em;">📜 how to play — champion abilities</summary>
+      <div style="padding: 14px 18px; background: rgba(20,12,8,0.5); border: 1px solid #382a1c; border-radius: 4px; margin-top: 6px; color: #d4a373; font-size: 13px; line-height: 1.6;">
+        <div style="margin-bottom: 12px;">
+          <strong style="color: #e8c39e;">Hearts &amp; bombs.</strong> 3 hearts per life. <b>Standard bombs deal 1 heart.</b> <b>Cluster runes</b> (from soft-wall powerups) drop a main bomb plus 4 minis — but each cluster bomb only deals <b>½ heart</b>. <b>Pierce</b> blasts go through soft walls but are capped at <b>3 tiles</b> per direction.
+        </div>
+        <div style="margin-bottom: 4px;"><strong style="color: #e8c39e;">Champions (pick once per game):</strong></div>
+        <ul style="margin: 0 0 12px; padding-left: 22px;">
+          <li><span style="color:#ff8855;">💣 SuperBomber</span> — <em>double-tap your detonate key</em> to drop a SUPER-BOMB that <b>fires immediately</b>. Cross-blasts the entire row + column, <b>obliterating every soft and inner hard wall</b> (boundary is safe). Deals <b>2 hearts</b>. Bombbomb himself is immune to it. <b>60 s cooldown.</b></li>
+          <li><span style="color:#9aa3ff;">🌀 Teleporter</span> — detonate to teleport to a random safe corner. <b>60 s cooldown.</b></li>
+          <li><span style="color:#a3b18a;">✂️ DefuseMan</span> — detonate to defuse every bomb on your row and column instantly. <b>60 s cooldown.</b></li>
+          <li><span style="color:#d4a373;">💪 StrongMan</span> — <em>walk into</em> any wall (hard or soft) to <b>shove it one tile</b> in your direction, as long as the tile behind is empty. <b>Max 3 pushes per rolling window</b> (window length adjustable; default 10 s).</li>
+          <li><span style="color:#cdb4db;">🧛 Vampire</span> — detonate to enter an aura state for 5 s; any other player you touch loses <b>all their powerups</b>. <b>Super-fast</b> while active. 60 s cooldown.</li>
+          <li><span style="color:#ff5a3c;">😱 LavaMan</span> — detonate to sprint mode for 2 s, leaving a <b>lava trail</b> behind you. He's immune to it while laying <em>plus a 1 s grace window</em> after, so he can step off the last tile safely. Lava persists 5 s. 60 s cooldown.</li>
+          <li><span style="color:#7fb3d5;">❄ FreezeMan</span> — detonate to fire a cross-shaped freeze ray <b>through hard walls</b> to the edges of the map. Bright icy flash visible for ~1 s. Anyone in the row/column is frozen <b>5 s</b>. 60 s cooldown.</li>
+          <li><span style="color:#a68a64;">😐 Loser</span> — no ability. Just vibes.</li>
+          <li><span style="color:#e8c39e;">🎲 Random</span> — pick this and the game rolls a champion for you.</li>
+        </ul>
+        <div><strong style="color: #e8c39e;">Cooldown ring.</strong> Each champion's cooldown is shown as a ring above their head and as a fill bar on the side panel — full when ready. <b>Every round starts with a 15 s lockout</b> for all abilities. Active windows (Vampire aura, LavaMan trail) show a colored glow.</div>
+      </div>
+    </details>
+  </body>
+</html>

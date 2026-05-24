@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bombwave — Bomberman v2</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌃</text></svg>" />
+    <style>
+      :root { color-scheme: dark; }
+      html, body { margin: 0; padding: 0; background: #050010; color: #ff66ff; font-family: "Orbitron", "Segoe UI", monospace; }
+      body { display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+      h1 { margin: 8px 0 0; font-weight: 700; letter-spacing: 0.3em; text-shadow: 0 0 10px #ff00ff, 0 0 22px #00ffff; }
+      #hud { font-size: 13px; opacity: 0.85; color: #00ffff; margin: 4px 0 8px; letter-spacing: 0.2em; text-transform: uppercase; }
+      #stage { position: relative; }
+      canvas { background: #000010; box-shadow: 0 0 40px #ff00ff44, 0 0 80px #00ffff33; border-radius: 4px; }
+      #overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+      #overlay .card { background: rgba(5, 0, 16, 0.94); padding: 22px 32px; border-radius: 4px; text-align: center; pointer-events: auto; border: 1px solid #ff00ff66; box-shadow: 0 0 24px #ff00ff44; }
+      #overlay h2 { margin: 0 0 6px; color: #ff66ff; text-shadow: 0 0 8px #ff00ff; }
+      #overlay button { margin-top: 12px; padding: 8px 16px; font-size: 14px; border-radius: 2px; border: 1px solid #00ffff; background: transparent; color: #00ffff; cursor: pointer; font-weight: 700; font-family: inherit; letter-spacing: 0.15em; }
+      #overlay button:hover { background: #00ffff22; box-shadow: 0 0 12px #00ffff66; }
+      .legend { font-size: 12px; margin-top: 10px; opacity: 0.75; display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; color: #cc66cc; }
+      .legend code { background: rgba(255,0,255,0.08); padding: 2px 6px; border-radius: 2px; color: #ff99ff; }
+      .rules { font-size: 12px; opacity: 0.7; margin-top: 6px; max-width: 720px; text-align: center; line-height: 1.5; color: #a0a0d0; }
+      .rules b { color: #00ffff; }
+      details { margin-top: 12px; font-size: 13px; max-width: 800px; color: #cc66cc; }
+      summary { cursor: pointer; opacity: 0.8; letter-spacing: 0.1em; }
+      .settings { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 18px; padding: 10px; background: rgba(255,0,255,0.05); border-radius: 2px; margin-top: 6px; border: 1px solid #ff00ff33; }
+      .settings label { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+    </style>
+    <script type="module" crossorigin src="/apps/bomberman/v2/assets/index-CQxU-EsK.js"></script>
+  </head>
+  <body>
+    <h1>BOMBWAVE</h1>
+    <div id="hud">round 1 · first to 3</div>
+    <div id="stage">
+      <canvas id="game" width="960" height="704"></canvas>
+      <div id="overlay"></div>
+    </div>
+    <div class="rules"><b>HOLD a direction while pressing bomb to THROW it</b> — bombs slide until they hit something. <b>Stand still + bomb</b> drops normally. Watch the edges: lava encroaches every <span id="lava-secs">12</span>s.</div>
+    <div class="legend">
+      <span>P1 <code>WASD</code> + <code>Q</code></span>
+      <span>P2 <code>IJKL</code> + <code>U</code></span>
+      <span>P3 <code>↑←↓→</code> + <code>/</code></span>
+    </div>
+    <details>
+      <summary>▸ SETTINGS &amp; POWERUPS</summary>
+      <div id="settings" class="settings"></div>
+    </details>
+  </body>
+</html>
