@@ -11,3 +11,4 @@ Single-file web apps hosted via GitHub Pages.
 | [chi2026-keyword-feedback](chi2026-keyword-feedback/) | CHI keyword redesign feedback activity — reviewer-profile + paper-tagging selectors, keyword map, task index |
 | [chi2027-ac-volunteer](chi2027-ac-volunteer/) | CHI 2027 Associate Chair expertise profile — self-tag Domain/Method/Users, copy the profile for the AC volunteer form |
 | [bomberman](bomberman/) | Bomberman — six reinterpretations sharing one deterministic engine. **Built from `~/Repos/claude-experiments/bomberman` via `pnpm run deploy:apps`; do not hand-edit files under `bomberman/`.** |
+| [tankwars](tankwars/) | Tank Wars — turn-based artillery with destructible terrain, caves, dirt-burying, CPU opponents, and an attract demo. **Built from `~/Repos/claude-experiments/tankwars` via `npm run deploy:apps`; do not hand-edit files under `tankwars/`.** |
