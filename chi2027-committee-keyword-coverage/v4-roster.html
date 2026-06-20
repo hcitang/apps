@@ -122,7 +122,7 @@ function render(){
   for(const sp of rows){
     const c=document.createElement("div"); c.className="cell"+(selCells.has(sp.key)?" sel":""); c.dataset.key=sp.key;
     c.style.borderLeftColor=UI.BAL[sp.balance];
-    const need=o.rule==="tiered"?sp.need:Math.round(sp.target);
+    const need=o.rule==="tiered"?sp.tier:Math.round(sp.target);
     c.innerHTML=`<div>${esc(sp.subpile)}</div><div class="c">${sp.supply}/${need} · ${UI.BAL_LABEL[sp.balance]} · d${sp.demand}</div>`;
     c.onmouseenter=()=>{ litCell=sp.key; applyVolLit(); };
     c.onmouseleave=()=>{ litCell=null; applyVolLit(); };

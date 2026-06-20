@@ -47,7 +47,7 @@ function render(){
     .attr("rx",3).attr("fill",d=>BALV[d.data.balance]||BALV.none)
     .attr("opacity",d=>d.data.supply<=0?0.5:1)
     .attr("stroke",d=>d.data.supply<=0?"#9aa0a6":"none").attr("stroke-dasharray","3 2")
-    .on("mousemove",(e,d)=>{const sp=d.data; const need=o.rule==="tiered"?sp.need:Math.round(sp.target);
+    .on("mousemove",(e,d)=>{const sp=d.data; const need=o.rule==="tiered"?sp.tier:Math.round(sp.target);
       tip.show(`<b>${sp.subpile}</b><br>${sp.category}<br>demand ${sp.demand} · supply ${sp.supply} (R${sp.nR}·K${sp.nK})/${need}<br>${UI.BAL_LABEL[sp.balance]} ${sp.target>0?(sp.supply/sp.target).toFixed(1)+"×":""}`,e.clientX,e.clientY);})
     .on("mouseleave",tip.hide);
   leaf.append("text").attr("x",4).attr("y",12).attr("class",d=>["ok","high","piled","thin","low"].includes(d.data.balance)?"":"dark")

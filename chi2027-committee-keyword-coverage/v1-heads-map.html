@@ -70,7 +70,7 @@ function card(sp,o){
   const el=document.createElement("div"); el.className="sp";
   el.style.borderLeftColor=UI.BAL[sp.balance];
   const ratio = sp.target>0 ? (sp.supply/sp.target).toFixed(1)+"×" : (sp.supply?"∞":"—");
-  const need = o.rule==="tiered" ? sp.need : Math.round(sp.target);
+  const need = o.rule==="tiered" ? sp.tier : Math.round(sp.target);
   el.innerHTML=`<div class="nm">${sp.subpile}<small title="2026 keyword volume — how many times terms in this sub-pile were tagged across CHI 2026 submissions">d ${sp.demand}</small></div>`+
     `<div class="meta">supply <b>${sp.supply}</b> <span title="Recently published / Knowledgeable">(R${sp.nR}·K${sp.nK})</span> / ${o.rule==="tiered"?"need":"target"} <b>${need}</b> · `+
     `<span style="color:${UI.BAL[sp.balance]};font-weight:600">${UI.BAL_LABEL[sp.balance]}</span> ${ratio}</div>`+

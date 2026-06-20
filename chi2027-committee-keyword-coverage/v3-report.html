@@ -48,7 +48,7 @@ function render(){
   t.innerHTML="<thead><tr>"+cols.map(c=>`<th class="${c[2]?'num':''} ${c[0]===sortKey?'sorted':''}" data-k="${c[0]}">${c[1]}</th>`).join("")+"</tr></thead>";
   const tb=document.createElement("tbody");
   for(const r of rows){
-    const need=o.rule==="tiered"?r.need:Math.round(r.target);
+    const need=o.rule==="tiered"?r.tier:Math.round(r.target);
     const ratio=r.target>0?r.ratioN.toFixed(1)+"×":(r.supply?"∞":"—");
     tb.innerHTML+=`<tr><td>${r.category}</td><td>${r.subpile}</td><td class="num">${r.demand}</td>`+
       `<td class="num">${r.supply}</td><td class="num">${r.nR}</td><td class="num">${r.nK}</td>`+
@@ -59,6 +59,6 @@ function render(){
   const wrap=document.createElement("div"); wrap.className="tablewrap"; wrap.appendChild(t); main.appendChild(wrap);
   t.querySelectorAll("th").forEach(th=>th.onclick=()=>{ const k=th.dataset.k; if(k===sortKey)sortDir*=-1; else{sortKey=k;sortDir=1;} render(); });
 }
-function li(r){ return `<li><span>${r.category} › ${r.subpile}</span><span><b>${(r.target>0?r.ratioN.toFixed(1)+"×":"∞")}</b> <span class="muted">${r.supply}/${Math.round(r.target||r.need)}</span></span></li>`; }
+function li(r){ const need=UI.opts().rule==="tiered"?r.tier:Math.round(r.target||r.need); return `<li><span>${r.category} › ${r.subpile}</span><span><b>${(r.target>0?r.ratioN.toFixed(1)+"×":"∞")}</b> <span class="muted">${r.supply}/${need}</span></span></li>`; }
 render();
 </script></body></html>
