@@ -1,0 +1,105 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Coverage · Heads map</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  .cats{display:flex;flex-direction:column;gap:18px}
+  .cat h2{font-size:13px;margin:0 0 6px;display:flex;gap:8px;align-items:center;cursor:pointer;user-select:none}
+  .cat h2 .d{font-weight:400;color:var(--muted);font-size:11px}
+  .cat h2 .tw{margin-left:auto}
+  .cat h2 .caret{color:var(--muted);font-size:11px;width:10px}
+  .light{width:11px;height:11px;border-radius:50%;display:inline-block;box-shadow:0 0 0 1px rgba(0,0,0,.08) inset}
+  .light.red{background:var(--thin)} .light.amber{background:var(--low)} .light.green{background:var(--ok)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+  .sp{border:1px solid var(--line);border-left:5px solid var(--none);border-radius:8px;
+    background:#fff;padding:8px 10px;cursor:default}
+  .sp .nm{font-weight:600;font-size:12px;display:flex;justify-content:space-between;gap:6px}
+  .sp .nm small{font-weight:400;color:var(--muted)}
+  .sp .meta{font-size:11px;color:var(--muted);margin:2px 0 6px}
+  .sp .meta b{color:var(--ink)}
+  .heads{display:flex;flex-wrap:wrap;gap:2px;min-height:24px}
+  .sortbar{font-size:11px;color:var(--muted);margin-bottom:10px}
+</style></head><body>
+<main></main>
+<script src="data.js"></script><script src="core.js"></script><script src="committees.js"></script><script src="shared-ui.js"></script>
+<script>
+const C=window.CoverageCore, UI=window.CoverageUI;
+UI.ensureConfirmedDefault();
+UI.renderHeader("v1", render);
+const tip=UI.tip();
+const CAP=14;
+
+function render(){
+  const main=document.querySelector("main"); main.innerHTML="";
+  const pool=UI.getPool();
+  if(!pool.length){ main.innerHTML='<div class="empty-note">Load the volunteer CSV, or click <b>demo</b> in the toolbar.</div>'; return; }
+  const o=UI.opts(); const scs=UI.confirmedSCs();
+  const cov=C.compute(scs, UI.computeOpts());
+  const rows=cov[o.facet]||[];
+  // group by category, preserve order, sort subpiles by demand
+  const byCat=new Map();
+  for(const sp of rows){ if(!byCat.has(sp.category)) byCat.set(sp.category,[]); byCat.get(sp.category).push(sp); }
+  const wrap=document.createElement("div"); wrap.className="cats";
+  main.appendChild(legend(o));
+  const collapsed=getCollapsed();
+  for(const [cat,sps] of byCat){
+    sps.sort((a,b)=>b.demand-a.demand);
+    const cd=document.createElement("div"); cd.className="cat";
+    const dem=sps.reduce((s,x)=>s+x.demand,0), sup=sps.reduce((s,x)=>s+x.supply,0);
+    const isCol=collapsed.has(cat); const light=catLight(sps);
+    const h2=document.createElement("h2");
+    h2.innerHTML=`<span class="caret">${isCol?"▸":"▾"}</span><span class="light ${light.cls}" title="${light.why}"></span>`+
+      `${cat} <span class="d">supply ${sup} · demand ${dem}</span>`+
+      `<span class="tw d">${sps.length} sub-piles</span>`;
+    h2.onclick=()=>{ const c=getCollapsed(); c.has(cat)?c.delete(cat):c.add(cat); sessionStorage.setItem("cov.v1collapsed",JSON.stringify([...c])); render(); };
+    cd.appendChild(h2);
+    if(!isCol){ const g=document.createElement("div"); g.className="grid"; for(const sp of sps) g.appendChild(card(sp,o)); cd.appendChild(g); }
+    wrap.appendChild(cd);
+  }
+  main.appendChild(wrap);
+}
+function getCollapsed(){ try{return new Set(JSON.parse(sessionStorage.getItem("cov.v1collapsed"))||[]);}catch{return new Set();} }
+// category traffic light: red if any pile missing/way-under, amber if any thin, else green
+function catLight(sps){
+  const bad=sps.filter(s=>["none","thin"].includes(s.balance));
+  const warn=sps.filter(s=>s.balance==="low");
+  if(bad.length) return {cls:"red", why:`${bad.length} sub-pile(s) missing or way under-covered`};
+  if(warn.length) return {cls:"amber", why:`${warn.length} sub-pile(s) thin vs demand`};
+  return {cls:"green", why:"adequately covered vs demand"};
+}
+
+function card(sp,o){
+  const el=document.createElement("div"); el.className="sp";
+  el.style.borderLeftColor=UI.BAL[sp.balance];
+  const ratio = sp.target>0 ? (sp.supply/sp.target).toFixed(1)+"×" : (sp.supply?"∞":"—");
+  const need = o.rule==="tiered" ? sp.need : Math.round(sp.target);
+  el.innerHTML=`<div class="nm">${sp.subpile}<small title="2026 keyword volume — how many times terms in this sub-pile were tagged across CHI 2026 submissions">d ${sp.demand}</small></div>`+
+    `<div class="meta">supply <b>${sp.supply}</b> <span title="Recently published / Knowledgeable">(R${sp.nR}·K${sp.nK})</span> / ${o.rule==="tiered"?"need":"target"} <b>${need}</b> · `+
+    `<span style="color:${UI.BAL[sp.balance]};font-weight:600">${UI.BAL_LABEL[sp.balance]}</span> ${ratio}</div>`+
+    `<div class="heads"></div>`;
+  const hs=el.querySelector(".heads"); const pool=UI.getPool();
+  const coverers=sp.coverers.slice(0,CAP);
+  for(const id of coverers){ const v=pool.find(p=>p.id===id); hs.appendChild(headEl(v?v.head:C.HEADS.EMPTY, 22, v)); }
+  if(sp.coverers.length>CAP){ const more=document.createElement("span"); more.className="muted"; more.style.fontSize="11px"; more.textContent=`+${sp.coverers.length-CAP}`; hs.appendChild(more); }
+  const deficit = Math.max(0, Math.round(need - sp.supply));
+  for(let i=0;i<Math.min(deficit,CAP);i++) hs.appendChild(headEl(C.HEADS.NEEDED,22,null));
+  return el;
+}
+
+function headEl(idx,size,v){
+  const d=document.createElement("span"); d.className="head"; d.style.cssText=C.headStyle(idx,size);
+  if(v){ d.onmousemove=e=>tip.show(`<b>${esc(v.name||v.id)}</b><br>${v.cells.length} expertise tags · ${v.role||"—"}`,e.clientX,e.clientY);
+    d.onmouseleave=tip.hide; }
+  else { d.title="unfilled — recruit here"; }
+  return d;
+}
+function legend(o){
+  const d=document.createElement("div"); d.className="sortbar";
+  const bands=["thin","low","ok","high","piled","none"];
+  d.innerHTML=`<div class="legend">Balance vs demand-share (${o.rule==="tiered"?"slots rule":"proportional"}): `+
+    bands.map(b=>`<span><i class="bal-${b}"></i>${UI.BAL_LABEL[b]}</span>`).join("")+
+    ` · <span>?-head = unfilled slot</span> · <span><span class="light green"></span>/<span class="light red"></span> pile health</span>`+
+    ` · <span>d = 2026 keyword volume</span></div>`;
+  return d;
+}
+function esc(s){return String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
+render();
+</script></body></html>

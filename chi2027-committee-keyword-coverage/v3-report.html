@@ -1,0 +1,64 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Coverage · Report</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  .summary{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+  .summary .box{background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+  .summary h3{margin:0 0 6px;font-size:12px}
+  .summary ul{margin:0;padding-left:0;list-style:none;font-size:12px}
+  .summary li{display:flex;justify-content:space-between;gap:8px;padding:2px 0}
+  .tablewrap{max-height:calc(100vh - 230px);overflow:auto;background:#fff;border:1px solid var(--line);border-radius:8px}
+  table{width:100%;border-collapse:collapse}
+  th,td{padding:6px 9px;text-align:left;border-bottom:1px solid var(--line);font-size:12px}
+  th{background:#fafbfc;cursor:pointer;user-select:none;position:sticky;top:0;z-index:1;white-space:nowrap;box-shadow:0 1px 0 var(--line)}
+  th.sorted::after{content:" ▾";color:var(--muted)}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+  .bchip{display:inline-block;padding:1px 7px;border-radius:999px;color:#fff;font-size:11px;font-weight:600}
+</style></head><body>
+<main></main>
+<script src="data.js"></script><script src="core.js"></script><script src="committees.js"></script><script src="shared-ui.js"></script>
+<script>
+const C=window.CoverageCore, UI=window.CoverageUI;
+UI.ensureConfirmedDefault(); UI.renderHeader("v3", render);
+let sortKey="ratioN", sortDir=1;  // ascending ratio -> most under-subscribed first
+
+function rowsFor(){
+  const o=UI.opts(); const cov=C.compute(UI.confirmedSCs(),UI.computeOpts());
+  return (cov[o.facet]||[]).map(sp=>({...sp, ratioN: sp.target>0?sp.supply/sp.target:(sp.supply?99:0)}));
+}
+function render(){
+  const main=document.querySelector("main"); main.innerHTML="";
+  if(!UI.getPool().length){ main.innerHTML='<div class="empty-note">Load the volunteer CSV, or click <b>demo</b>.</div>'; return; }
+  const o=UI.opts(); let rows=rowsFor();
+  // summary
+  const under=[...rows].filter(r=>r.supply>0).sort((a,b)=>a.ratioN-b.ratioN).slice(0,6);
+  const over=[...rows].sort((a,b)=>b.ratioN-a.ratioN).slice(0,6);
+  const miss=rows.filter(r=>r.supply<=0);
+  const sm=document.createElement("div"); sm.className="summary";
+  sm.innerHTML=`<div class="box"><h3>Most under-subscribed (thin vs demand)</h3><ul>`+
+    under.map(r=>li(r)).join("")+`</ul></div>`+
+    `<div class="box"><h3>Most piled-up${miss.length?` · ${miss.length} missing`:""}</h3><ul>`+
+    over.map(r=>li(r)).join("")+`</ul></div>`;
+  main.appendChild(sm);
+  // table
+  rows.sort((a,b)=> (typeof a[sortKey]==="string"? a[sortKey].localeCompare(b[sortKey]) : a[sortKey]-b[sortKey])*sortDir);
+  // note: Balance column sorts by ratio (the underlying continuous measure)
+  const cols=[["category","Category"],["subpile","Sub-pile"],["demand","Demand",1],["supply","Supply",1],
+    ["nR","R",1],["nK","K",1],["target",o.rule==="tiered"?"Need":"Target",1],["ratioN","Ratio",1],["ratioN","Balance"]];
+  const t=document.createElement("table");
+  t.innerHTML="<thead><tr>"+cols.map(c=>`<th class="${c[2]?'num':''} ${c[0]===sortKey?'sorted':''}" data-k="${c[0]}">${c[1]}</th>`).join("")+"</tr></thead>";
+  const tb=document.createElement("tbody");
+  for(const r of rows){
+    const need=o.rule==="tiered"?r.need:Math.round(r.target);
+    const ratio=r.target>0?r.ratioN.toFixed(1)+"×":(r.supply?"∞":"—");
+    tb.innerHTML+=`<tr><td>${r.category}</td><td>${r.subpile}</td><td class="num">${r.demand}</td>`+
+      `<td class="num">${r.supply}</td><td class="num">${r.nR}</td><td class="num">${r.nK}</td>`+
+      `<td class="num">${need}</td><td class="num">${ratio}</td>`+
+      `<td><span class="bchip" style="background:${UI.BAL[r.balance]}">${UI.BAL_LABEL[r.balance]}</span></td></tr>`;
+  }
+  t.appendChild(tb);
+  const wrap=document.createElement("div"); wrap.className="tablewrap"; wrap.appendChild(t); main.appendChild(wrap);
+  t.querySelectorAll("th").forEach(th=>th.onclick=()=>{ const k=th.dataset.k; if(k===sortKey)sortDir*=-1; else{sortKey=k;sortDir=1;} render(); });
+}
+function li(r){ return `<li><span>${r.category} › ${r.subpile}</span><span><b>${(r.target>0?r.ratioN.toFixed(1)+"×":"∞")}</b> <span class="muted">${r.supply}/${Math.round(r.target||r.need)}</span></span></li>`; }
+render();
+</script></body></html>

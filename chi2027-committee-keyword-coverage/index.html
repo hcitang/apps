@@ -1,0 +1,60 @@
+<!doctype html><html><head><meta charset="utf-8"><title>CHI 2027 · Coverage tool variations</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  .intro{max-width:820px}
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-top:14px}
+  .card{display:block;background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;color:var(--ink)}
+  .card:hover{border-color:var(--ink)}
+  .card h3{margin:0 0 4px;font-size:14px}
+  .card p{margin:0;font-size:12px;color:var(--muted)}
+  .start{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;margin:14px 0;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .start button,.start label{font:inherit;padding:6px 12px;border:1px solid var(--line);border-radius:7px;background:#fff;cursor:pointer}
+  .start button.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .doc{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:14px 0;max-width:820px}
+  .doc summary{font-weight:700;font-size:13px;cursor:pointer}
+  .docbody p{margin:8px 0;font-size:12.5px}
+  .docbody code{background:#f1f3f5;padding:1px 4px;border-radius:4px;font-size:11.5px}
+</style></head><body>
+<main><div class="intro">
+  <h1 style="margin:0 0 6px">CHI 2027 — Keyword Coverage</h1>
+  <p class="muted">Balance-first SC-recruiting tool. Four visual variations sharing one loaded committee.
+  Data stays in your browser (sessionStorage) — nothing is uploaded.</p>
+  <div class="start">
+    <b>Start:</b>
+    <button id="csvBtn">Load volunteer CSV</button><input id="csv" type="file" accept=".csv" hidden>
+    <select id="comm" class="primary"><option value="">Load a sample committee…</option></select>
+    <button id="clear">Clear</button>
+    <span class="pill" id="pill"></span>
+  </div>
+  <details class="doc" open><summary>What the numbers mean</summary>
+    <div class="docbody">
+      <p><b>supply</b> — how many of your confirmed SCs cover this sub-pile. With <b>K=R</b> it's just the headcount; with <b>R&gt;K</b> each <i>Knowledgeable</i> counts ½ of a <i>Recently-published</i>. Shown as <code>supply (R·K)</code> so you see the split.</p>
+      <p><b>demand</b> — 2026 keyword volume: how many times terms in this sub-pile were tagged across last year's submissions. A proxy for how much work lands here. (<code>d</code> in the tiles.)</p>
+      <p><b>target / balance</b> (default rule) — your people, spread <i>in proportion to demand</i>. <code>target = (this sub-pile's share of total demand) × (total people in the facet)</code>. <b>ratio = supply ÷ target</b>: 1× = right share, &lt;1× = thinner than its demand deserves, &gt;1× = piled up. This is <i>relative</i> — it asks "are we balanced", and re-balances as you add SCs.</p>
+      <p><b>slots</b> (other rule) — a fixed target of 1 / 2 / 3 covering SCs by demand tier (low / med / high). Simpler, absolute, fillable; the <code>?</code>-heads show the shortfall. Saturates once you have many broad SCs — useful at small sets and later for AC/reviewer depth.</p>
+      <p class="muted">Colors (thin → piled) are bands of the ratio under whichever rule is active.</p>
+    </div>
+  </details>
+  <div class="cards">
+    <a class="card" href="v3-report.html"><h3>① Report</h3><p>Sortable table + most-under / most-piled summaries. The numbers.</p></a>
+    <a class="card" href="v2-treemap.html"><h3>② Treemap</h3><p>Tiles sized by demand, colored by coverage. The shape of the field at a glance.</p></a>
+    <a class="card" href="v1-heads-map.html"><h3>③ Heads map</h3><p>Sub-piles colored by coverage; heads fill slots, ?-heads mark gaps.</p></a>
+    <a class="card" href="v4-roster.html"><h3>④ Roster + what-if</h3><p>Toggle SCs, watch coverage move; "suggest next" ranks who to recruit.</p></a>
+  </div>
+</div></main>
+<script src="data.js"></script><script src="core.js"></script><script src="committees.js"></script><script src="shared-ui.js"></script>
+<script>
+const UI=window.CoverageUI;
+const pill=document.getElementById("pill");
+function refresh(){const p=UI.getPool();pill.textContent=p.length?`${UI.confirmedSCs().length} SC-volunteers / ${p.length} loaded`:"no data loaded";}
+const csvIn=document.getElementById("csv");
+document.getElementById("csvBtn").onclick=()=>csvIn.click();
+csvIn.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{try{const n=UI.loadCSVText(r.result);refresh();if(!n)alert("No volunteers with an expertise block were found in that CSV.");}catch(err){console.error(err);alert("Could not parse that CSV: "+err.message);}};
+  r.onerror=()=>alert("Could not read the file.");r.readAsText(f);e.target.value="";};
+const commSel=document.getElementById("comm");
+UI.committeeKeys().forEach(k=>{const o=document.createElement("option");o.value=k;o.textContent=(window.COMMITTEES[k].label)||k;commSel.appendChild(o);});
+commSel.onchange=e=>{const k=e.target.value;if(!k)return;try{UI.loadCommittee(k);refresh();}catch(err){console.error(err);alert("Could not load committee: "+err.message);}e.target.value="";};
+document.getElementById("clear").onclick=()=>{sessionStorage.clear();refresh();};
+refresh();
+</script></body></html>

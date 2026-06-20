@@ -1,0 +1,177 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Coverage · Roster + what-if</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  .split{display:grid;grid-template-columns:360px 1fr;gap:16px;align-items:start}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:8px}
+  .panel .hd{padding:8px 10px;border-bottom:1px solid var(--line);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .panel .hd input[type=search]{flex:1;min-width:80px;padding:4px 7px;border:1px solid var(--line);border-radius:6px;font:inherit}
+  .panel .hd select{font:inherit;font-size:11px;padding:3px 5px;border:1px solid var(--line);border-radius:6px;background:#fff}
+  /* equal heights via a shared fixed pane height; each scrolls on its own. The map
+     stays a plain block-level grid (definite width from the 1fr column) so auto-fill
+     resolves its columns — no flex wrapper, which collapses it to one column. */
+  .list,.map{height:calc(100vh - 168px);overflow:auto}
+  .vrow{display:flex;gap:8px;align-items:center;padding:6px 10px;border-bottom:1px solid #f1f3f5;cursor:pointer}
+  .vrow:hover{background:#f6f9ff}
+  .vrow.on{background:#eef7ee}
+  .vrow.vlit{box-shadow:inset 3px 0 0 var(--ink);background:var(--hi)}
+  .vrow.vdim{opacity:.32}
+  .vrow .nm{flex:1;font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .vrow .badges{display:flex;gap:3px}
+  .badge{font-size:9px;font-weight:700;padding:1px 5px;border-radius:999px;background:#eef;color:#334}
+  .badge.SC{background:#dcfce7;color:#166534}.badge.AC{background:#e0e7ff;color:#3730a3}
+  .badge.ERB{background:#fee2e2;color:#991b1b}
+  .gain{font-size:11px;color:#166534;font-weight:700;min-width:46px;text-align:right}
+  .map{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:5px;padding:10px;align-content:start}
+  .cell{border:1px solid var(--line);border-left:4px solid var(--none);border-radius:6px;padding:5px 7px;font-size:11px;cursor:pointer;transition:box-shadow .08s}
+  .cell .c{color:var(--muted);font-size:10px}
+  .cell.lit{box-shadow:0 0 0 2px var(--ink);background:var(--hi)}
+  .cell.dim{opacity:.35}
+  .cell.sel{box-shadow:0 0 0 2px var(--ink);background:var(--hi)}
+  .cell.sel::after{content:"●";float:right;color:var(--ink);font-size:9px;margin-top:-2px}
+  .stat{display:flex;gap:14px;font-size:12px;flex-wrap:wrap;align-items:center}
+  .stat b{font-size:15px}
+</style></head><body>
+<main></main>
+<script src="data.js"></script><script src="core.js"></script><script src="committees.js"></script><script src="shared-ui.js"></script>
+<script>
+const C=window.CoverageCore, UI=window.CoverageUI;
+UI.ensureConfirmedDefault(); UI.renderHeader("v4", render);
+
+// ---- view state ----
+let query="";
+let vsort="surname";          // surname | selected | gain
+let vfilter="all";            // all | selected | unselected
+let spsort="ratio";           // ratio(piles first) | demand | supply | deficit | subpile
+let litVol=null;              // hovered volunteer -> lights matching tiles
+let litCell=null;             // hovered tile -> lights matching volunteers
+const selCells=new Set();     // clicked (pinned) tiles -> lights matching volunteers
+let listScroll=0;             // preserve left-list scroll across re-renders
+let poolById=new Map();
+
+function surname(v){ const t=(v.name||v.id||"").trim().split(/\s+/); return (t[t.length-1]||"").toLowerCase(); }
+function cmpName(a,b){ return surname(a).localeCompare(surname(b))||(a.name||"").localeCompare(b.name||""); }
+
+function render(){
+  const main=document.querySelector("main"); main.innerHTML="";
+  const pool=UI.getPool();
+  poolById=new Map(pool.map(v=>[v.id,v]));
+  if(!pool.length){ main.innerHTML='<div class="empty-note">Load the volunteer CSV, or pick a sample committee from the toolbar.</div>'; return; }
+  const o=UI.opts(); const confirmed=UI.getConfirmed(); const scs=pool.filter(v=>confirmed.has(v.id));
+  const cov=C.compute(scs,UI.computeOpts()); const rows=(cov[o.facet]||[]).slice();
+
+  const split=document.createElement("div"); split.className="split";
+
+  // ---- left: roster ----
+  const left=document.createElement("div"); left.className="panel";
+  left.innerHTML=
+    `<div class="hd"><input type="search" placeholder="filter ${pool.length} volunteers" value="${esc(query)}">`+
+    `<select id="vfilter" title="show which volunteers">`+
+      opt("all","everyone",vfilter)+opt("selected","selected only",vfilter)+opt("unselected","not selected",vfilter)+`</select>`+
+    `<select id="vsort" title="order the list">`+
+      opt("surname","by surname",vsort)+opt("selected","selected first",vsort)+opt("gain","suggest next ▸",vsort)+`</select>`+
+    `</div><div class="list"></div>`;
+  const listEl=left.querySelector(".list");
+
+  let items=pool.filter(v=>{
+    if(vfilter==="selected"&&!confirmed.has(v.id)) return false;
+    if(vfilter==="unselected"&&confirmed.has(v.id)) return false;
+    if(query){ const q=query.toLowerCase(); if(!(v.name||"").toLowerCase().includes(q)&&!v.role.toLowerCase().includes(q)) return false; }
+    return true;
+  });
+
+  let gains=null;
+  if(vsort==="gain"){
+    gains=new Map(items.map(v=>[v.id,C.marginalGain(scs,v,UI.computeOpts())]));
+    // confirmed first (already in), then candidates by descending marginal gain
+    const inSet=items.filter(v=>confirmed.has(v.id)).sort(cmpName);
+    const cand=items.filter(v=>!confirmed.has(v.id)).sort((a,b)=>gains.get(b.id).gain-gains.get(a.id).gain||cmpName(a,b));
+    items=[...inSet,...cand];
+  } else if(vsort==="selected"){
+    items.sort((a,b)=>(confirmed.has(b.id)-confirmed.has(a.id))||cmpName(a,b));
+  } else {
+    items.sort(cmpName);
+  }
+
+  for(const v of items){
+    const on=confirmed.has(v.id);
+    const row=document.createElement("div"); row.className="vrow"+(on?" on":""); row.dataset.id=v.id;
+    const g=gains&&gains.get(v.id);
+    row.innerHTML=`<span class="head" style="${C.headStyle(v.head,24)}"></span>`+
+      `<span class="nm">${esc(v.name||v.id)}</span>`+
+      `<span class="badges">${v.roles.map(r=>`<span class="badge ${r}">${r}</span>`).join("")}</span>`+
+      ((g&&!on)?`<span class="gain">+${g.gain}</span>`:`<span class="gain">${on?'✓':''}</span>`);
+    row.onclick=()=>{ listScroll=listEl.scrollTop; const s=UI.getConfirmed(); s.has(v.id)?s.delete(v.id):s.add(v.id); UI.setConfirmed(s); render(); };
+    row.onmouseenter=()=>{ litVol=v.id; applyTileLit(); };
+    row.onmouseleave=()=>{ litVol=null; applyTileLit(); };
+    listEl.appendChild(row);
+  }
+  listEl.onscroll=()=>{ listScroll=listEl.scrollTop; };
+
+  // ---- right: map + stats ----
+  const right=document.createElement("div"); right.className="panel";
+  const missing=rows.filter(r=>r.supply<=0).length, thin=rows.filter(r=>["thin","low"].includes(r.balance)).length;
+  const piled=rows.filter(r=>r.balance==="piled").length;
+  right.innerHTML=`<div class="hd"><div class="stat"><span><b>${scs.length}</b> confirmed</span>`+
+    `<span style="color:var(--thin)"><b>${missing}</b> missing</span><span style="color:var(--low)"><b>${thin}</b> thin</span>`+
+    `<span style="color:var(--piled)"><b>${piled}</b> piled</span><span class="muted">${o.facet}</span>`+
+    `<select id="spsort" title="order sub-piles" style="margin-left:auto">`+
+      opt("ratio","by balance (piled→thin)",spsort)+opt("deficit","by deficit",spsort)+opt("supply","by supply",spsort)+
+      opt("demand","by demand",spsort)+opt("subpile","by name",spsort)+`</select></div></div><div class="map"></div>`;
+  const mapEl=right.querySelector(".map");
+  sortRows(rows);
+  for(const sp of rows){
+    const c=document.createElement("div"); c.className="cell"+(selCells.has(sp.key)?" sel":""); c.dataset.key=sp.key;
+    c.style.borderLeftColor=UI.BAL[sp.balance];
+    const need=o.rule==="tiered"?sp.need:Math.round(sp.target);
+    c.innerHTML=`<div>${esc(sp.subpile)}</div><div class="c">${sp.supply}/${need} · ${UI.BAL_LABEL[sp.balance]} · d${sp.demand}</div>`;
+    c.onmouseenter=()=>{ litCell=sp.key; applyVolLit(); };
+    c.onmouseleave=()=>{ litCell=null; applyVolLit(); };
+    c.onclick=()=>{ selCells.has(sp.key)?selCells.delete(sp.key):selCells.add(sp.key); c.classList.toggle("sel"); applyVolLit(); };
+    mapEl.appendChild(c);
+  }
+
+  split.appendChild(left); split.appendChild(right); main.appendChild(split);
+  listEl.scrollTop=listScroll;   // keep position when toggling people
+
+  left.querySelector("input").oninput=e=>{ query=e.target.value; listScroll=0; render(); };
+  left.querySelector("#vfilter").onchange=e=>{ vfilter=e.target.value; listScroll=0; render(); };
+  left.querySelector("#vsort").onchange=e=>{ vsort=e.target.value; listScroll=0; render(); };
+  right.querySelector("#spsort").onchange=e=>{ spsort=e.target.value; render(); };
+  applyTileLit(); applyVolLit();
+}
+
+function sortRows(rows){
+  const by={
+    ratio:(a,b)=>b.ratio-a.ratio,            // piled first
+    deficit:(a,b)=>b.deficit-a.deficit||b.demand-a.demand,
+    supply:(a,b)=>b.supply-a.supply,
+    demand:(a,b)=>b.demand-a.demand,
+    subpile:(a,b)=>a.subpile.localeCompare(b.subpile),
+  };
+  rows.sort(by[spsort]||by.ratio);
+}
+
+// hovered volunteer -> highlight the tiles they cover
+function applyTileLit(){
+  const cells=document.querySelectorAll(".cell"); if(!cells.length) return;
+  if(!litVol){ cells.forEach(c=>c.classList.remove("lit","dim")); return; }
+  const v=poolById.get(litVol); const keys=new Set((v?v.cells:[]).map(c=>C.KEY(c.category,c.subpile)));
+  cells.forEach(c=>{ const hit=keys.has(c.dataset.key); c.classList.toggle("lit",hit); c.classList.toggle("dim",!hit); });
+}
+
+// hovered/selected tiles -> highlight the volunteers who cover them
+function applyVolLit(){
+  const vrows=document.querySelectorAll(".vrow"); if(!vrows.length) return;
+  const active=litCell?new Set([litCell]):selCells;
+  if(!active.size){ vrows.forEach(r=>r.classList.remove("vlit","vdim")); return; }
+  vrows.forEach(r=>{
+    const v=poolById.get(r.dataset.id);
+    const hit=!!v&&v.cells.some(c=>active.has(C.KEY(c.category,c.subpile)));
+    r.classList.toggle("vlit",hit); r.classList.toggle("vdim",!hit);
+  });
+}
+
+function opt(val,label,cur){ return `<option value="${val}"${val===cur?" selected":""}>${label}</option>`; }
+function esc(s){return String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
+render();
+</script></body></html>

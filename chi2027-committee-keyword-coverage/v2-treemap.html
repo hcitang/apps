@@ -1,0 +1,59 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Coverage · Treemap</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  #map{background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .node text{font-size:10px;fill:#fff;pointer-events:none}
+  .node text.dark{fill:#1f2430}
+  .cathdr{font-size:11px;font-weight:700;fill:#374151;pointer-events:none}
+  .note{font-size:11px;color:var(--muted);margin-bottom:8px}
+</style></head><body>
+<main><div class="note">Tiles sized by 2026 demand (keyword volume), colored by balance vs demand-share. Hover for detail.</div>
+<div class="legend" id="key" style="margin-bottom:8px"></div>
+<div id="map"></div></main>
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<script src="data.js"></script><script src="core.js"></script><script src="committees.js"></script><script src="shared-ui.js"></script>
+<script>
+const C=window.CoverageCore, UI=window.CoverageUI;
+UI.ensureConfirmedDefault(); UI.renderHeader("v2", render);
+const tip=UI.tip();
+const BALV={none:getC("--none"),thin:getC("--thin"),low:getC("--low"),ok:getC("--ok"),high:getC("--high"),piled:getC("--piled")};
+function getC(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+
+function renderKey(){
+  const bands=["thin","low","ok","high","piled","none"];
+  document.getElementById("key").innerHTML="Balance: "+
+    bands.map(b=>`<span><i class="bal-${b}"></i>${UI.BAL_LABEL[b]}</span>`).join("")+
+    ` · <span style="border:1px dashed #9aa0a6;padding:0 4px;border-radius:3px">dashed = no coverage</span>`;
+}
+function render(){
+  renderKey();
+  const main=document.querySelector("main"); const mapDiv=document.getElementById("map");
+  mapDiv.innerHTML="";
+  if(!UI.getPool().length){ mapDiv.innerHTML='<div class="empty-note">Load the volunteer CSV, or click <b>demo</b>.</div>'; return; }
+  const o=UI.opts(); const cov=C.compute(UI.confirmedSCs(),UI.computeOpts()); const rows=cov[o.facet]||[];
+  const W=mapDiv.clientWidth||1000, H=Math.max(560, innerHeight-160);
+  const cats={}; for(const sp of rows){ (cats[sp.category]=cats[sp.category]||[]).push(sp); }
+  const root=d3.hierarchy({children:Object.entries(cats).map(([name,children])=>({name,children}))})
+    .sum(d=>d.demand!==undefined?Math.max(d.demand,1):0)
+    .sort((a,b)=>b.value-a.value);
+  d3.treemap().size([W,H]).paddingTop(16).paddingInner(2).round(true)(root);
+  const svg=d3.select(mapDiv).append("svg").attr("width",W).attr("height",H);
+  // category headers
+  svg.selectAll("text.cathdr").data(root.children).enter().append("text").attr("class","cathdr")
+    .attr("x",d=>d.x0+4).attr("y",d=>d.y0+12).text(d=>d.data.name.length>40?d.data.name.slice(0,38)+"…":d.data.name);
+  const leaf=svg.selectAll("g.node").data(root.leaves()).enter().append("g").attr("class","node")
+    .attr("transform",d=>`translate(${d.x0},${d.y0})`);
+  leaf.append("rect").attr("width",d=>d.x1-d.x0).attr("height",d=>d.y1-d.y0)
+    .attr("rx",3).attr("fill",d=>BALV[d.data.balance]||BALV.none)
+    .attr("opacity",d=>d.data.supply<=0?0.5:1)
+    .attr("stroke",d=>d.data.supply<=0?"#9aa0a6":"none").attr("stroke-dasharray","3 2")
+    .on("mousemove",(e,d)=>{const sp=d.data; const need=o.rule==="tiered"?sp.need:Math.round(sp.target);
+      tip.show(`<b>${sp.subpile}</b><br>${sp.category}<br>demand ${sp.demand} · supply ${sp.supply} (R${sp.nR}·K${sp.nK})/${need}<br>${UI.BAL_LABEL[sp.balance]} ${sp.target>0?(sp.supply/sp.target).toFixed(1)+"×":""}`,e.clientX,e.clientY);})
+    .on("mouseleave",tip.hide);
+  leaf.append("text").attr("x",4).attr("y",12).attr("class",d=>["ok","high","piled","thin","low"].includes(d.data.balance)?"":"dark")
+    .each(function(d){const w=d.x1-d.x0,h=d.y1-d.y0; if(w<40||h<16){d3.select(this).remove();return;}
+      const t=d.data.subpile, max=Math.floor(w/5.5); d3.select(this).text(t.length>max?t.slice(0,max-1)+"…":t);});
+}
+addEventListener("resize",()=>render());
+render();
+</script></body></html>

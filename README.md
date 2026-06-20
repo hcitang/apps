@@ -8,6 +8,12 @@ Single-file web apps hosted via GitHub Pages.
 | [chi2026-keyword-feedback](chi2026-keyword-feedback/) | CHI keyword redesign feedback activity — reviewer-profile + paper-tagging selectors, keyword map, task index |
 | [chi2027-ac-volunteer](chi2027-ac-volunteer/) | CHI 2027 Associate Chair expertise profile — self-tag Domain/Method/Users, copy the profile for the AC volunteer form |
 
+# Testing/Working
+
+| App | Description |
+|-----|-------------|
+| [Keyword/Descriptor Coverage Tool](chi2027-committee-keyword-coverage/) | CHI 2027 SC-recruiting coverage over the keyword tree — supply vs. demand per sub-pile, four views, roster what-if. Load a bundled CHI 2025/2026 committee or your own volunteer CSV (client-side only). |
+
 # Old
 
 | App | Description |
