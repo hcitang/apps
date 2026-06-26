@@ -90,7 +90,8 @@
   // ---- toolbar (loader + view links + facet/rule controls) ----
   // order: Report, Treemap, Heads map, Roster + what-if.
   const VIEWS = [["v3-report.html", "Report"], ["v2-treemap.html", "Treemap"],
-                 ["v1-heads-map.html", "Heads map"], ["v4-roster.html", "Roster + what-if"]];
+                 ["v1-heads-map.html", "Heads map"], ["v4-roster.html", "Roster + what-if"],
+                 ["v5-fingerprint.html", "Fingerprint"]];
   function renderHeader(active, onChange) {
     const o = opts();
     const cur = location.pathname.split("/").pop();

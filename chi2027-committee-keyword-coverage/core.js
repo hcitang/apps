@@ -92,7 +92,13 @@
 
   function volunteersFromCSV(text) {
     const recs = parseCSV(text);
-    const hasConfirmedCol = recs.length > 0 && ("confirmed" in recs[0]);
+    // accept alternate header spellings; first present name wins (so the canonical
+    // header still takes precedence when both are present).
+    const get = (r, names) => { for (const n of names) if (n in r) return r[n]; return undefined; };
+    const NAME_COLS = ["Contact Name", "Title"];
+    const CONFIRMED_COLS = ["confirmed", "SC-eligible"];
+    const hdr = recs[0] || {};
+    const hasConfirmedCol = CONFIRMED_COLS.some(n => n in hdr);
     const pool = recs.map((r, idx) => {
       const block = (r["expertise_domain_methods"] || "").trim();
       if (!block) return null;
@@ -100,10 +106,10 @@
       const role = (r["role"] || "").trim();
       return {
         id: r["Paper ID"] || ("row" + idx),
-        name: (r["Contact Name"] || "").trim(),
+        name: (get(r, NAME_COLS) || "").trim(),
         role, roles: role ? role.split("; ") : [],
         status: r["Status"], cells: matched, unmatched, head: headFor(r["Paper ID"] || idx),
-        confirmed: hasConfirmedCol ? /^(t|y|1)/i.test((r["confirmed"] || "").trim()) : undefined,
+        confirmed: hasConfirmedCol ? /^(t|y|1)/i.test((get(r, CONFIRMED_COLS) || "").trim()) : undefined,
       };
     }).filter(Boolean);
     pool.hasConfirmedCol = hasConfirmedCol;   // tells the loader to seed the confirmed set from the column
